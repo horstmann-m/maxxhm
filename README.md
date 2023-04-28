@@ -1,5 +1,5 @@
 - 👋 Hi, I’m Max
-- 👀 I’m interested in Strategy, Finance & Statistics
+- 👀 I’m interested in Finance, Statistics & Strategy
 - 🌱 I’m currently learning Python
 - 💞️ I’m looking to collaborate on don't know yet.
 - 📫 How to reach me linkedin.com/in/horstmannm
