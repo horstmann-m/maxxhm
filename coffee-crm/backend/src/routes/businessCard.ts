@@ -12,7 +12,7 @@ export async function businessCardRoutes(app: FastifyInstance) {
     if (!data) return reply.code(400).send({ error: "no_file" });
     const buffer = await data.toBuffer();
 
-    const parsed = await cardParserService.parse(buffer);
+    const parsed = await cardParserService.parse(buffer, data.mimetype);
 
     return reply.send({
       draft: {

@@ -44,6 +44,16 @@ enum PriceMarket {
   usd_index
 }
 
+enum Channel {
+  whatsapp
+  email
+}
+
+enum MessageDirection {
+  in
+  out
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -72,8 +82,31 @@ model Contact {
   createdAt            DateTime    @default(now())
   lastContactedAt      DateTime?
   activities           Activity[]
+  conversations        Conversation[]
 
   @@index([company])
+}
+
+model Conversation {
+  id            String    @id @default(uuid())
+  contactId     String
+  contact       Contact   @relation(fields: [contactId], references: [id])
+  channel       Channel
+  subject       String?
+  lastMessageAt DateTime?
+  messages      Message[]
+}
+
+model Message {
+  id             String           @id @default(uuid())
+  conversationId String
+  conversation   Conversation     @relation(fields: [conversationId], references: [id])
+  direction      MessageDirection
+  channel        Channel
+  body           String
+  mediaUrls      String[]
+  sentAt         DateTime         @default(now())
+  externalId     String?          @unique
 }
 
 model Activity {

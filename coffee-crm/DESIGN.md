@@ -22,9 +22,11 @@ A CRM purpose-built for a specialty coffee trader, run solo, with a small book (
 
 ## 3. WhatsApp Integration — Official Business API
 
-Given the ToS/reliability concerns with unofficial bridges (account ban risk is unacceptable for a trading business), use the Meta WhatsApp Cloud API directly (free tier covers low volume; no BSP markup needed at <200 contacts) or a BSP (360dialog/Twilio) if you want a nicer dashboard and faster support.
+Given the ToS/reliability concerns with unofficial bridges (account ban risk is unacceptable for a trading business), use the official Cloud API via a BSP rather than an unofficial bridge. **Decision: Twilio**, chosen for EU availability and a more usable dashboard/support than raw Meta Cloud API integration.
 
-You confirmed you already have a phone number you intend to use — note that porting it into the Cloud API locks it out of the regular WhatsApp Business app, so register it deliberately (not your personal number, and not one you need dual access to). The exact API implementation (direct Cloud API vs. BSP) is still open; see §10.
+Cost note: Twilio's WhatsApp **sandbox** is free for development/testing (your test number joins via a join code, shared sandbox number) but is not suitable for real customers. Moving to production requires your own WhatsApp sender, Meta business verification, and per-conversation billing from both Twilio and Meta — it is not free at that point, just simpler to operate day-to-day than direct Cloud API integration. Start on the sandbox, budget for production fees before going live with real contacts.
+
+You confirmed you already have a phone number you intend to use — note that registering it as a WhatsApp Business sender locks it out of the regular WhatsApp Business app, so register it deliberately (not your personal number, and not one you need dual access to).
 
 Mechanics:
 
@@ -174,7 +176,7 @@ Primary use case: at a fair, point your phone at a business card, get a usable `
 - **Capture flow**:
   1. Photo taken via device camera (`<input type="file" accept="image/*" capture="environment">` or native camera API) — works offline, queues upload if signal is poor at a venue.
   2. Image uploaded to object storage (same bucket as WhatsApp media, §3) and stored on a draft `Contact.business_card_image_url`.
-  3. OCR/parsing step extracts name, company, email(s), phone(s), country — via a vision-capable OCR service (e.g. a cloud Vision API or a multimodal LLM call). This is an injectable `CardParserService` so the provider can be swapped without touching the rest of the app.
+  3. OCR/parsing step extracts name, company, email(s), phone(s), country. **Decision: Claude (Sonnet) vision call** — send the card photo with a structured-JSON-extraction prompt. Implemented behind an injectable `CardParserService` so the provider can still be swapped later.
   4. Parsed fields are pre-filled into an editable `Contact` form (never auto-save unreviewed — coffee names/companies are easy to mis-OCR) with a one-tap confirm.
   5. On confirm, a `next_action` `Activity` is auto-suggested based on simple rules (extendable later with funnel data): new contact with no prior history → "Send intro WhatsApp/email within 48h"; contact matches an existing dormant record → "Reactivation: reference last contact from {date}"; company matches a known supplier origin you're short on → "Flag as sample-request candidate".
 - **Offline tolerance**: capture and queue locally if there's no signal at the fair; sync (upload + OCR) resumes automatically when connectivity returns.
@@ -198,7 +200,7 @@ type,name,company,country,region,email,phone,whatsapp_enabled,classification,tie
 ## 13. Open Questions — Resolved
 
 - **Email provider**: Microsoft 365 → Microsoft Graph API/OAuth (§4).
-- **WhatsApp number**: you have one available; exact API integration path (direct Cloud API vs. BSP) still to be decided once you're ready to register the number (§3).
+- **WhatsApp number**: you have one available; integration path decided — Twilio (§3), starting on the free sandbox before registering a production sender.
 - **Price feed**: tracked manually today; building an integrated delayed-quote tracker for Robusta, Arabica, USD, and the arbitrage spread, starting with manual daily entry and layering in a free delayed-data source later (§10).
 - **Data migration**: CSV import for contacts, format and template provided (§12).
 - **Mobile / trade-fair workflow**: business-card-photo → draft contact → suggested next action, designed in §11, scheduled as Phase 1.5.
