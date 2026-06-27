@@ -17,7 +17,7 @@ A CRM purpose-built for a specialty coffee trader, run solo, with a small book (
 - **ORM**: Prisma — fast to iterate on schema, good migration story.
 - **Auth**: simple email+password / passkey for a single user (+ optional 2nd login if you bring in a partner/assistant later). JWT session, refresh token. No need for full multi-tenant RBAC yet — just a `users` table with roles (`owner`, `staff`) for future-proofing.
 - **Frontend** (separate concern, not detailed here): a responsive web app (React/Next.js) is the most "portable across devices" answer — works on phone browser, tablet, laptop, no app store needed. Built mobile-first per §11; PWA wrapper later if you want home-screen install + push notifications + offline camera capture.
-- **Hosting**: single small VM or PaaS (Fly.io/Render) running API + Postgres + a background worker for WhatsApp/email/price sync jobs.
+- **Hosting**: **Hetzner Cloud** (German company, datacenters in Germany/Finland only) — a single small VM running API + self-hosted Postgres + a background worker for WhatsApp/email/price sync jobs. Chosen over Fly.io/Render/Neon (all US-incorporated, even when offering an EU region) to satisfy the strict EU-data-residency policy for infrastructure you control (§14). Media (business-card photos, WhatsApp attachments, documents) goes to **Hetzner Object Storage** (Helsinki, S3-compatible) instead of Backblaze/Cloudflare R2.
 - **Background jobs**: BullMQ + Redis (or Postgres-based queue like `pg-boss` to avoid an extra Redis instance at this scale) for polling email, processing WhatsApp webhooks/template sends, and the daily price-feed pull (§10).
 
 ## 3. WhatsApp Integration — Official Business API
@@ -176,7 +176,7 @@ Primary use case: at a fair, point your phone at a business card, get a usable `
 - **Capture flow**:
   1. Photo taken via device camera (`<input type="file" accept="image/*" capture="environment">` or native camera API) — works offline, queues upload if signal is poor at a venue.
   2. Image uploaded to object storage (same bucket as WhatsApp media, §3) and stored on a draft `Contact.business_card_image_url`.
-  3. OCR/parsing step extracts name, company, email(s), phone(s), country. **Decision: Claude (Sonnet) vision call** — send the card photo with a structured-JSON-extraction prompt. Implemented behind an injectable `CardParserService` so the provider can still be swapped later.
+  3. OCR/parsing step extracts name, company, email(s), phone(s), country. **Decision: Mistral (Pixtral) vision call** — French company, EU-hosted processing, chosen over Claude specifically to satisfy the strict EU-data-residency policy (§14). Implemented behind an injectable `CardParserService` so the provider can still be swapped later.
   4. Parsed fields are pre-filled into an editable `Contact` form (never auto-save unreviewed — coffee names/companies are easy to mis-OCR) with a one-tap confirm.
   5. On confirm, a `next_action` `Activity` is auto-suggested based on simple rules (extendable later with funnel data): new contact with no prior history → "Send intro WhatsApp/email within 48h"; contact matches an existing dormant record → "Reactivation: reference last contact from {date}"; company matches a known supplier origin you're short on → "Flag as sample-request candidate".
 - **Offline tolerance**: capture and queue locally if there's no signal at the fair; sync (upload + OCR) resumes automatically when connectivity returns.
@@ -204,3 +204,13 @@ type,name,company,country,region,email,phone,whatsapp_enabled,classification,tie
 - **Price feed**: tracked manually today; building an integrated delayed-quote tracker for Robusta, Arabica, USD, and the arbitrage spread, starting with manual daily entry and layering in a free delayed-data source later (§10).
 - **Data migration**: CSV import for contacts, format and template provided (§12).
 - **Mobile / trade-fair workflow**: business-card-photo → draft contact → suggested next action, designed in §11, scheduled as Phase 1.5.
+
+## 14. Data Residency Policy
+
+Requirement: no data should leave Europe. In practice this can't be applied uniformly without dropping two requirements that were stated as essential (M365 email, WhatsApp), so the policy is split:
+
+- **Infrastructure you control — strict EU-only, no exceptions**: hosting VM, Postgres database, object storage, and the OCR provider are all EU-incorporated companies with EU-only processing (§2 Hetzner, §11 Mistral).
+- **Third-party SaaS integrations you depend on operationally — accepted exceptions**:
+  - **Microsoft 365 / Graph API** (§4) — Microsoft is a US company; your actual business mailbox lives there already, so email integration necessarily touches US-controlled infrastructure (under the EU-US Data Privacy Framework). Replacing it would mean migrating your real mailbox, not just a backend dependency.
+  - **WhatsApp via Twilio** (§3) — WhatsApp is a Meta-owned protocol; no BSP (Twilio, 360dialog, or direct Cloud API) can route message delivery around Meta's (US) infrastructure, since that's how WhatsApp works end to end. This is structural, not a vendor choice — dropping it was considered and rejected since WhatsApp is the primary client/supplier channel.
+- **Re-evaluate if requirements tighten further**: if "no exceptions" ever becomes non-negotiable, the only paths are (a) migrate email off M365 to an EU provider, and (b) drop WhatsApp as a channel entirely — both are significant scope changes, not technical swaps, so they're deliberately out of scope unless explicitly requested.

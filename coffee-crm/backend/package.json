@@ -11,7 +11,7 @@
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.30.1",
+    "@mistralai/mistralai": "^1.5.0",
     "@fastify/formbody": "^7.4.0",
     "@fastify/multipart": "^8.3.0",
     "@prisma/client": "^5.20.0",

@@ -8,7 +8,7 @@ Backend scaffold in [`backend/`](./backend) covers:
 
 - Contacts CRUD (`/contacts`)
 - CSV contact import (`/import/contacts`, file field `file`) — template at [`data/contacts_import_template.csv`](./data/contacts_import_template.csv)
-- Business-card capture flow (`/business-card/scan`, `/business-card/confirm`) — OCR via Claude (Sonnet) vision, see `src/services/cardParser.ts`
+- Business-card capture flow (`/business-card/scan`, `/business-card/confirm`) — OCR via Mistral (Pixtral) vision, EU-hosted, see `src/services/cardParser.ts`
 - Manual price entry + arbitrage calc (`/prices`, `/prices/arbitrage`)
 - WhatsApp via Twilio: inbound webhook + outbound send (`/whatsapp/webhook`, `/whatsapp/send`)
 
@@ -21,3 +21,7 @@ npm install
 npm run prisma:migrate
 npm run dev
 ```
+
+## Data residency
+
+Hosting target is **Hetzner Cloud** (Germany/Finland) for the VM, Postgres, and object storage — see [`DESIGN.md` §14](./DESIGN.md#14-data-residency-policy) for the full EU-data-residency policy and the accepted exceptions (M365 email, Twilio/WhatsApp).
