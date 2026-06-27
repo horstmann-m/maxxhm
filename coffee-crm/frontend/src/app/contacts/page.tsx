@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getContacts } from "@/lib/api";
+import { getContacts, type Contact } from "@/lib/api";
 
 function initials(name: string): string {
   return name
@@ -11,11 +11,22 @@ function initials(name: string): string {
 }
 
 export default async function ContactsPage() {
-  const contacts = await getContacts();
+  let contacts: Contact[] = [];
+  let loadError = false;
+  try {
+    contacts = await getContacts();
+  } catch {
+    loadError = true;
+  }
 
   return (
     <div>
       <h1 className="mb-4 text-2xl font-semibold text-espresso">People</h1>
+      {loadError && (
+        <p className="mb-4 rounded-xl bg-clay/60 p-4 text-sm text-espresso/70">
+          Couldn't reach the backend yet — check the API is running.
+        </p>
+      )}
       <ul className="space-y-2">
         {contacts.map((contact) => (
           <li key={contact.id}>

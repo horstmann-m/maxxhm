@@ -2,7 +2,26 @@ import Link from "next/link";
 import { getContact, daysSince } from "@/lib/api";
 
 export default async function ContactDetailPage({ params }: { params: { id: string } }) {
-  const contact = await getContact(params.id);
+  let contact: Awaited<ReturnType<typeof getContact>> | null = null;
+  try {
+    contact = await getContact(params.id);
+  } catch {
+    contact = null;
+  }
+
+  if (!contact) {
+    return (
+      <div className="space-y-4">
+        <Link href="/contacts" className="text-sm text-espresso/60 hover:text-terracotta">
+          ← People
+        </Link>
+        <p className="rounded-xl bg-clay/60 p-4 text-sm text-espresso/70">
+          Couldn't load this contact — check the API is running and the link is correct.
+        </p>
+      </div>
+    );
+  }
+
   const days = daysSince(contact.lastContactedAt);
 
   return (
