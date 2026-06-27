@@ -1,0 +1,4 @@
+type,name,company,country,region,email,phone,whatsapp_enabled,classification,tier,lead_status,source,preferred_currency,incoterm_default,notes
+client,Jane Roaster,Acme Roastery,DE,,jane@acmeroastery.de,+4915112345678,true,,prospect,cold,trade_fair,EUR,DAP,Met at Host Milan 2026
+supplier,Carlos Mendes,Fazenda Boa Vista,BR,Cerrado,carlos@fazendaboavista.com.br,"+5535999999999,+5535988888888",true,,B,,referral,USD,FOB,Robusta + Arabica blocks available Q3
+both,Lena Ho,Pacific Trading Co,SG,,lena@pacifictrading.sg,+6591234567,false,,B,,inbound,USD,CFR,Acts as both buyer and re-exporter

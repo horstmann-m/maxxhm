@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ContactType {
+  client
+  supplier
+  both
+}
+
+enum Tier {
+  A
+  B
+  C
+  prospect
+}
+
+enum LeadStatus {
+  cold
+  contacted
+  sample_sent
+  negotiating
+  customer
+  dormant
+  churned
+}
+
+enum ActivityType {
+  call
+  meeting
+  note
+  status_change
+  next_action
+}
+
+enum PriceMarket {
+  robusta
+  arabica
+  usd_index
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("owner")
+  createdAt    DateTime @default(now())
+}
+
+model Contact {
+  id                   String      @id @default(uuid())
+  type                 ContactType
+  name                 String
+  company              String?
+  country              String?
+  region               String?
+  emails               String[]
+  phones               String[]
+  whatsappEnabledPhone String?
+  tier                 Tier?
+  leadStatus           LeadStatus?
+  source               String?
+  preferredCurrency    String?
+  incotermDefault      String?
+  notes                String?
+  businessCardImageUrl String?
+  createdAt            DateTime    @default(now())
+  lastContactedAt      DateTime?
+  activities           Activity[]
+
+  @@index([company])
+}
+
+model Activity {
+  id        String       @id @default(uuid())
+  contactId String
+  contact   Contact      @relation(fields: [contactId], references: [id])
+  type      ActivityType
+  body      String
+  dueAt     DateTime?
+  createdAt DateTime     @default(now())
+}
+
+model PriceQuote {
+  id            String      @id @default(uuid())
+  market        PriceMarket
+  contractMonth String?
+  price         Float
+  currency      String
+  quoteDate     DateTime
+  source        String
+  isDelayed     Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+
+  @@unique([market, contractMonth, quoteDate])
+}
