@@ -31,6 +31,8 @@ function DesktopNav() {
       </a>
       <a href="/" className="hover:text-terracotta">Home</a>
       <a href="/contacts" className="hover:text-terracotta">People</a>
+      <a href="/deals" className="hover:text-terracotta">Deals</a>
+      <a href="/prices" className="hover:text-terracotta">Prices</a>
       <a href="/capture" className="hover:text-terracotta">Capture card</a>
     </nav>
   );

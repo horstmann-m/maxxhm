@@ -54,6 +54,32 @@ enum MessageDirection {
   out
 }
 
+enum DealStage {
+  lead
+  engaged
+  sample_sent
+  sample_feedback
+  negotiation
+  contracted
+  shipped
+  closed_won
+  closed_lost
+}
+
+// §10/§12 of DESIGN.md: a deal can be priced outright (a flat price per unit)
+// or as a differential against the C-market (cents/lb over/under the latest
+// PriceQuote for the chosen market). Both currencies are first-class, not
+// just EUR with a USD afterthought.
+enum PriceType {
+  outright
+  differential
+}
+
+enum DealCurrency {
+  EUR
+  USD
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -83,8 +109,34 @@ model Contact {
   lastContactedAt      DateTime?
   activities           Activity[]
   conversations        Conversation[]
+  deals                Deal[]
 
   @@index([company])
+}
+
+model Deal {
+  id                String       @id @default(uuid())
+  contactId         String
+  contact           Contact      @relation(fields: [contactId], references: [id])
+  coffeeDescription String?
+  stage             DealStage    @default(lead)
+
+  priceType         PriceType
+  currency          DealCurrency
+  // outright: flat price per lb in `currency`.
+  outrightPrice     Float?
+  // differential: cents per lb over(+)/under(-) the latest PriceQuote for `market`.
+  market            PriceMarket?
+  differentialCents Float?
+
+  quantityKg        Float?
+  incoterm          String?
+  expectedCloseDate DateTime?
+  probability       Int?
+  lostReason        String?
+
+  createdAt         DateTime  @default(now())
+  closedAt          DateTime?
 }
 
 model Conversation {

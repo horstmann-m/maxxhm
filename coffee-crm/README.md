@@ -11,8 +11,11 @@ Backend scaffold in [`backend/`](./backend) covers:
 - Business-card capture flow (`/business-card/scan`, `/business-card/confirm`) — OCR via Mistral (Pixtral) vision, EU-hosted, see `src/services/cardParser.ts`
 - Manual price entry + arbitrage calc (`/prices`, `/prices/arbitrage`)
 - WhatsApp via Twilio: inbound webhook + outbound send (`/whatsapp/webhook`, `/whatsapp/send`)
+- Deals/funnel with outright or differential pricing in EUR or USD (`/deals`)
 
 ## Running locally
+
+Backend listens on **3000**, frontend dev server on **3001** (deliberately split — they used to collide on the same default port, which caused the frontend to fetch itself instead of the API).
 
 ```bash
 cd backend
@@ -28,7 +31,7 @@ Hosting target is **Hetzner Cloud** (Germany/Finland) for the VM, Postgres, and 
 
 ## Frontend
 
-Mobile-first Next.js app in [`frontend/`](./frontend) — warm/human UX per `DESIGN.md` §11, not a generic SaaS dashboard. Three screens so far: Home ("who needs you today"), People (contact list/detail with timeline), and Capture (business-card scan → confirm → suggested next action).
+Mobile-first Next.js app in [`frontend/`](./frontend) — warm/human UX per `DESIGN.md` §11, not a generic SaaS dashboard. Screens: Home ("who needs you today"), People (contact list/detail with timeline), Deals (funnel grouped by stage, new-deal form with outright/differential pricing in EUR/USD), Prices (manual daily entry + arbitrage spread), and Capture (business-card scan → confirm → suggested next action).
 
 ```bash
 cd frontend

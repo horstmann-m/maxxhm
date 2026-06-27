@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 const items = [
   { href: "/", label: "Home", icon: "☕" },
   { href: "/contacts", label: "People", icon: "👤" },
+  { href: "/deals", label: "Deals", icon: "🤝" },
+  { href: "/prices", label: "Prices", icon: "📈" },
   { href: "/capture", label: "Capture", icon: "📷" },
 ];
 
@@ -21,7 +23,7 @@ export function BottomNav() {
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`flex flex-col items-center gap-1 px-4 py-1 text-xs ${
+                className={`flex flex-col items-center gap-1 px-2 py-1 text-xs ${
                   active ? "text-terracotta font-medium" : "text-espresso/60"
                 }`}
               >

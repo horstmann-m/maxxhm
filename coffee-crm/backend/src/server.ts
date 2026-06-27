@@ -6,6 +6,7 @@ import { importRoutes } from "./routes/import.js";
 import { businessCardRoutes } from "./routes/businessCard.js";
 import { pricesRoutes } from "./routes/prices.js";
 import { whatsappRoutes } from "./routes/whatsapp.js";
+import { dealsRoutes } from "./routes/deals.js";
 
 const app = Fastify({ logger: true });
 
@@ -16,6 +17,7 @@ await app.register(importRoutes);
 await app.register(businessCardRoutes);
 await app.register(pricesRoutes);
 await app.register(whatsappRoutes);
+await app.register(dealsRoutes);
 
 app.get("/health", async () => ({ status: "ok" }));
 
