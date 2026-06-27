@@ -25,3 +25,14 @@ npm run dev
 ## Data residency
 
 Hosting target is **Hetzner Cloud** (Germany/Finland) for the VM, Postgres, and object storage — see [`DESIGN.md` §14](./DESIGN.md#14-data-residency-policy) for the full EU-data-residency policy and the accepted exceptions (M365 email, Twilio/WhatsApp).
+
+## Frontend
+
+Mobile-first Next.js app in [`frontend/`](./frontend) — warm/human UX per `DESIGN.md` §11, not a generic SaaS dashboard. Three screens so far: Home ("who needs you today"), People (contact list/detail with timeline), and Capture (business-card scan → confirm → suggested next action).
+
+```bash
+cd frontend
+cp .env.example .env   # point NEXT_PUBLIC_API_URL at the backend
+npm install
+npm run dev
+```
