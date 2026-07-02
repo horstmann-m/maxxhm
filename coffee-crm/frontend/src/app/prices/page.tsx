@@ -1,4 +1,5 @@
-import { getPrices, getArbitrage, type PriceQuote, type Arbitrage } from "@/lib/api";
+import { type PriceQuote, type Arbitrage } from "@/lib/api";
+import { getPrices, getArbitrage } from "@/lib/server-api";
 import { PriceEntryForm } from "./PriceEntryForm";
 
 function latestByMarket(quotes: PriceQuote[], market: string): PriceQuote | undefined {

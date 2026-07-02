@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { API_URL } from "@/lib/api";
+import { scanBusinessCard, confirmBusinessCard } from "@/lib/api";
 
 interface Draft {
   type: string;
@@ -25,11 +25,7 @@ export default function CapturePage() {
     setLoading(true);
     setError(null);
     try {
-      const form = new FormData();
-      form.append("file", file);
-      const res = await fetch(`${API_URL}/business-card/scan`, { method: "POST", body: form });
-      if (!res.ok) throw new Error("scan_failed");
-      const data = await res.json();
+      const data = await scanBusinessCard(file);
       setDraft(data.draft);
     } catch {
       setError("Couldn't read that card — you can still fill it in by hand below.");
@@ -43,12 +39,7 @@ export default function CapturePage() {
     if (!draft) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/business-card/confirm`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(draft),
-      });
-      const data = await res.json();
+      const data = await confirmBusinessCard(draft);
       setNextAction(data.nextAction);
     } finally {
       setLoading(false);

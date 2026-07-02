@@ -117,7 +117,7 @@ model Contact {
 model Deal {
   id                String       @id @default(uuid())
   contactId         String
-  contact           Contact      @relation(fields: [contactId], references: [id])
+  contact           Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
   coffeeDescription String?
   stage             DealStage    @default(lead)
 
@@ -142,7 +142,7 @@ model Deal {
 model Conversation {
   id            String    @id @default(uuid())
   contactId     String
-  contact       Contact   @relation(fields: [contactId], references: [id])
+  contact       Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
   channel       Channel
   subject       String?
   lastMessageAt DateTime?
@@ -152,7 +152,7 @@ model Conversation {
 model Message {
   id             String           @id @default(uuid())
   conversationId String
-  conversation   Conversation     @relation(fields: [conversationId], references: [id])
+  conversation   Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   direction      MessageDirection
   channel        Channel
   body           String
@@ -164,7 +164,7 @@ model Message {
 model Activity {
   id        String       @id @default(uuid())
   contactId String
-  contact   Contact      @relation(fields: [contactId], references: [id])
+  contact   Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
   type      ActivityType
   body      String
   dueAt     DateTime?

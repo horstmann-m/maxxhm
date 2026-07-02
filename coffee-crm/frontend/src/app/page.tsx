@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getContacts, daysSince, type Contact } from "@/lib/api";
+import { daysSince, type Contact } from "@/lib/api";
+import { getContacts } from "@/lib/server-api";
 
 // Thresholds mirror DESIGN.md §6: 60 days for clients, 120 for suppliers.
 function needsAttention(contact: Contact): { days: number } | null {

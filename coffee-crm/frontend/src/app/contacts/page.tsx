@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getContacts, type Contact } from "@/lib/api";
+import { type Contact } from "@/lib/api";
+import { getContacts } from "@/lib/server-api";
 
 function initials(name: string): string {
   return name

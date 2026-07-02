@@ -12,6 +12,8 @@ Backend scaffold in [`backend/`](./backend) covers:
 - Manual price entry + arbitrage calc (`/prices`, `/prices/arbitrage`)
 - WhatsApp via Twilio: inbound webhook + outbound send (`/whatsapp/webhook`, `/whatsapp/send`)
 - Deals/funnel with outright or differential pricing in EUR or USD (`/deals`)
+- Auth: single-owner JWT login (`/auth/login`), every other route protected — see `DESIGN.md` §15
+- Data subject rights: erasure (`DELETE /contacts/:id`, cascades) and export (`GET /contacts/:id/export`) — see `DESIGN.md` §15
 
 ## Running locally
 
@@ -19,11 +21,14 @@ Backend listens on **3000**, frontend dev server on **3001** (deliberately split
 
 ```bash
 cd backend
-cp .env.example .env   # point DATABASE_URL at a local Postgres
+cp .env.example .env   # point DATABASE_URL at a local Postgres, set JWT_SECRET (openssl rand -base64 48)
 npm install
 npm run prisma:migrate
+OWNER_EMAIL=you@example.com OWNER_PASSWORD=... npm run create-owner   # one-time
 npm run dev
 ```
+
+Sign in at the frontend's `/login` page with the owner credentials you just created — the JWT is stored in an httpOnly cookie by the Next.js server, not accessible to client-side JS.
 
 ## Data residency
 

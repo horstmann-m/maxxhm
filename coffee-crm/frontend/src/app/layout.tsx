@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { BottomNav } from "@/components/BottomNav";
+import { LogoutButton } from "@/components/LogoutButton";
 
 export const metadata: Metadata = {
   title: "Coffee Trader CRM",
@@ -34,6 +35,7 @@ function DesktopNav() {
       <a href="/deals" className="hover:text-terracotta">Deals</a>
       <a href="/prices" className="hover:text-terracotta">Prices</a>
       <a href="/capture" className="hover:text-terracotta">Capture card</a>
+      <LogoutButton className="mt-4 text-left text-sm text-espresso/50 hover:text-terracotta" />
     </nav>
   );
 }

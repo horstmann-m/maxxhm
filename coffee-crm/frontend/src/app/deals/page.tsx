@@ -1,4 +1,5 @@
-import { getDeals, getContacts, DEAL_STAGES, type Deal, type Contact } from "@/lib/api";
+import { DEAL_STAGES, type Deal, type Contact } from "@/lib/api";
+import { getDeals, getContacts } from "@/lib/server-api";
 import { NewDealForm } from "./NewDealForm";
 import { DealCard } from "./DealCard";
 

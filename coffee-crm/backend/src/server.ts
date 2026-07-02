@@ -1,6 +1,8 @@
 import Fastify from "fastify";
 import multipart from "@fastify/multipart";
 import formbody from "@fastify/formbody";
+import { registerAuth } from "./lib/auth.js";
+import { authRoutes } from "./routes/auth.js";
 import { contactsRoutes } from "./routes/contacts.js";
 import { importRoutes } from "./routes/import.js";
 import { businessCardRoutes } from "./routes/businessCard.js";
@@ -12,6 +14,8 @@ const app = Fastify({ logger: true });
 
 await app.register(multipart);
 await app.register(formbody); // Twilio webhooks post application/x-www-form-urlencoded
+await registerAuth(app);
+await app.register(authRoutes);
 await app.register(contactsRoutes);
 await app.register(importRoutes);
 await app.register(businessCardRoutes);

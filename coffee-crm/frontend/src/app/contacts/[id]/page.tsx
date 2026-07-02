@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { getContact, daysSince } from "@/lib/api";
+import { daysSince } from "@/lib/api";
+import { getContact } from "@/lib/server-api";
+import { DataRightsPanel } from "./DataRightsPanel";
 
 export default async function ContactDetailPage({ params }: { params: { id: string } }) {
   let contact: Awaited<ReturnType<typeof getContact>> | null = null;
@@ -87,6 +89,8 @@ export default async function ContactDetailPage({ params }: { params: { id: stri
           )}
         </ul>
       </section>
+
+      <DataRightsPanel contactId={contact.id} contactName={contact.name} />
     </div>
   );
 }

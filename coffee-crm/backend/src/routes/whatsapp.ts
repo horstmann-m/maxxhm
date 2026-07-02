@@ -1,6 +1,18 @@
 import type { FastifyInstance } from "fastify";
+import twilio from "twilio";
 import { prisma } from "../lib/prisma.js";
 import { sendWhatsAppMessage } from "../services/whatsapp.js";
+
+// The webhook is the one route exempt from our own JWT auth (Twilio can't
+// carry a bearer token), so it must verify Twilio's request signature
+// instead — this replaces auth here, it doesn't skip it (Art. 32 GDPR).
+function isValidTwilioRequest(req: { headers: Record<string, unknown>; body: unknown; protocol: string; hostname: string; url: string }): boolean {
+  const signature = req.headers["x-twilio-signature"] as string | undefined;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  if (!signature || !authToken) return false;
+  const url = `${req.protocol}://${req.hostname}${req.url}`;
+  return twilio.validateRequest(authToken, signature, url, req.body as Record<string, string>);
+}
 
 interface TwilioInboundBody {
   From: string; // "whatsapp:+1234567890"
@@ -22,6 +34,9 @@ export async function whatsappRoutes(app: FastifyInstance) {
   // Twilio webhook: configure this URL as the WhatsApp sandbox/sender's
   // "when a message comes in" callback (form-encoded POST).
   app.post("/whatsapp/webhook", async (req, reply) => {
+    if (!isValidTwilioRequest(req as any)) {
+      return reply.code(403).send({ error: "invalid_signature" });
+    }
     const body = req.body as TwilioInboundBody;
     const phone = body.From.replace("whatsapp:", "");
 

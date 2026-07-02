@@ -50,4 +50,34 @@ export async function contactsRoutes(app: FastifyInstance) {
       return reply.code(404).send({ error: "not_found" });
     }
   });
+
+  // Art. 17 GDPR — right to erasure. Cascades to conversations/messages/
+  // activities/deals via the FK onDelete: Cascade in schema.prisma, so this
+  // is a genuine, complete erasure rather than a soft-delete flag.
+  app.delete("/contacts/:id", async (req, reply) => {
+    const { id } = req.params as { id: string };
+    try {
+      await prisma.contact.delete({ where: { id } });
+      return reply.code(204).send();
+    } catch {
+      return reply.code(404).send({ error: "not_found" });
+    }
+  });
+
+  // Art. 15/20 GDPR — right of access & data portability. Returns everything
+  // held on this contact as a single machine-readable JSON document.
+  app.get("/contacts/:id/export", async (req, reply) => {
+    const { id } = req.params as { id: string };
+    const contact = await prisma.contact.findUnique({
+      where: { id },
+      include: {
+        activities: true,
+        deals: true,
+        conversations: { include: { messages: true } },
+      },
+    });
+    if (!contact) return reply.code(404).send({ error: "not_found" });
+    reply.header("Content-Disposition", `attachment; filename="contact-${id}-export.json"`);
+    return contact;
+  });
 }
