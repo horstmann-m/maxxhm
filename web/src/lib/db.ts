@@ -7,13 +7,14 @@
 //      switching the primary keys from "id" to "@id" for global id generation.
 
 import Dexie, { type Table } from "dexie";
-import type { Note, Preferences, Tasting, WatchlistItem } from "./types";
+import type { Note, PriceEntry, Preferences, Tasting, WatchlistItem } from "./types";
 
 export class CoffeeDB extends Dexie {
   notes!: Table<Note, string>;
   tastings!: Table<Tasting, string>;
   watchlist!: Table<WatchlistItem, string>;
   preferences!: Table<Preferences, string>;
+  prices!: Table<PriceEntry, string>;
 
   constructor() {
     // --- CLOUD: const url = process.env.NEXT_PUBLIC_DEXIE_CLOUD_URL;
@@ -26,6 +27,8 @@ export class CoffeeDB extends Dexie {
       watchlist: "id, &entityKey, entityType, addedAt",
       preferences: "id",
     });
+    // v2 (additive): manual price entry for the Phase 3 value factor
+    this.version(2).stores({ prices: "id, kind" });
     // --- CLOUD: if (url) this.cloud.configure({ databaseUrl: url, requireAuth: false });
   }
 }

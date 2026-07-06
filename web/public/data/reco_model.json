@@ -1,0 +1,24 @@
+{
+  "weights": {
+    "freshness": 0.3,
+    "tasteMatch": 0.3,
+    "weather": 0.15,
+    "value": 0.2,
+    "watchlist": 0.05
+  },
+  "freshnessByStage": {
+    "export": 1.0,
+    "drying": 0.6,
+    "harvest_main": 0.55,
+    "harvest_fly": 0.5,
+    "cherry_development": 0.25,
+    "flowering": 0.2,
+    "off_season": 0.35
+  },
+  "valueScaleUscLb": 30.0,
+  "neutral": {
+    "tasteMatch": 0.5,
+    "weather": 0.7,
+    "value": 0.5
+  }
+}

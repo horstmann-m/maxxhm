@@ -1,0 +1,31 @@
+# "What to buy now" scoring model. Declarative weights + factor config consumed by
+# the client-side scorer (web/src/lib/recommend.ts). Tune the weights here.
+#
+# Final score = sum(weight_i * subscore_i) / sum(weight_i), each subscore in 0..1.
+weights:
+  freshness: 0.30      # is fresh crop arriving / being made now?
+  taste_match: 0.30    # does it match your flavour affinities?
+  weather: 0.15        # is the current-stage weather clean? (Phase 2 risk)
+  value: 0.20          # price vs your target (manual price entry)
+  watchlist: 0.05      # small nudge for coffees you're already tracking
+
+# Freshness per headline season stage. "export" (arriving at port) is the open
+# buying window; developing/flowering are far from a fresh lot.
+freshness_by_stage:
+  export: 1.0
+  drying: 0.6
+  harvest_main: 0.55
+  harvest_fly: 0.5
+  cherry_development: 0.25
+  flowering: 0.2
+  off_season: 0.35
+
+# (target_fob - est_fob) in US¢/lb is divided by this and centred on 0.5, then
+# clamped to 0..1. 30 => 30¢ under your target scores ~1.0, 30¢ over scores ~0.0.
+value_scale_usc_lb: 30
+
+# Fallback subscores when the input is unknown (no prefs / no price / no weather).
+neutral:
+  taste_match: 0.5
+  weather: 0.7
+  value: 0.5

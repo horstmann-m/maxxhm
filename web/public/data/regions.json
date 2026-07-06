@@ -21,6 +21,12 @@
       "black tea",
       "peach"
     ],
+    "flavorNodes": [
+      "jasmine",
+      "citrus",
+      "black_tea",
+      "stone_fruit"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -75,6 +81,12 @@
       "floral",
       "candy"
     ],
+    "flavorNodes": [
+      "berry",
+      "tropical",
+      "jasmine",
+      "honey"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -126,6 +138,12 @@
     "flavorTags": [
       "blueberry",
       "floral",
+      "citrus",
+      "honey"
+    ],
+    "flavorNodes": [
+      "berry",
+      "jasmine",
       "citrus",
       "honey"
     ],
@@ -182,6 +200,12 @@
       "winey",
       "dark chocolate"
     ],
+    "flavorNodes": [
+      "berry",
+      "dried_fruit",
+      "winey",
+      "dark_chocolate"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -237,6 +261,12 @@
       "grapefruit",
       "tomato",
       "cane sugar"
+    ],
+    "flavorNodes": [
+      "berry",
+      "citrus",
+      "brown_sugar",
+      "sour_acid"
     ],
     "harvest": [
       {
@@ -300,6 +330,12 @@
       "orange",
       "brown sugar"
     ],
+    "flavorNodes": [
+      "berry",
+      "stone_fruit",
+      "citrus",
+      "brown_sugar"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -362,6 +398,12 @@
       "citrus",
       "panela"
     ],
+    "flavorNodes": [
+      "caramel",
+      "stone_fruit",
+      "citrus",
+      "brown_sugar"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -415,6 +457,12 @@
       "tropical",
       "sugarcane",
       "floral"
+    ],
+    "flavorNodes": [
+      "citrus",
+      "tropical",
+      "brown_sugar",
+      "jasmine"
     ],
     "harvest": [
       {
@@ -472,6 +520,12 @@
       "caramel",
       "red apple"
     ],
+    "flavorNodes": [
+      "chocolate",
+      "nutty",
+      "caramel",
+      "stone_fruit"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -526,6 +580,12 @@
       "hazelnut",
       "dried fruit",
       "low acidity"
+    ],
+    "flavorNodes": [
+      "chocolate",
+      "nutty",
+      "dried_fruit",
+      "dark_chocolate"
     ],
     "harvest": [
       {
@@ -582,6 +642,12 @@
       "orange",
       "full body"
     ],
+    "flavorNodes": [
+      "chocolate",
+      "brown_spice",
+      "citrus",
+      "dark_chocolate"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -635,6 +701,12 @@
       "honey",
       "citrus",
       "cocoa"
+    ],
+    "flavorNodes": [
+      "stone_fruit",
+      "honey",
+      "citrus",
+      "chocolate"
     ],
     "harvest": [
       {
@@ -692,6 +764,12 @@
       "orange",
       "clean"
     ],
+    "flavorNodes": [
+      "honey",
+      "stone_fruit",
+      "citrus",
+      "caramel"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -747,6 +825,12 @@
       "brown sugar",
       "red fruit",
       "floral"
+    ],
+    "flavorNodes": [
+      "stone_fruit",
+      "brown_sugar",
+      "berry",
+      "jasmine"
     ],
     "harvest": [
       {
@@ -804,6 +888,12 @@
       "papaya",
       "honeysuckle"
     ],
+    "flavorNodes": [
+      "jasmine",
+      "citrus",
+      "tropical",
+      "rose"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -858,6 +948,12 @@
       "tropical",
       "stone fruit",
       "tea-like"
+    ],
+    "flavorNodes": [
+      "jasmine",
+      "tropical",
+      "stone_fruit",
+      "black_tea"
     ],
     "harvest": [
       {
@@ -916,6 +1012,12 @@
       "cocoa",
       "citrus"
     ],
+    "flavorNodes": [
+      "caramel",
+      "stone_fruit",
+      "chocolate",
+      "citrus"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -968,6 +1070,11 @@
       "chocolate",
       "red apple",
       "brown sugar"
+    ],
+    "flavorNodes": [
+      "chocolate",
+      "stone_fruit",
+      "brown_sugar"
     ],
     "harvest": [
       {
@@ -1022,6 +1129,12 @@
       "orange",
       "silky"
     ],
+    "flavorNodes": [
+      "berry",
+      "jasmine",
+      "citrus",
+      "black_tea"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -1075,6 +1188,12 @@
       "red fruit",
       "tea-like"
     ],
+    "flavorNodes": [
+      "jasmine",
+      "citrus",
+      "berry",
+      "black_tea"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -1127,6 +1246,12 @@
       "floral",
       "black tea",
       "juicy"
+    ],
+    "flavorNodes": [
+      "berry",
+      "jasmine",
+      "black_tea",
+      "sour_acid"
     ],
     "harvest": [
       {
@@ -1182,6 +1307,12 @@
       "dark chocolate",
       "herbal"
     ],
+    "flavorNodes": [
+      "earthy",
+      "dark_chocolate",
+      "herb_like",
+      "tobacco"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -1236,6 +1367,12 @@
       "herbal",
       "low acidity",
       "syrupy"
+    ],
+    "flavorNodes": [
+      "earthy",
+      "herb_like",
+      "dark_chocolate",
+      "brown_spice"
     ],
     "harvest": [
       {
@@ -1293,6 +1430,12 @@
       "citrus",
       "sweet"
     ],
+    "flavorNodes": [
+      "chocolate",
+      "nutty",
+      "citrus",
+      "brown_sugar"
+    ],
     "harvest": [
       {
         "stage": "flowering",
@@ -1347,6 +1490,12 @@
       "mild",
       "sweet",
       "light citrus"
+    ],
+    "flavorNodes": [
+      "nutty",
+      "brown_sugar",
+      "citrus",
+      "caramel"
     ],
     "harvest": [
       {

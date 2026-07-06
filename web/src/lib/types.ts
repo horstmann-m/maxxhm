@@ -37,6 +37,7 @@ export interface Region {
   varietals: string[];
   processes: string[];
   flavorTags: string[];
+  flavorNodes: string[]; // flavor-wheel node ids (for taste matching)
   harvest: HarvestWindow[];
 }
 
@@ -124,6 +125,17 @@ export interface WatchlistItem {
 
 export interface Preferences {
   id: "me";
-  // affinity weight (-2..2) per flavor-wheel node id — seeds Phase 3 recs.
+  // affinity weight (-2..2) per flavor-wheel node id — powers taste matching.
   affinities: Record<string, number>;
+}
+
+// Manual price entry (Phase 3). id is "market" (the C-price) or `origin:<id>`.
+export interface PriceEntry {
+  id: string;
+  kind: "market" | "origin";
+  cPriceUscLb?: number; // market: ICE "C" / KC in US cents per lb
+  differentialUscLb?: number; // origin: premium/discount vs the C-price
+  targetFobUscLb?: number; // origin: the FOB you'd be happy to pay
+  note?: string;
+  at: number;
 }

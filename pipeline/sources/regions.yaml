@@ -1,6 +1,7 @@
 # Region centroids, altitudes and harvest calendars. Month ranges (1-12) may
 # wrap the year boundary. These windows drive the "what's in season now" map and
 # the harvest calendar; they are typical/approximate and region-averaged.
+# flavor_nodes reference flavor_wheel.yaml ids and power taste-match scoring.
 regions:
   # ---------------- Ethiopia ----------------
   - id: yirgacheffe
@@ -13,6 +14,7 @@ regions:
     varietals: [heirloom]
     processes: [washed, natural]
     flavor_tags: [jasmine, lemon, bergamot, black tea, peach]
+    flavor_nodes: [jasmine, citrus, black_tea, stone_fruit]
     harvest:
       - { stage: flowering, start: 2, end: 3 }
       - { stage: cherry_development, start: 4, end: 9 }
@@ -29,6 +31,7 @@ regions:
     varietals: [heirloom]
     processes: [washed, natural]
     flavor_tags: [strawberry, tropical, floral, candy]
+    flavor_nodes: [berry, tropical, jasmine, honey]
     harvest:
       - { stage: flowering, start: 2, end: 3 }
       - { stage: cherry_development, start: 4, end: 9 }
@@ -45,6 +48,7 @@ regions:
     varietals: [heirloom]
     processes: [washed, natural]
     flavor_tags: [blueberry, floral, citrus, honey]
+    flavor_nodes: [berry, jasmine, citrus, honey]
     harvest:
       - { stage: flowering, start: 2, end: 3 }
       - { stage: cherry_development, start: 4, end: 9 }
@@ -61,6 +65,7 @@ regions:
     varietals: [heirloom]
     processes: [natural]
     flavor_tags: [blueberry, dried fruit, winey, dark chocolate]
+    flavor_nodes: [berry, dried_fruit, winey, dark_chocolate]
     harvest:
       - { stage: flowering, start: 3, end: 4 }
       - { stage: cherry_development, start: 5, end: 9 }
@@ -78,6 +83,7 @@ regions:
     varietals: [sl28, sl34, ruiru11, batian]
     processes: [washed]
     flavor_tags: [blackcurrant, grapefruit, tomato, cane sugar]
+    flavor_nodes: [berry, citrus, brown_sugar, sour_acid]
     harvest:
       - { stage: flowering, start: 3, end: 4 }
       - { stage: harvest_fly, start: 6, end: 8, note: "Early/fly crop from the long rains" }
@@ -95,6 +101,7 @@ regions:
     varietals: [sl28, sl34, ruiru11, batian]
     processes: [washed]
     flavor_tags: [blackberry, plum, orange, brown sugar]
+    flavor_nodes: [berry, stone_fruit, citrus, brown_sugar]
     harvest:
       - { stage: flowering, start: 3, end: 4 }
       - { stage: harvest_fly, start: 6, end: 8 }
@@ -113,6 +120,7 @@ regions:
     varietals: [caturra, castillo, colombia_var]
     processes: [washed, honey]
     flavor_tags: [caramel, red apple, citrus, panela]
+    flavor_nodes: [caramel, stone_fruit, citrus, brown_sugar]
     harvest:
       - { stage: flowering, start: 1, end: 2 }
       - { stage: harvest_main, start: 9, end: 12 }
@@ -129,6 +137,7 @@ regions:
     varietals: [caturra, castillo]
     processes: [washed]
     flavor_tags: [tangerine, tropical, sugarcane, floral]
+    flavor_nodes: [citrus, tropical, brown_sugar, jasmine]
     harvest:
       - { stage: flowering, start: 9, end: 10 }
       - { stage: cherry_development, start: 11, end: 4 }
@@ -146,6 +155,7 @@ regions:
     varietals: [mundo_novo, catuai, bourbon]
     processes: [natural, honey]
     flavor_tags: [milk chocolate, peanut, caramel, red apple]
+    flavor_nodes: [chocolate, nutty, caramel, stone_fruit]
     harvest:
       - { stage: flowering, start: 9, end: 10 }
       - { stage: cherry_development, start: 11, end: 4 }
@@ -162,6 +172,7 @@ regions:
     varietals: [catuai, mundo_novo, bourbon]
     processes: [natural]
     flavor_tags: [chocolate, hazelnut, dried fruit, low acidity]
+    flavor_nodes: [chocolate, nutty, dried_fruit, dark_chocolate]
     harvest:
       - { stage: flowering, start: 9, end: 10 }
       - { stage: cherry_development, start: 11, end: 4 }
@@ -179,6 +190,7 @@ regions:
     varietals: [bourbon, caturra, catuai]
     processes: [washed]
     flavor_tags: [cocoa, baking spice, orange, full body]
+    flavor_nodes: [chocolate, brown_spice, citrus, dark_chocolate]
     harvest:
       - { stage: flowering, start: 4, end: 5 }
       - { stage: cherry_development, start: 6, end: 11 }
@@ -195,6 +207,7 @@ regions:
     varietals: [bourbon, caturra]
     processes: [washed]
     flavor_tags: [red apple, honey, citrus, cocoa]
+    flavor_nodes: [stone_fruit, honey, citrus, chocolate]
     harvest:
       - { stage: flowering, start: 4, end: 5 }
       - { stage: cherry_development, start: 6, end: 12 }
@@ -212,6 +225,7 @@ regions:
     varietals: [caturra, catuai, villa_sarchi]
     processes: [washed, honey]
     flavor_tags: [honey, peach, orange, clean]
+    flavor_nodes: [honey, stone_fruit, citrus, caramel]
     harvest:
       - { stage: flowering, start: 3, end: 4 }
       - { stage: cherry_development, start: 5, end: 10 }
@@ -228,6 +242,7 @@ regions:
     varietals: [villa_sarchi, caturra, catuai]
     processes: [honey, washed]
     flavor_tags: [peach, brown sugar, red fruit, floral]
+    flavor_nodes: [stone_fruit, brown_sugar, berry, jasmine]
     harvest:
       - { stage: flowering, start: 3, end: 4 }
       - { stage: cherry_development, start: 5, end: 10 }
@@ -245,6 +260,7 @@ regions:
     varietals: [geisha, caturra, catuai]
     processes: [washed, natural]
     flavor_tags: [jasmine, bergamot, papaya, honeysuckle]
+    flavor_nodes: [jasmine, citrus, tropical, rose]
     harvest:
       - { stage: flowering, start: 3, end: 4 }
       - { stage: cherry_development, start: 5, end: 11 }
@@ -261,6 +277,7 @@ regions:
     varietals: [geisha, pacamara]
     processes: [washed, natural]
     flavor_tags: [floral, tropical, stone fruit, tea-like]
+    flavor_nodes: [jasmine, tropical, stone_fruit, black_tea]
     harvest:
       - { stage: flowering, start: 3, end: 4 }
       - { stage: cherry_development, start: 5, end: 11 }
@@ -278,6 +295,7 @@ regions:
     varietals: [bourbon, catuai, pacas, catimor]
     processes: [washed, honey]
     flavor_tags: [caramel, stone fruit, cocoa, citrus]
+    flavor_nodes: [caramel, stone_fruit, chocolate, citrus]
     harvest:
       - { stage: flowering, start: 4, end: 5 }
       - { stage: cherry_development, start: 6, end: 11 }
@@ -294,6 +312,7 @@ regions:
     varietals: [bourbon, catuai]
     processes: [washed]
     flavor_tags: [chocolate, red apple, brown sugar]
+    flavor_nodes: [chocolate, stone_fruit, brown_sugar]
     harvest:
       - { stage: flowering, start: 4, end: 5 }
       - { stage: cherry_development, start: 6, end: 10 }
@@ -311,6 +330,7 @@ regions:
     varietals: [bourbon]
     processes: [washed]
     flavor_tags: [red currant, floral, orange, silky]
+    flavor_nodes: [berry, jasmine, citrus, black_tea]
     harvest:
       - { stage: flowering, start: 9, end: 10 }
       - { stage: cherry_development, start: 11, end: 3 }
@@ -327,6 +347,7 @@ regions:
     varietals: [bourbon]
     processes: [washed]
     flavor_tags: [floral, orange, red fruit, tea-like]
+    flavor_nodes: [jasmine, citrus, berry, black_tea]
     harvest:
       - { stage: flowering, start: 9, end: 10 }
       - { stage: cherry_development, start: 11, end: 3 }
@@ -344,6 +365,7 @@ regions:
     varietals: [bourbon]
     processes: [washed]
     flavor_tags: [red fruit, floral, black tea, juicy]
+    flavor_nodes: [berry, jasmine, black_tea, sour_acid]
     harvest:
       - { stage: flowering, start: 9, end: 10 }
       - { stage: cherry_development, start: 11, end: 3 }
@@ -361,6 +383,7 @@ regions:
     varietals: [catimor, bourbon]
     processes: [wet_hulled]
     flavor_tags: [cedar, earthy, dark chocolate, herbal]
+    flavor_nodes: [earthy, dark_chocolate, herb_like, tobacco]
     harvest:
       - { stage: flowering, start: 4, end: 5 }
       - { stage: cherry_development, start: 6, end: 9 }
@@ -377,6 +400,7 @@ regions:
     varietals: [catimor, typica]
     processes: [wet_hulled, washed]
     flavor_tags: [cedar, herbal, low acidity, syrupy]
+    flavor_nodes: [earthy, herb_like, dark_chocolate, brown_spice]
     harvest:
       - { stage: flowering, start: 10, end: 11 }
       - { stage: cherry_development, start: 12, end: 5 }
@@ -394,6 +418,7 @@ regions:
     varietals: [bourbon, caturra, catimor, typica]
     processes: [washed]
     flavor_tags: [soft chocolate, almond, citrus, sweet]
+    flavor_nodes: [chocolate, nutty, citrus, brown_sugar]
     harvest:
       - { stage: flowering, start: 9, end: 10 }
       - { stage: cherry_development, start: 11, end: 4 }
@@ -410,6 +435,7 @@ regions:
     varietals: [typica, bourbon, caturra]
     processes: [washed]
     flavor_tags: [nutty, mild, sweet, light citrus]
+    flavor_nodes: [nutty, brown_sugar, citrus, caramel]
     harvest:
       - { stage: flowering, start: 9, end: 10 }
       - { stage: cherry_development, start: 11, end: 4 }

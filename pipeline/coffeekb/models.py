@@ -70,6 +70,7 @@ class Region(CamelModel):
     varietals: list[str] = Field(default_factory=list)
     processes: list[str] = Field(default_factory=list)
     flavor_tags: list[str] = Field(default_factory=list)
+    flavor_nodes: list[str] = Field(default_factory=list, description="flavor-wheel node ids")
     harvest: list[HarvestWindow] = Field(default_factory=list)
 
     @model_validator(mode="after")
@@ -201,3 +202,35 @@ class StageRule(CamelModel):
 
 class RiskModelFile(CamelModel):
     stages: list[StageRule]
+
+
+# ---- recommendation model (Phase 3) ----------------------------------------
+
+
+class RecoWeights(CamelModel):
+    freshness: float = Field(gt=0)
+    taste_match: float = Field(gt=0)
+    weather: float = Field(gt=0)
+    value: float = Field(gt=0)
+    watchlist: float = Field(gt=0)
+
+
+class RecoNeutral(CamelModel):
+    taste_match: float = Field(ge=0, le=1)
+    weather: float = Field(ge=0, le=1)
+    value: float = Field(ge=0, le=1)
+
+
+class RecoModelFile(CamelModel):
+    weights: RecoWeights
+    freshness_by_stage: dict[str, float]
+    value_scale_usc_lb: float = Field(gt=0)
+    neutral: RecoNeutral
+
+    @field_validator("freshness_by_stage")
+    @classmethod
+    def _fresh_range(cls, v: dict[str, float]) -> dict[str, float]:
+        for stage, val in v.items():
+            if not 0 <= val <= 1:
+                raise ValueError(f"freshness for '{stage}' must be 0..1")
+        return v

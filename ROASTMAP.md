@@ -9,6 +9,11 @@ turning in real time, keep a linked tasting journal, and track what you want to 
 
 ## What it does
 
+- **"Buy now" board** *(Phase 3)* — every region ranked by one score that blends
+  **freshness × taste match × weather × value × watchlist**, each card explaining *why*
+  ("Arriving now · Matches your taste · Weather clear · Good value vs target"). Powered by
+  a **taste-preferences** editor (rate flavour notes, or "learn from my tastings") and a
+  manual **prices** page (C-price + differential + your target → estimated FOB).
 - **The global coffee clock** — a world map where each origin is coloured by the most
   advanced stage across its regions for the selected month (flowering → developing →
   harvesting → drying → **arriving**). Scrub through the year to see the world turn.
@@ -57,16 +62,17 @@ the fetch fails, the app degrades to the plain season view.
 
 ```
 /web        Next.js app (deploys to Vercel)
-  src/app         routes: / (map), /calendar, /weather, /origin/[id], /notes, /tastings, /watchlist, /search
+  src/app         routes: / (map), /recommend, /calendar, /weather, /origin/[id],
+                  /notes, /tastings, /watchlist, /search, /preferences, /prices
   src/components  WorldMap, HarvestCalendar, RegionCard, RiskBadge, WeatherRiskProvider, …
   src/lib         db.ts (Dexie), reference.ts, season.ts, scoring.ts, store.ts, types.ts,
-                  risk.ts + weather.ts (Phase 2 evaluator + Open-Meteo fetch), *.test.ts
-  public/data     generated reference JSON incl. risk_model.json (committed)
+                  risk.ts + weather.ts (Phase 2), recommend.ts (Phase 3 scorer), *.test.ts
+  public/data     generated reference JSON incl. risk_model.json, reco_model.json (committed)
 /pipeline   Python knowledge pipeline
-  sources/*.yaml  human-authored curated data incl. risk_model.yaml (edit these)
+  sources/*.yaml  human-authored curated data incl. risk_model.yaml, reco_model.yaml
   coffeekb/       pydantic models
   weather/        Open-Meteo client, pure evaluator, backtest CLI, fixtures
-  tests/          pytest evaluator tests (parity anchor)
+  tests/          pytest (evaluator parity anchor + model validation)
   build.py        validates YAML → writes web/public/data/*.json
 ```
 
@@ -129,5 +135,7 @@ switch primary keys from `id` to `@id`).
 - **Phase 1 — Knowledge + second brain.** ✅ Shipped.
 - **Phase 2 — Weather intelligence.** ✅ Shipped (client-side Open-Meteo + Python-authored
   risk model; map rings, region badges, and the Weather alerts page).
-- **Phase 3 — Price + recommendations.** ICE "C"/KC futures + differentials, and a
-  personalised "what to buy now" that weights your flavour affinities.
+- **Phase 3 — Price + recommendations.** ✅ Shipped (taste preferences, manual price
+  entry, and the "Buy now" board blending freshness/taste/weather/value/watchlist via a
+  Python-authored `reco_model.json`). Next up: swap manual price for a licensed live
+  futures feed (the `prices` table is the drop-in point).
