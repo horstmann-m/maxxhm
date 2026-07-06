@@ -25,6 +25,7 @@ from coffeekb.models import (
     PhenologyFile,
     ProcessesFile,
     RegionsFile,
+    RiskModelFile,
     VarietalsFile,
 )
 
@@ -62,6 +63,7 @@ def main() -> None:
     processes = ProcessesFile.model_validate(load("processes.yaml"))
     phenology = PhenologyFile.model_validate(load("phenology.yaml"))
     wheel = FlavorWheelFile.model_validate(load("flavor_wheel.yaml"))
+    risk_model = RiskModelFile.model_validate(load("risk_model.yaml"))
 
     # ---- referential integrity -------------------------------------------
     origin_ids = {o.id for o in origins.origins}
@@ -91,6 +93,12 @@ def main() -> None:
     for o in sorted(orphan_origins):
         errors.append(f"origin {o}: has no regions")
 
+    # risk model stages must exist in phenology (keeps the two models consistent)
+    phenology_stages = {s.stage for s in phenology.stages}
+    for sr in risk_model.stages:
+        if sr.stage not in phenology_stages:
+            errors.append(f"risk_model stage '{sr.stage}' missing from phenology")
+
     if errors:
         die("referential integrity:\n    - " + "\n    - ".join(errors))
 
@@ -101,6 +109,7 @@ def main() -> None:
     dump("processes.json", [p.model_dump(by_alias=True) for p in processes.processes])
     dump("phenology.json", [s.model_dump(by_alias=True) for s in phenology.stages])
     dump("flavor_wheel.json", [n.model_dump(by_alias=True) for n in wheel.wheel])
+    dump("risk_model.json", [s.model_dump(by_alias=True) for s in risk_model.stages])
     dump(
         "meta.json",
         {

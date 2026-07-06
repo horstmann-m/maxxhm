@@ -1,6 +1,8 @@
 "use client";
 
+import { RiskBadge, RiskDetail } from "@/components/RiskBadge";
 import { WatchButton } from "@/components/WatchButton";
+import { useRisk } from "@/components/WeatherRiskProvider";
 import { getProcess, getVarietal } from "@/lib/reference";
 import {
   MONTHS,
@@ -57,6 +59,8 @@ function MiniHarvest({ region }: { region: Region }) {
 export function RegionCard({ region }: { region: Region }) {
   const now = currentMonth();
   const status = regionStatus(region, now);
+  const { byRegion } = useRisk();
+  const risk = byRegion.get(region.id);
   return (
     <section
       id={region.id}
@@ -71,19 +75,23 @@ export function RegionCard({ region }: { region: Region }) {
             {region.lng.toFixed(2)}
           </p>
         </div>
-        <span
-          className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
-          style={{ background: status.meta.color + "22", color: status.meta.color }}
-        >
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
           <span
-            className="w-2 h-2 rounded-full"
-            style={{ background: status.meta.color }}
-          />
-          {status.meta.short}
-        </span>
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+            style={{ background: status.meta.color + "22", color: status.meta.color }}
+          >
+            <span
+              className="w-2 h-2 rounded-full"
+              style={{ background: status.meta.color }}
+            />
+            {status.meta.short}
+          </span>
+          {risk && risk.stage !== null && <RiskBadge risk={risk} />}
+        </div>
       </div>
 
-      <p className="text-xs text-muted mb-3">{status.meta.buyerNote}</p>
+      <p className="text-xs text-muted mb-1">{status.meta.buyerNote}</p>
+      <RiskDetail risk={risk} />
 
       <MiniHarvest region={region} />
 

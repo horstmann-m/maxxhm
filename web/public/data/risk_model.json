@@ -1,0 +1,117 @@
+[
+  {
+    "stage": "drying",
+    "metrics": [
+      {
+        "kind": "rolling_sum",
+        "source": "precip",
+        "label": "Rain over any 7 days",
+        "unit": "mm",
+        "fromDay": -2,
+        "toDay": 14,
+        "direction": "high",
+        "warn": 15.0,
+        "alert": 35.0,
+        "reasonWarn": "Showers during drying — watch for mould and ferment defects.",
+        "reasonAlert": "Heavy rain forecast during drying — high defect risk.",
+        "windowDays": 7,
+        "threshold": null
+      }
+    ]
+  },
+  {
+    "stage": "harvest_main",
+    "metrics": [
+      {
+        "kind": "rolling_sum",
+        "source": "precip",
+        "label": "Rain over any 7 days",
+        "unit": "mm",
+        "fromDay": -2,
+        "toDay": 14,
+        "direction": "high",
+        "warn": 25.0,
+        "alert": 60.0,
+        "reasonWarn": "Wet picking conditions — expect cherry drop and uneven ripening.",
+        "reasonAlert": "Heavy rain during harvest — ferment defects and cherry loss.",
+        "windowDays": 7,
+        "threshold": null
+      }
+    ]
+  },
+  {
+    "stage": "harvest_fly",
+    "metrics": [
+      {
+        "kind": "rolling_sum",
+        "source": "precip",
+        "label": "Rain over any 7 days",
+        "unit": "mm",
+        "fromDay": -2,
+        "toDay": 14,
+        "direction": "high",
+        "warn": 25.0,
+        "alert": 60.0,
+        "reasonWarn": "Wet conditions on the fly crop — quality dip likely.",
+        "reasonAlert": "Heavy rain on the fly crop — ferment defects and cherry loss.",
+        "windowDays": 7,
+        "threshold": null
+      }
+    ]
+  },
+  {
+    "stage": "flowering",
+    "metrics": [
+      {
+        "kind": "rolling_sum",
+        "source": "precip",
+        "label": "Rain over any 10 days",
+        "unit": "mm",
+        "fromDay": -5,
+        "toDay": 14,
+        "direction": "high",
+        "warn": 120.0,
+        "alert": 200.0,
+        "reasonWarn": "Persistent rain during flowering — risk of staggered, uneven bloom.",
+        "reasonAlert": "Very heavy rain during flowering — bloom disruption likely.",
+        "windowDays": 10,
+        "threshold": null
+      }
+    ]
+  },
+  {
+    "stage": "cherry_development",
+    "metrics": [
+      {
+        "kind": "sum",
+        "source": "precip",
+        "label": "Rainfall, last 30 days",
+        "unit": "mm",
+        "fromDay": -29,
+        "toDay": 0,
+        "direction": "low",
+        "warn": 40.0,
+        "alert": 15.0,
+        "reasonWarn": "Dry spell during bean development — risk of small beans.",
+        "reasonAlert": "Severe drought during development — small, low-density beans.",
+        "windowDays": 30,
+        "threshold": null
+      },
+      {
+        "kind": "count_above",
+        "source": "tmax",
+        "label": "Hot days over 30°C",
+        "unit": "days",
+        "fromDay": -6,
+        "toDay": 14,
+        "direction": "high",
+        "warn": 5.0,
+        "alert": 12.0,
+        "reasonWarn": "Repeated heat stress during development.",
+        "reasonAlert": "Sustained heat stress during development.",
+        "windowDays": null,
+        "threshold": 30.0
+      }
+    ]
+  }
+]

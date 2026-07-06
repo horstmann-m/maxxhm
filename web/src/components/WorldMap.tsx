@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { feature } from "topojson-client";
 import type { Feature, Geometry } from "geojson";
+import { useRisk } from "@/components/WeatherRiskProvider";
 import { origins, regionsForOrigin } from "@/lib/reference";
 import { originCentroid, originStatus } from "@/lib/season";
+import { RISK_META, aggregateLevel, type RiskLevel } from "@/lib/risk";
 
 const W = 960;
 const H = 480;
@@ -32,10 +34,12 @@ interface Hover {
   name: string;
   status: string;
   color: string;
+  risk: RiskLevel;
 }
 
-export function WorldMap({ month }: { month: number }) {
+export function WorldMap({ month, showRisk }: { month: number; showRisk: boolean }) {
   const router = useRouter();
+  const { byRegion } = useRisk();
   const [land, setLand] = useState<Feature<Geometry>[] | null>(null);
   const [hover, setHover] = useState<Hover | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -70,6 +74,7 @@ export function WorldMap({ month }: { month: number }) {
         const p = projection([c.lng, c.lat]);
         if (!p) return null;
         const st = originStatus(rs, month);
+        const risk: RiskLevel = aggregateLevel(rs.map((r) => byRegion.get(r.id)));
         return {
           id: o.id,
           originId: o.id,
@@ -78,10 +83,11 @@ export function WorldMap({ month }: { month: number }) {
           y: p[1],
           color: st.meta.color,
           status: st.meta.label,
+          risk,
         };
       })
       .filter((m): m is NonNullable<typeof m> => m !== null);
-  }, [projection, month]);
+  }, [projection, month, byRegion]);
 
   return (
     <div ref={wrapRef} className="relative w-full">
@@ -103,9 +109,20 @@ export function WorldMap({ month }: { month: number }) {
             strokeWidth={0.5}
           />
         ))}
-        {/* Region markers */}
+        {/* Origin markers (+ weather-risk ring when enabled) */}
         {markers.map((m) => (
           <g key={m.id}>
+            {showRisk && m.risk !== "ok" && (
+              <circle
+                cx={m.x}
+                cy={m.y}
+                r={10}
+                fill="none"
+                stroke={RISK_META[m.risk].color}
+                strokeWidth={2.5}
+                className="pointer-events-none"
+              />
+            )}
             <circle
               cx={m.x}
               cy={m.y}
@@ -115,7 +132,7 @@ export function WorldMap({ month }: { month: number }) {
               strokeWidth={1}
               className="cursor-pointer transition-[r]"
               onMouseEnter={() =>
-                setHover({ x: m.x, y: m.y, name: m.name, status: m.status, color: m.color })
+                setHover({ x: m.x, y: m.y, name: m.name, status: m.status, color: m.color, risk: m.risk })
               }
               onMouseLeave={() => setHover(null)}
               onClick={() => router.push(`/origin/${m.originId}`)}
@@ -138,6 +155,14 @@ export function WorldMap({ month }: { month: number }) {
           <span className="font-semibold">{hover.name}</span>
           <span className="mx-1.5 opacity-40">·</span>
           <span style={{ color: hover.color }}>●</span> {hover.status}
+          {showRisk && hover.risk !== "ok" && (
+            <>
+              <span className="mx-1.5 opacity-40">·</span>
+              <span style={{ color: RISK_META[hover.risk].color }}>
+                {RISK_META[hover.risk].icon} {RISK_META[hover.risk].label}
+              </span>
+            </>
+          )}
         </div>
       )}
 

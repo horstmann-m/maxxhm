@@ -7,14 +7,19 @@ turning in real time, keep a linked tasting journal, and track what you want to 
 > This project lives alongside the profile `README.md` (which GitHub renders on the
 > user profile and is intentionally left untouched). All app docs are here.
 
-## What it does (Phase 1)
+## What it does
 
 - **The global coffee clock** — a world map where each origin is coloured by the most
   advanced stage across its regions for the selected month (flowering → developing →
   harvesting → drying → **arriving**). Scrub through the year to see the world turn.
+- **Weather intelligence** *(Phase 2)* — live Open-Meteo forecasts are compared against
+  each stage's ideal climate to raise **ok / watch / alert** quality-risk flags: a ring
+  on map markers, a badge + driving metric on each region, and a dedicated **Weather
+  alerts** page. E.g. *"Sul de Minas is drying and 84 mm of rain is forecast over 7 days
+  → high defect risk."*
 - **Harvest calendar** — the whole growing year across all 25 regions, month by month.
 - **Origin profiles** — altitude, varietals, processes, flavour, and a per-region
-  mini harvest strip, plus a live status badge and a "Watch" toggle.
+  mini harvest strip, plus a live status badge, weather-risk badge and a "Watch" toggle.
 - **Notes** — a markdown second brain. Tag freely, link notes to origins/regions;
   links surface as **backlinks** on each profile.
 - **Tasting journal** — score cups on the SCA form (live 100-pt total), tag flavours
@@ -34,21 +39,34 @@ Data is split by ownership — the two halves never fight:
 | **App shell / UI** | Next.js on Vercel | TypeScript / React |
 
 The Python pipeline (`/pipeline`) is the stats-heavy half and where the curated coffee
-knowledge is authored and validated; the Next.js app (`/web`) is the local-first
-product surface. Phase 2 adds live weather-per-stage risk flags (the `phenology.json`
-climate bands are already authored for it); Phase 3 adds price + recommendations.
+knowledge **and the weather risk model** are authored and validated; the Next.js app
+(`/web`) is the local-first product surface. Phase 3 adds price + recommendations.
+
+### The weather risk engine (Phase 2)
+
+Runs **client-side**: the browser fetches Open-Meteo once for all regions (cached 6h)
+and applies a **declarative risk model authored + validated in Python**
+(`sources/risk_model.yaml` → `public/data/risk_model.json`). That JSON is the **single
+source of truth**; the Python evaluator (`pipeline/weather/evaluate.py`) and the TS
+evaluator (`web/src/lib/risk.ts`) are thin interpreters of it, pinned to identical
+output by a **parity test** on a shared fixture. Tune thresholds in the YAML and rerun
+`python -m weather.backtest <region>` to see the effect. Risk is purely additive — if
+the fetch fails, the app degrades to the plain season view.
 
 ## Repo layout
 
 ```
 /web        Next.js app (deploys to Vercel)
-  src/app         routes: / (map), /calendar, /origin/[id], /notes, /tastings, /watchlist, /search
-  src/components  WorldMap, HarvestCalendar, RegionCard, CuppingForm, NoteEditor, …
-  src/lib         db.ts (Dexie), reference.ts, season.ts, scoring.ts, store.ts, types.ts
-  public/data     generated reference JSON (committed; produced by the pipeline)
+  src/app         routes: / (map), /calendar, /weather, /origin/[id], /notes, /tastings, /watchlist, /search
+  src/components  WorldMap, HarvestCalendar, RegionCard, RiskBadge, WeatherRiskProvider, …
+  src/lib         db.ts (Dexie), reference.ts, season.ts, scoring.ts, store.ts, types.ts,
+                  risk.ts + weather.ts (Phase 2 evaluator + Open-Meteo fetch), *.test.ts
+  public/data     generated reference JSON incl. risk_model.json (committed)
 /pipeline   Python knowledge pipeline
-  sources/*.yaml  human-authored curated data (edit these)
+  sources/*.yaml  human-authored curated data incl. risk_model.yaml (edit these)
   coffeekb/       pydantic models
+  weather/        Open-Meteo client, pure evaluator, backtest CLI, fixtures
+  tests/          pytest evaluator tests (parity anchor)
   build.py        validates YAML → writes web/public/data/*.json
 ```
 
@@ -75,8 +93,22 @@ python build.py       # validates sources → web/public/data/*.json
 ```
 
 The build fails loudly on bad data (unknown originId, altitude inversions, missing
-harvest windows, etc.), so the app never ships broken reference data. Commit the
-regenerated JSON along with your YAML edits.
+harvest windows, risk-model stages absent from phenology, etc.), so the app never ships
+broken reference data. Commit the regenerated JSON along with your YAML edits.
+
+### 3. Tests
+
+```bash
+# TS evaluator + parity (web/)
+npm test                                    # vitest
+
+# Python evaluator (pipeline/, venv active)
+pip install pytest && PYTHONPATH=. pytest tests/
+
+# Tune the weather model and inspect one region
+PYTHONPATH=. python -m weather.backtest yirgacheffe --stage drying \
+  --fixture weather/fixtures/rainy_drying.json
+```
 
 ## Enabling sync (Dexie Cloud) — optional
 
@@ -94,7 +126,8 @@ switch primary keys from `id` to `@id`).
 
 ## Roadmap
 
-- **Phase 2 — Weather intelligence.** Open-Meteo ingestion (Python) compared against the
-  per-stage `phenology.json` climate bands to raise quality-risk flags on the map/profiles.
+- **Phase 1 — Knowledge + second brain.** ✅ Shipped.
+- **Phase 2 — Weather intelligence.** ✅ Shipped (client-side Open-Meteo + Python-authored
+  risk model; map rings, region badges, and the Weather alerts page).
 - **Phase 3 — Price + recommendations.** ICE "C"/KC futures + differentials, and a
   personalised "what to buy now" that weights your flavour affinities.

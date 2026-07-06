@@ -148,3 +148,56 @@ class FlavorWheelFile(CamelModel):
         if not v:
             raise ValueError("flavor wheel must not be empty")
         return v
+
+
+# ---- weather risk model (Phase 2) ------------------------------------------
+
+MetricKind = Literal["rolling_sum", "sum", "count_above"]
+Source = Literal["precip", "tmax", "tmin"]
+Direction = Literal["high", "low"]
+
+
+class RiskMetric(CamelModel):
+    """One evaluable rule over a window of day-offsets from today.
+
+    See ``sources/risk_model.yaml`` for the semantics of each ``kind``. The same
+    fields are consumed verbatim by the TS evaluator (``web/src/lib/risk.ts``).
+    """
+
+    kind: MetricKind
+    source: Source
+    label: str
+    unit: str
+    from_day: int = Field(le=0 + 20, ge=-92, description="window start offset (days)")
+    to_day: int = Field(ge=-92, le=16, description="window end offset (days)")
+    direction: Direction
+    warn: float
+    alert: float
+    reason_warn: str
+    reason_alert: str
+    window_days: int | None = Field(default=None, ge=1, le=92)
+    threshold: float | None = None
+
+    @model_validator(mode="after")
+    def _check(self) -> "RiskMetric":
+        if self.to_day < self.from_day:
+            raise ValueError(f"{self.label}: to_day < from_day")
+        if self.kind == "rolling_sum" and self.window_days is None:
+            raise ValueError(f"{self.label}: rolling_sum requires window_days")
+        if self.kind == "count_above" and self.threshold is None:
+            raise ValueError(f"{self.label}: count_above requires threshold")
+        # high: alert should be the more severe (larger) bound; low: the smaller.
+        if self.direction == "high" and self.alert < self.warn:
+            raise ValueError(f"{self.label}: high metric needs alert >= warn")
+        if self.direction == "low" and self.alert > self.warn:
+            raise ValueError(f"{self.label}: low metric needs alert <= warn")
+        return self
+
+
+class StageRule(CamelModel):
+    stage: Stage
+    metrics: list[RiskMetric]
+
+
+class RiskModelFile(CamelModel):
+    stages: list[StageRule]
