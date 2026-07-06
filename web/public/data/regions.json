@@ -1,0 +1,1384 @@
+[
+  {
+    "id": "yirgacheffe",
+    "originId": "ethiopia",
+    "name": "Yirgacheffe",
+    "lat": 6.16,
+    "lng": 38.2,
+    "altitudeMinM": 1750,
+    "altitudeMaxM": 2200,
+    "varietals": [
+      "heirloom"
+    ],
+    "processes": [
+      "washed",
+      "natural"
+    ],
+    "flavorTags": [
+      "jasmine",
+      "lemon",
+      "bergamot",
+      "black tea",
+      "peach"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 2,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 4,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 10,
+        "end": 12,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 11,
+        "end": 1,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 1,
+        "end": 3,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "guji",
+    "originId": "ethiopia",
+    "name": "Guji (Hambela)",
+    "lat": 5.7,
+    "lng": 38.55,
+    "altitudeMinM": 1800,
+    "altitudeMaxM": 2300,
+    "varietals": [
+      "heirloom"
+    ],
+    "processes": [
+      "washed",
+      "natural"
+    ],
+    "flavorTags": [
+      "strawberry",
+      "tropical",
+      "floral",
+      "candy"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 2,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 4,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 10,
+        "end": 1,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 11,
+        "end": 2,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 2,
+        "end": 4,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "sidama",
+    "originId": "ethiopia",
+    "name": "Sidama (Bensa)",
+    "lat": 6.72,
+    "lng": 38.5,
+    "altitudeMinM": 1700,
+    "altitudeMaxM": 2200,
+    "varietals": [
+      "heirloom"
+    ],
+    "processes": [
+      "washed",
+      "natural"
+    ],
+    "flavorTags": [
+      "blueberry",
+      "floral",
+      "citrus",
+      "honey"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 2,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 4,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 10,
+        "end": 12,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 11,
+        "end": 1,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 1,
+        "end": 3,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "harrar",
+    "originId": "ethiopia",
+    "name": "Harrar",
+    "lat": 9.31,
+    "lng": 42.12,
+    "altitudeMinM": 1500,
+    "altitudeMaxM": 2100,
+    "varietals": [
+      "heirloom"
+    ],
+    "processes": [
+      "natural"
+    ],
+    "flavorTags": [
+      "blueberry",
+      "dried fruit",
+      "winey",
+      "dark chocolate"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 3,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 5,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 10,
+        "end": 2,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 11,
+        "end": 2,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 2,
+        "end": 4,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "nyeri",
+    "originId": "kenya",
+    "name": "Nyeri",
+    "lat": -0.42,
+    "lng": 36.95,
+    "altitudeMinM": 1600,
+    "altitudeMaxM": 2000,
+    "varietals": [
+      "sl28",
+      "sl34",
+      "ruiru11",
+      "batian"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "blackcurrant",
+      "grapefruit",
+      "tomato",
+      "cane sugar"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 3,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "harvest_fly",
+        "start": 6,
+        "end": 8,
+        "note": "Early/fly crop from the long rains"
+      },
+      {
+        "stage": "cherry_development",
+        "start": 5,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 10,
+        "end": 12,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 10,
+        "end": 1,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 1,
+        "end": 3,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "kirinyaga",
+    "originId": "kenya",
+    "name": "Kirinyaga",
+    "lat": -0.5,
+    "lng": 37.3,
+    "altitudeMinM": 1500,
+    "altitudeMaxM": 1900,
+    "varietals": [
+      "sl28",
+      "sl34",
+      "ruiru11",
+      "batian"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "blackberry",
+      "plum",
+      "orange",
+      "brown sugar"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 3,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "harvest_fly",
+        "start": 6,
+        "end": 8,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 5,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 10,
+        "end": 12,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 10,
+        "end": 1,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 1,
+        "end": 3,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "huila",
+    "originId": "colombia",
+    "name": "Huila",
+    "lat": 2.0,
+    "lng": -75.9,
+    "altitudeMinM": 1400,
+    "altitudeMaxM": 1900,
+    "varietals": [
+      "caturra",
+      "castillo",
+      "colombia_var"
+    ],
+    "processes": [
+      "washed",
+      "honey"
+    ],
+    "flavorTags": [
+      "caramel",
+      "red apple",
+      "citrus",
+      "panela"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 1,
+        "end": 2,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 9,
+        "end": 12,
+        "note": null
+      },
+      {
+        "stage": "harvest_fly",
+        "start": 4,
+        "end": 6,
+        "note": "Mitaca secondary crop"
+      },
+      {
+        "stage": "drying",
+        "start": 9,
+        "end": 1,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 11,
+        "end": 3,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "narino",
+    "originId": "colombia",
+    "name": "Nariño",
+    "lat": 1.2,
+    "lng": -77.3,
+    "altitudeMinM": 1700,
+    "altitudeMaxM": 2100,
+    "varietals": [
+      "caturra",
+      "castillo"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "tangerine",
+      "tropical",
+      "sugarcane",
+      "floral"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 9,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 11,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 5,
+        "end": 7,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 5,
+        "end": 8,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 7,
+        "end": 10,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "sul_de_minas",
+    "originId": "brazil",
+    "name": "Sul de Minas",
+    "lat": -21.5,
+    "lng": -45.4,
+    "altitudeMinM": 900,
+    "altitudeMaxM": 1300,
+    "varietals": [
+      "mundo_novo",
+      "catuai",
+      "bourbon"
+    ],
+    "processes": [
+      "natural",
+      "honey"
+    ],
+    "flavorTags": [
+      "milk chocolate",
+      "peanut",
+      "caramel",
+      "red apple"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 9,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 11,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 5,
+        "end": 8,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 6,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 8,
+        "end": 11,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "cerrado_mineiro",
+    "originId": "brazil",
+    "name": "Cerrado Mineiro",
+    "lat": -18.9,
+    "lng": -47.5,
+    "altitudeMinM": 900,
+    "altitudeMaxM": 1250,
+    "varietals": [
+      "catuai",
+      "mundo_novo",
+      "bourbon"
+    ],
+    "processes": [
+      "natural"
+    ],
+    "flavorTags": [
+      "chocolate",
+      "hazelnut",
+      "dried fruit",
+      "low acidity"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 9,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 11,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 5,
+        "end": 8,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 6,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 8,
+        "end": 11,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "antigua",
+    "originId": "guatemala",
+    "name": "Antigua",
+    "lat": 14.55,
+    "lng": -90.73,
+    "altitudeMinM": 1500,
+    "altitudeMaxM": 1700,
+    "varietals": [
+      "bourbon",
+      "caturra",
+      "catuai"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "cocoa",
+      "baking spice",
+      "orange",
+      "full body"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 4,
+        "end": 5,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 6,
+        "end": 11,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 12,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 1,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 3,
+        "end": 6,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "huehuetenango",
+    "originId": "guatemala",
+    "name": "Huehuetenango",
+    "lat": 15.32,
+    "lng": -91.47,
+    "altitudeMinM": 1500,
+    "altitudeMaxM": 2000,
+    "varietals": [
+      "bourbon",
+      "caturra"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "red apple",
+      "honey",
+      "citrus",
+      "cocoa"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 4,
+        "end": 5,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 6,
+        "end": 12,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 1,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 2,
+        "end": 5,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 4,
+        "end": 7,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "tarrazu",
+    "originId": "costa_rica",
+    "name": "Tarrazú",
+    "lat": 9.66,
+    "lng": -84.02,
+    "altitudeMinM": 1200,
+    "altitudeMaxM": 1900,
+    "varietals": [
+      "caturra",
+      "catuai",
+      "villa_sarchi"
+    ],
+    "processes": [
+      "washed",
+      "honey"
+    ],
+    "flavorTags": [
+      "honey",
+      "peach",
+      "orange",
+      "clean"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 3,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 5,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 11,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 12,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 2,
+        "end": 5,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "west_valley",
+    "originId": "costa_rica",
+    "name": "West Valley",
+    "lat": 10.1,
+    "lng": -84.4,
+    "altitudeMinM": 1200,
+    "altitudeMaxM": 1650,
+    "varietals": [
+      "villa_sarchi",
+      "caturra",
+      "catuai"
+    ],
+    "processes": [
+      "honey",
+      "washed"
+    ],
+    "flavorTags": [
+      "peach",
+      "brown sugar",
+      "red fruit",
+      "floral"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 3,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 5,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 11,
+        "end": 2,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 12,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 2,
+        "end": 5,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "boquete",
+    "originId": "panama",
+    "name": "Boquete",
+    "lat": 8.78,
+    "lng": -82.43,
+    "altitudeMinM": 1300,
+    "altitudeMaxM": 1800,
+    "varietals": [
+      "geisha",
+      "caturra",
+      "catuai"
+    ],
+    "processes": [
+      "washed",
+      "natural"
+    ],
+    "flavorTags": [
+      "jasmine",
+      "bergamot",
+      "papaya",
+      "honeysuckle"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 3,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 5,
+        "end": 11,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 12,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 1,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 3,
+        "end": 6,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "volcan",
+    "originId": "panama",
+    "name": "Volcán / Candela",
+    "lat": 8.78,
+    "lng": -82.63,
+    "altitudeMinM": 1400,
+    "altitudeMaxM": 1900,
+    "varietals": [
+      "geisha",
+      "pacamara"
+    ],
+    "processes": [
+      "washed",
+      "natural"
+    ],
+    "flavorTags": [
+      "floral",
+      "tropical",
+      "stone fruit",
+      "tea-like"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 3,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 5,
+        "end": 11,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 12,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 1,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 3,
+        "end": 6,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "marcala",
+    "originId": "honduras",
+    "name": "Marcala (La Paz)",
+    "lat": 14.16,
+    "lng": -88.02,
+    "altitudeMinM": 1300,
+    "altitudeMaxM": 1700,
+    "varietals": [
+      "bourbon",
+      "catuai",
+      "pacas",
+      "catimor"
+    ],
+    "processes": [
+      "washed",
+      "honey"
+    ],
+    "flavorTags": [
+      "caramel",
+      "stone fruit",
+      "cocoa",
+      "citrus"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 4,
+        "end": 5,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 6,
+        "end": 11,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 11,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 12,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 2,
+        "end": 6,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "copan",
+    "originId": "honduras",
+    "name": "Copán",
+    "lat": 14.9,
+    "lng": -88.9,
+    "altitudeMinM": 1200,
+    "altitudeMaxM": 1500,
+    "varietals": [
+      "bourbon",
+      "catuai"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "chocolate",
+      "red apple",
+      "brown sugar"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 4,
+        "end": 5,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 6,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 11,
+        "end": 2,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 12,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 2,
+        "end": 5,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "nyamasheke",
+    "originId": "rwanda",
+    "name": "Nyamasheke (Western)",
+    "lat": -2.35,
+    "lng": 29.13,
+    "altitudeMinM": 1600,
+    "altitudeMaxM": 2000,
+    "varietals": [
+      "bourbon"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "red currant",
+      "floral",
+      "orange",
+      "silky"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 9,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 11,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 3,
+        "end": 6,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 4,
+        "end": 7,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 6,
+        "end": 9,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "huye",
+    "originId": "rwanda",
+    "name": "Huye (Southern)",
+    "lat": -2.53,
+    "lng": 29.74,
+    "altitudeMinM": 1700,
+    "altitudeMaxM": 2000,
+    "varietals": [
+      "bourbon"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "floral",
+      "orange",
+      "red fruit",
+      "tea-like"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 9,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 11,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 3,
+        "end": 6,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 4,
+        "end": 7,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 6,
+        "end": 9,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "kayanza",
+    "originId": "burundi",
+    "name": "Kayanza",
+    "lat": -2.92,
+    "lng": 29.62,
+    "altitudeMinM": 1700,
+    "altitudeMaxM": 2000,
+    "varietals": [
+      "bourbon"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "red fruit",
+      "floral",
+      "black tea",
+      "juicy"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 9,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 11,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 3,
+        "end": 6,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 4,
+        "end": 7,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 6,
+        "end": 9,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "gayo",
+    "originId": "indonesia",
+    "name": "Sumatra — Gayo (Aceh)",
+    "lat": 4.6,
+    "lng": 96.85,
+    "altitudeMinM": 1200,
+    "altitudeMaxM": 1600,
+    "varietals": [
+      "catimor",
+      "bourbon"
+    ],
+    "processes": [
+      "wet_hulled"
+    ],
+    "flavorTags": [
+      "cedar",
+      "earthy",
+      "dark chocolate",
+      "herbal"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 4,
+        "end": 5,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 6,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 10,
+        "end": 2,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 11,
+        "end": 3,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 1,
+        "end": 4,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "java_ijen",
+    "originId": "indonesia",
+    "name": "Java — Ijen Plateau",
+    "lat": -8.1,
+    "lng": 114.2,
+    "altitudeMinM": 900,
+    "altitudeMaxM": 1500,
+    "varietals": [
+      "catimor",
+      "typica"
+    ],
+    "processes": [
+      "wet_hulled",
+      "washed"
+    ],
+    "flavorTags": [
+      "cedar",
+      "herbal",
+      "low acidity",
+      "syrupy"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 10,
+        "end": 11,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 12,
+        "end": 5,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 6,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 7,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 9,
+        "end": 12,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "cajamarca",
+    "originId": "peru",
+    "name": "Cajamarca (Jaén)",
+    "lat": -5.7,
+    "lng": -78.8,
+    "altitudeMinM": 1400,
+    "altitudeMaxM": 1900,
+    "varietals": [
+      "bourbon",
+      "caturra",
+      "catimor",
+      "typica"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "soft chocolate",
+      "almond",
+      "citrus",
+      "sweet"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 9,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 11,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 5,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 6,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 8,
+        "end": 11,
+        "note": null
+      }
+    ]
+  },
+  {
+    "id": "cusco",
+    "originId": "peru",
+    "name": "Cusco (La Convención)",
+    "lat": -12.9,
+    "lng": -72.7,
+    "altitudeMinM": 1200,
+    "altitudeMaxM": 1800,
+    "varietals": [
+      "typica",
+      "bourbon",
+      "caturra"
+    ],
+    "processes": [
+      "washed"
+    ],
+    "flavorTags": [
+      "nutty",
+      "mild",
+      "sweet",
+      "light citrus"
+    ],
+    "harvest": [
+      {
+        "stage": "flowering",
+        "start": 9,
+        "end": 10,
+        "note": null
+      },
+      {
+        "stage": "cherry_development",
+        "start": 11,
+        "end": 4,
+        "note": null
+      },
+      {
+        "stage": "harvest_main",
+        "start": 5,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "drying",
+        "start": 6,
+        "end": 9,
+        "note": null
+      },
+      {
+        "stage": "export",
+        "start": 8,
+        "end": 11,
+        "note": null
+      }
+    ]
+  }
+]

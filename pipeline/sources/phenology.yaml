@@ -1,0 +1,47 @@
+# Ideal climate envelope per phenology stage. Authored now; consumed in Phase 2
+# to compare against live Open-Meteo weather and raise per-stage risk flags.
+stages:
+  - stage: flowering
+    label: Flowering
+    ideal: A dry spell broken by rain triggers a uniform bloom.
+    temp_min_c: 18
+    temp_max_c: 28
+    rain_mm_min: 20
+    rain_mm_max: 120
+    risk_if_wrong: Erratic or continuous rain causes staggered, uneven flowering and uneven ripening later.
+  - stage: cherry_development
+    label: Cherry Development
+    ideal: Steady, moderate rainfall and warmth grow full, dense beans.
+    temp_min_c: 18
+    temp_max_c: 26
+    rain_mm_min: 80
+    rain_mm_max: 250
+    risk_if_wrong: Drought during expansion yields small, low-density beans; heat stress harms development.
+  - stage: harvest_main
+    label: Main Harvest
+    ideal: Warm days with a wide diurnal swing ripen cherries slowly and build sugars; dry picking conditions.
+    temp_min_c: 15
+    temp_max_c: 27
+    rain_mm_min: 0
+    rain_mm_max: 80
+    risk_if_wrong: Rain during picking triggers uncontrolled fermentation and cherry drop, raising defect counts.
+  - stage: harvest_fly
+    label: Fly Crop
+    ideal: Secondary, smaller harvest; same dry warm conditions as the main crop.
+    temp_min_c: 15
+    temp_max_c: 27
+    rain_mm_min: 0
+    rain_mm_max: 80
+    risk_if_wrong: Wet conditions on a smaller crop disproportionately hurt overall lot quality.
+  - stage: drying
+    label: Drying
+    ideal: Sunny, low humidity, gentle airflow for even, slow moisture loss to ~10-11%.
+    temp_min_c: 15
+    temp_max_c: 32
+    rain_mm_min: 0
+    rain_mm_max: 20
+    risk_if_wrong: Rain or high humidity during drying causes mould, phenol and stink defects; over-fast drying cracks beans.
+  - stage: export
+    label: Export / At Port
+    ideal: Fresh-crop parchment rested then milled and shipped; freshness window opens for buyers.
+    risk_if_wrong: Long delays or poor storage/transit humidity fade acidity and flatten the cup before arrival.

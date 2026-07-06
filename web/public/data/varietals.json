@@ -1,0 +1,110 @@
+[
+  {
+    "id": "heirloom",
+    "name": "Ethiopian Heirloom (Landrace)",
+    "lineage": "Indigenous Ethiopian mother population",
+    "notes": "Umbrella term for the thousands of undocumented indigenous varieties of Ethiopia; source of coffee's genetic diversity. Complex, floral, tea-like."
+  },
+  {
+    "id": "geisha",
+    "name": "Geisha / Gesha",
+    "lineage": "Ethiopian landrace (Gori Gesha) -> Panama",
+    "notes": "Famous for jasmine, bergamot and tropical-fruit clarity at high altitude. Low-yielding, premium-priced."
+  },
+  {
+    "id": "bourbon",
+    "name": "Bourbon",
+    "lineage": "Typica mutation (Bourbon Island)",
+    "notes": "Classic sweet, balanced cup with good complexity. Red, yellow and orange sub-types."
+  },
+  {
+    "id": "typica",
+    "name": "Typica",
+    "lineage": "Base Arabica lineage",
+    "notes": "Clean, sweet, refined but low-yielding and disease-susceptible. Ancestor of many varieties."
+  },
+  {
+    "id": "caturra",
+    "name": "Caturra",
+    "lineage": "Bourbon mutation (Brazil)",
+    "notes": "Compact, higher-yielding Bourbon mutation. Bright, clean, medium body."
+  },
+  {
+    "id": "catuai",
+    "name": "Catuaí",
+    "lineage": "Mundo Novo x Caturra",
+    "notes": "Sturdy, high-yield, holds cherries well in wind. Sweet but can lack complexity."
+  },
+  {
+    "id": "mundo_novo",
+    "name": "Mundo Novo",
+    "lineage": "Typica (Sumatra) x Bourbon",
+    "notes": "Vigorous, productive Brazilian workhorse. Heavy body, chocolatey."
+  },
+  {
+    "id": "sl28",
+    "name": "SL28",
+    "lineage": "Scott Labs selection (Kenya)",
+    "notes": "Drought-tolerant, deep blackcurrant and citric acidity. Iconic Kenyan quality."
+  },
+  {
+    "id": "sl34",
+    "name": "SL34",
+    "lineage": "Scott Labs selection (Kenya)",
+    "notes": "Tolerates higher rainfall; rich body with juicy acidity, close to SL28."
+  },
+  {
+    "id": "ruiru11",
+    "name": "Ruiru 11",
+    "lineage": "Composite disease-resistant hybrid (Kenya)",
+    "notes": "Compact, CBD/leaf-rust resistant. Higher yield, cup generally below SL28/34."
+  },
+  {
+    "id": "batian",
+    "name": "Batian",
+    "lineage": "Kenyan disease-resistant selection",
+    "notes": "Tall, disease-resistant, faster to bear than Ruiru 11 with better cup potential."
+  },
+  {
+    "id": "castillo",
+    "name": "Castillo",
+    "lineage": "Caturra x Timor Hybrid (Colombia)",
+    "notes": "Leaf-rust resistant Colombian workhorse. Reliable, clean, good sweetness."
+  },
+  {
+    "id": "colombia_var",
+    "name": "Colombia",
+    "lineage": "Caturra x Timor Hybrid (earlier release)",
+    "notes": "Rust-resistant predecessor to Castillo, still widely planted."
+  },
+  {
+    "id": "pacamara",
+    "name": "Pacamara",
+    "lineage": "Pacas x Maragogipe",
+    "notes": "Large-bean, expressive and wild — herbal, fruity, sometimes savoury. Central American standout."
+  },
+  {
+    "id": "pacas",
+    "name": "Pacas",
+    "lineage": "Bourbon mutation (El Salvador)",
+    "notes": "Compact Bourbon mutation; sweet, balanced, good at altitude."
+  },
+  {
+    "id": "villa_sarchi",
+    "name": "Villa Sarchi",
+    "lineage": "Bourbon mutation (Costa Rica)",
+    "notes": "Compact, wind-tolerant Bourbon mutation with bright acidity and sweetness."
+  },
+  {
+    "id": "catimor",
+    "name": "Catimor",
+    "lineage": "Caturra x Timor Hybrid",
+    "notes": "Rust-resistant, high-yield group; cup quality variable, can be herbaceous."
+  },
+  {
+    "id": "wush_wush",
+    "name": "Wush Wush",
+    "lineage": "Ethiopian landrace",
+    "notes": "Floral, delicate, tropical — a boutique Ethiopian selection now grown in Colombia."
+  }
+]

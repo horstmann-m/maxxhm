@@ -1,0 +1,62 @@
+[
+  {
+    "stage": "flowering",
+    "label": "Flowering",
+    "ideal": "A dry spell broken by rain triggers a uniform bloom.",
+    "tempMinC": 18.0,
+    "tempMaxC": 28.0,
+    "rainMmMin": 20.0,
+    "rainMmMax": 120.0,
+    "riskIfWrong": "Erratic or continuous rain causes staggered, uneven flowering and uneven ripening later."
+  },
+  {
+    "stage": "cherry_development",
+    "label": "Cherry Development",
+    "ideal": "Steady, moderate rainfall and warmth grow full, dense beans.",
+    "tempMinC": 18.0,
+    "tempMaxC": 26.0,
+    "rainMmMin": 80.0,
+    "rainMmMax": 250.0,
+    "riskIfWrong": "Drought during expansion yields small, low-density beans; heat stress harms development."
+  },
+  {
+    "stage": "harvest_main",
+    "label": "Main Harvest",
+    "ideal": "Warm days with a wide diurnal swing ripen cherries slowly and build sugars; dry picking conditions.",
+    "tempMinC": 15.0,
+    "tempMaxC": 27.0,
+    "rainMmMin": 0.0,
+    "rainMmMax": 80.0,
+    "riskIfWrong": "Rain during picking triggers uncontrolled fermentation and cherry drop, raising defect counts."
+  },
+  {
+    "stage": "harvest_fly",
+    "label": "Fly Crop",
+    "ideal": "Secondary, smaller harvest; same dry warm conditions as the main crop.",
+    "tempMinC": 15.0,
+    "tempMaxC": 27.0,
+    "rainMmMin": 0.0,
+    "rainMmMax": 80.0,
+    "riskIfWrong": "Wet conditions on a smaller crop disproportionately hurt overall lot quality."
+  },
+  {
+    "stage": "drying",
+    "label": "Drying",
+    "ideal": "Sunny, low humidity, gentle airflow for even, slow moisture loss to ~10-11%.",
+    "tempMinC": 15.0,
+    "tempMaxC": 32.0,
+    "rainMmMin": 0.0,
+    "rainMmMax": 20.0,
+    "riskIfWrong": "Rain or high humidity during drying causes mould, phenol and stink defects; over-fast drying cracks beans."
+  },
+  {
+    "stage": "export",
+    "label": "Export / At Port",
+    "ideal": "Fresh-crop parchment rested then milled and shipped; freshness window opens for buyers.",
+    "tempMinC": null,
+    "tempMaxC": null,
+    "rainMmMin": null,
+    "rainMmMax": null,
+    "riskIfWrong": "Long delays or poor storage/transit humidity fade acidity and flatten the cup before arrival."
+  }
+]
