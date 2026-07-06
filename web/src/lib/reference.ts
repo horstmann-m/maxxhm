@@ -19,17 +19,32 @@ import type {
   Varietal,
 } from "./types";
 
-export const origins = originsJson as Origin[];
-export const regions = regionsJson as Region[];
+const BASE_ORIGINS = originsJson as Origin[];
+const BASE_REGIONS = regionsJson as Region[];
 export const varietals = varietalsJson as Varietal[];
 export const processes = processesJson as Process[];
 export const phenology = phenologyJson as ClimateBand[];
 export const flavorWheel = flavorWheelJson as FlavorNode[];
 
-const originById = new Map(origins.map((o) => [o.id, o]));
-const regionById = new Map(regions.map((r) => [r.id, r]));
+// origins/regions are live bindings: curated base merged with the user's custom
+// entries (added via the in-app editor). applyCustomData() rebuilds them; a remount
+// keyed on its version (see DataGate) makes consumers pick up changes — no refactor.
+export let origins: Origin[] = [...BASE_ORIGINS];
+export let regions: Region[] = [...BASE_REGIONS];
+let originById = new Map(origins.map((o) => [o.id, o]));
+let regionById = new Map(regions.map((r) => [r.id, r]));
 const varietalById = new Map(varietals.map((v) => [v.id, v]));
 const processById = new Map(processes.map((p) => [p.id, p]));
+
+/** Rebuild origins/regions = curated base + custom. Returns a version signature
+ *  that changes only when the custom set changes. */
+export function applyCustomData(customOrigins: Origin[], customRegions: Region[]): string {
+  origins = [...BASE_ORIGINS, ...customOrigins.map((o) => ({ ...o, custom: true }))];
+  regions = [...BASE_REGIONS, ...customRegions.map((r) => ({ ...r, custom: true }))];
+  originById = new Map(origins.map((o) => [o.id, o]));
+  regionById = new Map(regions.map((r) => [r.id, r]));
+  return `${customOrigins.map((o) => o.id).join(",")}|${customRegions.map((r) => r.id).join(",")}`;
+}
 
 export const getOrigin = (id: string) => originById.get(id);
 export const getRegion = (id: string) => regionById.get(id);

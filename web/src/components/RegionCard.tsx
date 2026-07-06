@@ -3,6 +3,7 @@
 import { RiskBadge, RiskDetail } from "@/components/RiskBadge";
 import { WatchButton } from "@/components/WatchButton";
 import { useRisk } from "@/components/WeatherRiskProvider";
+import { RISK_META } from "@/lib/risk";
 import { getProcess, getVarietal } from "@/lib/reference";
 import {
   MONTHS,
@@ -59,8 +60,12 @@ function MiniHarvest({ region }: { region: Region }) {
 export function RegionCard({ region }: { region: Region }) {
   const now = currentMonth();
   const status = regionStatus(region, now);
-  const { byRegion } = useRisk();
+  const { byRegion, frost, anomaly } = useRisk();
   const risk = byRegion.get(region.id);
+  const frostHit = frost.get(region.id);
+  const anomalyHit = anomaly.get(region.id);
+  const showFrost = frostHit && frostHit.level !== "ok";
+  const showAnomaly = anomalyHit && anomalyHit.level !== "ok" && anomalyHit.kind !== "none";
   return (
     <section id={region.id} className="scroll-mt-20 card p-4">
       <div className="flex items-start justify-between gap-3 mb-3">
@@ -84,6 +89,24 @@ export function RegionCard({ region }: { region: Region }) {
             {status.meta.short}
           </span>
           {risk && risk.stage !== null && <RiskBadge risk={risk} />}
+          {showFrost && (
+            <span
+              title={frostHit!.headline}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
+              style={{ background: RISK_META[frostHit!.level].color + "22", color: RISK_META[frostHit!.level].color }}
+            >
+              ❄ {frostHit!.level === "alert" ? "Frost" : "Cold"}
+            </span>
+          )}
+          {showAnomaly && (
+            <span
+              title={anomalyHit!.headline}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
+              style={{ background: RISK_META[anomalyHit!.level].color + "22", color: RISK_META[anomalyHit!.level].color }}
+            >
+              {anomalyHit!.kind === "wet" ? "💧 Wet" : "🌵 Dry"}
+            </span>
+          )}
         </div>
       </div>
 

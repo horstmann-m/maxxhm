@@ -27,6 +27,7 @@
       "black_tea",
       "stone_fruit"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -87,6 +88,7 @@
       "jasmine",
       "honey"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -147,6 +149,7 @@
       "citrus",
       "honey"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -206,6 +209,7 @@
       "winey",
       "dark_chocolate"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -268,6 +272,7 @@
       "brown_sugar",
       "sour_acid"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -336,6 +341,7 @@
       "citrus",
       "brown_sugar"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -404,6 +410,7 @@
       "citrus",
       "brown_sugar"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -464,6 +471,7 @@
       "brown_sugar",
       "jasmine"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -526,6 +534,7 @@
       "caramel",
       "stone_fruit"
     ],
+    "frostProne": true,
     "harvest": [
       {
         "stage": "flowering",
@@ -587,6 +596,7 @@
       "dried_fruit",
       "dark_chocolate"
     ],
+    "frostProne": true,
     "harvest": [
       {
         "stage": "flowering",
@@ -648,6 +658,7 @@
       "citrus",
       "dark_chocolate"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -708,6 +719,7 @@
       "citrus",
       "chocolate"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -770,6 +782,7 @@
       "citrus",
       "caramel"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -832,6 +845,7 @@
       "berry",
       "jasmine"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -894,6 +908,7 @@
       "tropical",
       "rose"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -955,6 +970,7 @@
       "stone_fruit",
       "black_tea"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -1018,6 +1034,7 @@
       "chocolate",
       "citrus"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -1076,6 +1093,7 @@
       "stone_fruit",
       "brown_sugar"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -1135,6 +1153,7 @@
       "citrus",
       "black_tea"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -1194,6 +1213,7 @@
       "berry",
       "black_tea"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -1253,6 +1273,7 @@
       "black_tea",
       "sour_acid"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -1313,6 +1334,7 @@
       "herb_like",
       "tobacco"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -1374,6 +1396,7 @@
       "dark_chocolate",
       "brown_spice"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -1436,6 +1459,7 @@
       "citrus",
       "brown_sugar"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",
@@ -1497,6 +1521,7 @@
       "citrus",
       "caramel"
     ],
+    "frostProne": false,
     "harvest": [
       {
         "stage": "flowering",

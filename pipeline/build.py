@@ -20,7 +20,9 @@ from pathlib import Path
 import yaml
 
 from coffeekb.models import (
+    ClimateNormalsFile,
     FlavorWheelFile,
+    MarketModelFile,
     OriginsFile,
     PhenologyFile,
     ProcessesFile,
@@ -66,6 +68,8 @@ def main() -> None:
     wheel = FlavorWheelFile.model_validate(load("flavor_wheel.yaml"))
     risk_model = RiskModelFile.model_validate(load("risk_model.yaml"))
     reco_model = RecoModelFile.model_validate(load("reco_model.yaml"))
+    market_model = MarketModelFile.model_validate(load("market_model.yaml"))
+    normals = ClimateNormalsFile.model_validate(load("climate_normals.yaml"))
 
     # ---- referential integrity -------------------------------------------
     origin_ids = {o.id for o in origins.origins}
@@ -122,6 +126,15 @@ def main() -> None:
         if key not in valid_fresh_keys:
             errors.append(f"reco_model: unknown freshness stage '{key}'")
 
+    # climate normals must reference real origins
+    seen_normal: set[str] = set()
+    for n in normals.normals:
+        if n.origin_id not in origin_ids:
+            errors.append(f"climate_normals: unknown originId '{n.origin_id}'")
+        if n.origin_id in seen_normal:
+            errors.append(f"climate_normals: duplicate origin '{n.origin_id}'")
+        seen_normal.add(n.origin_id)
+
     if errors:
         die("referential integrity:\n    - " + "\n    - ".join(errors))
 
@@ -134,6 +147,11 @@ def main() -> None:
     dump("flavor_wheel.json", [n.model_dump(by_alias=True) for n in wheel.wheel])
     dump("risk_model.json", [s.model_dump(by_alias=True) for s in risk_model.stages])
     dump("reco_model.json", reco_model.model_dump(by_alias=True))
+    dump("market_model.json", market_model.model_dump(by_alias=True))
+    dump(
+        "climate_normals.json",
+        {n.origin_id: n.rain_mm for n in normals.normals},
+    )
     dump(
         "meta.json",
         {

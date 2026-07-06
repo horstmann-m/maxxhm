@@ -4,6 +4,12 @@
 
 import { regions } from "./reference";
 import { evaluateRegion, regionFocusStage, type DailySeries, type RiskResult } from "./risk";
+import {
+  evaluateAnomaly,
+  evaluateFrost,
+  type AnomalyResult,
+  type FrostResult,
+} from "./market";
 
 const ENDPOINT = "https://api.open-meteo.com/v1/forecast";
 const PAST_DAYS = 30;
@@ -91,6 +97,8 @@ async function loadAllSeries(force = false): Promise<Record<string, DailySeries>
 
 export interface RiskSnapshot {
   byRegion: Map<string, RiskResult>;
+  frost: Map<string, FrostResult>;
+  anomaly: Map<string, AnomalyResult>;
   updatedAt: number;
 }
 
@@ -98,10 +106,14 @@ export interface RiskSnapshot {
 export async function loadRiskSnapshot(month: number, force = false): Promise<RiskSnapshot> {
   const series = await loadAllSeries(force);
   const byRegion = new Map<string, RiskResult>();
+  const frost = new Map<string, FrostResult>();
+  const anomaly = new Map<string, AnomalyResult>();
   for (const r of regions) {
     const s = series[r.id];
     if (!s) continue;
     byRegion.set(r.id, evaluateRegion(r.id, regionFocusStage(r, month), s));
+    frost.set(r.id, evaluateFrost(r.id, !!r.frostProne, s));
+    anomaly.set(r.id, evaluateAnomaly(r.id, r.originId, s));
   }
-  return { byRegion, updatedAt: Date.now() };
+  return { byRegion, frost, anomaly, updatedAt: Date.now() };
 }

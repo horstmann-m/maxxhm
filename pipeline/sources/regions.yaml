@@ -156,6 +156,7 @@ regions:
     processes: [natural, honey]
     flavor_tags: [milk chocolate, peanut, caramel, red apple]
     flavor_nodes: [chocolate, nutty, caramel, stone_fruit]
+    frost_prone: true
     harvest:
       - { stage: flowering, start: 9, end: 10 }
       - { stage: cherry_development, start: 11, end: 4 }
@@ -173,6 +174,7 @@ regions:
     processes: [natural]
     flavor_tags: [chocolate, hazelnut, dried fruit, low acidity]
     flavor_nodes: [chocolate, nutty, dried_fruit, dark_chocolate]
+    frost_prone: true
     harvest:
       - { stage: flowering, start: 9, end: 10 }
       - { stage: cherry_development, start: 11, end: 4 }

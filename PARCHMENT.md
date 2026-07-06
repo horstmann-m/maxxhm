@@ -14,6 +14,12 @@ turning in real time, keep a linked tasting journal, and track what you want to 
   ("Arriving now · Matches your taste · Weather clear · Good value vs target"). Powered by
   a **taste-preferences** editor (rate flavour notes, or "learn from my tastings") and a
   manual **prices** page (C-price + differential + your target → estimated FOB).
+- **Market intelligence** *(Phase 4)* — **frost alerts** for frost-prone origins (a
+  market-moving event), **rainfall anomaly** vs the seasonal normal, a **C-price history**
+  chart with trend + below-threshold alert, and a **supplier scorecard** (rate
+  exporters/importers by approval rate, cup quality, and how established they are).
+- **In-app data editor** *(Phase 4)* — add your own origins and regions from the UI (no
+  YAML); they merge live with the curated data across the map, calendar and recommendations.
 - **The global coffee clock** — a world map where each origin is coloured by the most
   advanced stage across its regions for the selected month (flowering → developing →
   harvesting → drying → **arriving**). Scrub through the year to see the world turn.
@@ -137,5 +143,9 @@ switch primary keys from `id` to `@id`).
   risk model; map rings, region badges, and the Weather alerts page).
 - **Phase 3 — Price + recommendations.** ✅ Shipped (taste preferences, manual price
   entry, and the "Buy now" board blending freshness/taste/weather/value/watchlist via a
-  Python-authored `reco_model.json`). Next up: swap manual price for a licensed live
-  futures feed (the `prices` table is the drop-in point).
+  Python-authored `reco_model.json`).
+- **Phase 4 — Market intelligence + editor.** ✅ Shipped (frost + rainfall-anomaly alerts
+  via `market_model.json` + `climate_normals.json`; C-price history/trend/threshold;
+  supplier scorecard; and an in-app origin/region editor that merges into the live data).
+  Next up: swap manual price for a licensed live futures feed (the `prices` table is the
+  drop-in point), and let custom entities show up in pickers/search.

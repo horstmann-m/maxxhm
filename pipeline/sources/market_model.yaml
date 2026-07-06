@@ -1,0 +1,18 @@
+# Market-signal thresholds beyond per-stage quality risk: frost (a market-moving
+# event — Brazil frosts spike the C-price) and rainfall anomaly vs the seasonal
+# normal. Consumed client-side by web/src/lib/market.ts.
+frost:
+  # Evaluated only for frost-prone regions, over the forecast window.
+  from_day: 0
+  to_day: 14
+  tmin_watch_c: 4     # a cold night worth watching
+  tmin_alert_c: 1     # frost damage likely at/below this
+
+anomaly:
+  # Rainfall over this window compared to the seasonal normal for those days.
+  from_day: -6
+  to_day: 14
+  wet_ratio_watch: 1.6   # 60% wetter than normal
+  wet_ratio_alert: 2.2
+  dry_ratio_watch: 0.5   # half of normal
+  dry_ratio_alert: 0.3

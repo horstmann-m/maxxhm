@@ -39,7 +39,9 @@ type IconName =
   | "notes"
   | "tastings"
   | "watchlist"
-  | "search";
+  | "search"
+  | "suppliers"
+  | "manage";
 
 const PATHS: Record<IconName, React.ReactNode> = {
   map: (
@@ -90,6 +92,16 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <circle cx="11" cy="11" r="6.5" />
       <path d="M20 20l-4.5-4.5" strokeLinecap="round" />
     </>
+  ),
+  suppliers: (
+    <>
+      <path d="M4 9.5l1.6-4h12.8l1.6 4" strokeLinejoin="round" />
+      <path d="M4 9.5h16v10a1 1 0 01-1 1H5a1 1 0 01-1-1z" strokeLinejoin="round" />
+      <path d="M9.5 20.5V15h5v5.5" />
+    </>
+  ),
+  manage: (
+    <path d="M4 20l4-1 9.4-9.4a2 2 0 000-2.8l-.2-.2a2 2 0 00-2.8 0L5 16z" strokeLinejoin="round" />
   ),
 };
 

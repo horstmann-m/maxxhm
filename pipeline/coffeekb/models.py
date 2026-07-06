@@ -71,6 +71,7 @@ class Region(CamelModel):
     processes: list[str] = Field(default_factory=list)
     flavor_tags: list[str] = Field(default_factory=list)
     flavor_nodes: list[str] = Field(default_factory=list, description="flavor-wheel node ids")
+    frost_prone: bool = Field(default=False, description="evaluate frost alerts here")
     harvest: list[HarvestWindow] = Field(default_factory=list)
 
     @model_validator(mode="after")
@@ -234,3 +235,49 @@ class RecoModelFile(CamelModel):
             if not 0 <= val <= 1:
                 raise ValueError(f"freshness for '{stage}' must be 0..1")
         return v
+
+
+# ---- market signals: frost + rainfall anomaly (Phase 4) --------------------
+
+
+class FrostConfig(CamelModel):
+    from_day: int
+    to_day: int
+    tmin_watch_c: float
+    tmin_alert_c: float
+
+    @model_validator(mode="after")
+    def _order(self) -> "FrostConfig":
+        if self.tmin_alert_c > self.tmin_watch_c:
+            raise ValueError("frost: tmin_alert_c must be <= tmin_watch_c")
+        return self
+
+
+class AnomalyConfig(CamelModel):
+    from_day: int
+    to_day: int
+    wet_ratio_watch: float = Field(gt=1)
+    wet_ratio_alert: float = Field(gt=1)
+    dry_ratio_watch: float = Field(gt=0, lt=1)
+    dry_ratio_alert: float = Field(gt=0, lt=1)
+
+
+class MarketModelFile(CamelModel):
+    frost: FrostConfig
+    anomaly: AnomalyConfig
+
+
+class ClimateNormal(CamelModel):
+    origin_id: str
+    rain_mm: list[float]
+
+    @field_validator("rain_mm")
+    @classmethod
+    def _twelve(cls, v: list[float]) -> list[float]:
+        if len(v) != 12:
+            raise ValueError("rain_mm must have exactly 12 monthly values")
+        return v
+
+
+class ClimateNormalsFile(CamelModel):
+    normals: list[ClimateNormal]

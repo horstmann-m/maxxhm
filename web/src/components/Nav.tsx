@@ -11,8 +11,10 @@ const LINKS = [
   { href: "/weather", label: "Weather", icon: "weather" },
   { href: "/notes", label: "Notes", icon: "notes" },
   { href: "/tastings", label: "Tastings", icon: "tastings" },
+  { href: "/suppliers", label: "Suppliers", icon: "suppliers" },
   { href: "/watchlist", label: "Watchlist", icon: "watchlist" },
   { href: "/search", label: "Search", icon: "search" },
+  { href: "/manage", label: "Manage", icon: "manage" },
 ] as const;
 
 export function Nav() {

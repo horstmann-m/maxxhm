@@ -7,7 +7,18 @@
 //      switching the primary keys from "id" to "@id" for global id generation.
 
 import Dexie, { type Table } from "dexie";
-import type { Note, PriceEntry, Preferences, Tasting, WatchlistItem } from "./types";
+import type {
+  Note,
+  Origin,
+  PriceEntry,
+  PricePoint,
+  Preferences,
+  Region,
+  Sample,
+  Supplier,
+  Tasting,
+  WatchlistItem,
+} from "./types";
 
 export class CoffeeDB extends Dexie {
   notes!: Table<Note, string>;
@@ -15,6 +26,11 @@ export class CoffeeDB extends Dexie {
   watchlist!: Table<WatchlistItem, string>;
   preferences!: Table<Preferences, string>;
   prices!: Table<PriceEntry, string>;
+  priceHistory!: Table<PricePoint, string>;
+  suppliers!: Table<Supplier, string>;
+  samples!: Table<Sample, string>;
+  customOrigins!: Table<Origin, string>;
+  customRegions!: Table<Region, string>;
 
   constructor() {
     // --- CLOUD: const url = process.env.NEXT_PUBLIC_DEXIE_CLOUD_URL;
@@ -29,6 +45,18 @@ export class CoffeeDB extends Dexie {
     });
     // v2 (additive): manual price entry for the Phase 3 value factor
     this.version(2).stores({ prices: "id, kind" });
+    // v3 (additive): dated C-price history for the trend + threshold alert
+    this.version(3).stores({ priceHistory: "id, date" });
+    // v4 (additive): supplier scorecard
+    this.version(4).stores({
+      suppliers: "id, name, createdAt",
+      samples: "id, supplierId, status, createdAt",
+    });
+    // v5 (additive): user-added origins/regions (in-app editor)
+    this.version(5).stores({
+      customOrigins: "id, name",
+      customRegions: "id, originId",
+    });
     // --- CLOUD: if (url) this.cloud.configure({ databaseUrl: url, requireAuth: false });
   }
 }

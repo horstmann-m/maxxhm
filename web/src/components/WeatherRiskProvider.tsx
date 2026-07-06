@@ -4,9 +4,12 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { currentMonth } from "@/lib/season";
 import { loadRiskSnapshot } from "@/lib/weather";
 import type { RiskResult } from "@/lib/risk";
+import type { AnomalyResult, FrostResult } from "@/lib/market";
 
 interface RiskContext {
   byRegion: Map<string, RiskResult>;
+  frost: Map<string, FrostResult>;
+  anomaly: Map<string, AnomalyResult>;
   updatedAt: number | null;
   loading: boolean;
   error: string | null;
@@ -14,8 +17,12 @@ interface RiskContext {
 }
 
 const EMPTY = new Map<string, RiskResult>();
+const EMPTY_FROST = new Map<string, FrostResult>();
+const EMPTY_ANOM = new Map<string, AnomalyResult>();
 const Ctx = createContext<RiskContext>({
   byRegion: EMPTY,
+  frost: EMPTY_FROST,
+  anomaly: EMPTY_ANOM,
   updatedAt: null,
   loading: true,
   error: null,
@@ -28,6 +35,8 @@ export const useRisk = () => useContext(Ctx);
 // map's month scrubber. Fetched once, cached 6h in localStorage (see weather.ts).
 export function WeatherRiskProvider({ children }: { children: React.ReactNode }) {
   const [byRegion, setByRegion] = useState<Map<string, RiskResult>>(EMPTY);
+  const [frost, setFrost] = useState<Map<string, FrostResult>>(EMPTY_FROST);
+  const [anomaly, setAnomaly] = useState<Map<string, AnomalyResult>>(EMPTY_ANOM);
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +49,8 @@ export function WeatherRiskProvider({ children }: { children: React.ReactNode })
       .then((snap) => {
         if (!alive) return;
         setByRegion(snap.byRegion);
+        setFrost(snap.frost);
+        setAnomaly(snap.anomaly);
         setUpdatedAt(snap.updatedAt);
         setError(null);
         setLoading(false);
@@ -58,6 +69,8 @@ export function WeatherRiskProvider({ children }: { children: React.ReactNode })
     <Ctx.Provider
       value={{
         byRegion,
+        frost,
+        anomaly,
         updatedAt,
         loading,
         error,

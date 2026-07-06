@@ -24,6 +24,7 @@ export interface Origin {
   altitudeMinM: number;
   altitudeMaxM: number;
   character: string;
+  custom?: boolean; // user-added via the in-app editor
 }
 
 export interface Region {
@@ -38,7 +39,9 @@ export interface Region {
   processes: string[];
   flavorTags: string[];
   flavorNodes: string[]; // flavor-wheel node ids (for taste matching)
+  frostProne?: boolean; // evaluate frost alerts here
   harvest: HarvestWindow[];
+  custom?: boolean; // user-added via the in-app editor
 }
 
 export interface Varietal {
@@ -133,9 +136,43 @@ export interface Preferences {
 export interface PriceEntry {
   id: string;
   kind: "market" | "origin";
-  cPriceUscLb?: number; // market: ICE "C" / KC in US cents per lb
+  cPriceUscLb?: number; // market: ICE "C" / KC in US cents per lb (latest)
+  thresholdUscLb?: number; // market: alert me when the C-price drops below this
   differentialUscLb?: number; // origin: premium/discount vs the C-price
   targetFobUscLb?: number; // origin: the FOB you'd be happy to pay
   note?: string;
   at: number;
+}
+
+// A dated C-price observation (Phase 4). id === date (yyyy-mm-dd), one per day.
+export interface PricePoint {
+  id: string; // yyyy-mm-dd
+  date: string; // yyyy-mm-dd
+  cPriceUscLb: number;
+  createdAt: number;
+}
+
+// Supplier scorecard (Phase 4).
+export type SupplierType = "exporter" | "importer" | "producer" | "other";
+export interface Supplier {
+  id: string;
+  name: string;
+  type: SupplierType;
+  country?: string;
+  note?: string;
+  createdAt: number;
+}
+
+export type SampleStatus = "requested" | "received" | "cupped" | "approved" | "rejected";
+export interface Sample {
+  id: string;
+  supplierId: string;
+  name: string; // lot / offer label
+  date: string; // yyyy-mm-dd
+  status: SampleStatus;
+  cupScore?: number;
+  priceUscLb?: number;
+  originRef?: EntityRef | null; // link to an origin/region
+  note?: string;
+  createdAt: number;
 }

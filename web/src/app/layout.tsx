@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Fraunces } from "next/font/google";
 import "./globals.css";
+import { DataGate } from "@/components/DataGate";
 import { Nav } from "@/components/Nav";
 import { WeatherRiskProvider } from "@/components/WeatherRiskProvider";
 
@@ -35,10 +36,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col md:flex-row">
-        <WeatherRiskProvider>
-          <Nav />
-          <main className="flex-1 min-w-0">{children}</main>
-        </WeatherRiskProvider>
+        <DataGate>
+          <WeatherRiskProvider>
+            <Nav />
+            <main className="flex-1 min-w-0">{children}</main>
+          </WeatherRiskProvider>
+        </DataGate>
       </body>
     </html>
   );

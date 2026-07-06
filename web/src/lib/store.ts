@@ -8,8 +8,12 @@ import type {
   EntityRef,
   EntityType,
   Note,
+  Origin,
   PriceEntry,
   Preferences,
+  Region,
+  Sample,
+  Supplier,
   Tasting,
   WatchlistItem,
 } from "./types";
@@ -119,9 +123,79 @@ export async function deriveAffinitiesFromTastings(): Promise<number> {
 
 // ---- prices (Phase 3, manual entry) -----------------------------------------
 
-export async function setMarketPrice(cPriceUscLb: number): Promise<void> {
-  await getDb().prices.put({ id: "market", kind: "market", cPriceUscLb, at: Date.now() });
+const todayISO = () => new Date().toISOString().slice(0, 10);
+
+/** Log a dated C-price observation and refresh the "current" market price to the
+ *  most recent point. One entry per date (re-logging a date overwrites it). */
+export async function logCPrice(date: string, cPriceUscLb: number): Promise<void> {
+  const db = getDb();
+  await db.priceHistory.put({ id: date, date, cPriceUscLb, createdAt: Date.now() });
+  const latest = (await db.priceHistory.orderBy("date").reverse().first())?.cPriceUscLb;
+  const cur = await db.prices.get("market");
+  await db.prices.put({
+    ...cur,
+    id: "market",
+    kind: "market",
+    cPriceUscLb: latest ?? cPriceUscLb,
+    at: Date.now(),
+  });
 }
+
+/** Set today's C-price (also logs it to history). */
+export const setMarketPrice = (cPriceUscLb: number) => logCPrice(todayISO(), cPriceUscLb);
+
+/** Alert threshold: notify when the C-price drops below this. */
+export async function setPriceThreshold(thresholdUscLb: number | undefined): Promise<void> {
+  const db = getDb();
+  const cur = await db.prices.get("market");
+  await db.prices.put({ ...cur, id: "market", kind: "market", thresholdUscLb, at: Date.now() });
+}
+
+// ---- suppliers + samples (Phase 4) ------------------------------------------
+
+export async function createSupplier(
+  input: Pick<Supplier, "name" | "type" | "country" | "note">
+): Promise<string> {
+  const supplier: Supplier = { id: newId(), createdAt: Date.now(), ...input };
+  await getDb().suppliers.add(supplier);
+  return supplier.id;
+}
+
+export async function deleteSupplier(id: string): Promise<void> {
+  const db = getDb();
+  await db.transaction("rw", db.suppliers, db.samples, async () => {
+    await db.samples.where("supplierId").equals(id).delete();
+    await db.suppliers.delete(id);
+  });
+}
+
+export async function createSample(
+  input: Omit<Sample, "id" | "createdAt">
+): Promise<string> {
+  const sample: Sample = { id: newId(), createdAt: Date.now(), ...input };
+  await getDb().samples.add(sample);
+  return sample.id;
+}
+
+export const updateSample = (id: string, patch: Partial<Sample>) =>
+  getDb().samples.update(id, patch);
+
+export const deleteSample = (id: string) => getDb().samples.delete(id);
+
+// ---- custom origins/regions (in-app editor, Phase 4) ------------------------
+
+export const addCustomOrigin = (o: Origin) => getDb().customOrigins.put({ ...o, custom: true });
+export const addCustomRegion = (r: Region) => getDb().customRegions.put({ ...r, custom: true });
+
+export async function deleteCustomOrigin(id: string): Promise<void> {
+  const db = getDb();
+  await db.transaction("rw", db.customOrigins, db.customRegions, async () => {
+    await db.customRegions.where("originId").equals(id).delete();
+    await db.customOrigins.delete(id);
+  });
+}
+
+export const deleteCustomRegion = (id: string) => getDb().customRegions.delete(id);
 
 export async function setOriginPrice(
   originId: string,

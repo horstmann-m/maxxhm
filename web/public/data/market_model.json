@@ -1,0 +1,16 @@
+{
+  "frost": {
+    "fromDay": 0,
+    "toDay": 14,
+    "tminWatchC": 4.0,
+    "tminAlertC": 1.0
+  },
+  "anomaly": {
+    "fromDay": -6,
+    "toDay": 14,
+    "wetRatioWatch": 1.6,
+    "wetRatioAlert": 2.2,
+    "dryRatioWatch": 0.5,
+    "dryRatioAlert": 0.3
+  }
+}
