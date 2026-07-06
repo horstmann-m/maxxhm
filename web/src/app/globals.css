@@ -1,42 +1,49 @@
 @import "tailwindcss";
 
-/* ---- Coffee theme tokens ------------------------------------------------ */
+/* ---- Parchment theme tokens --------------------------------------------- */
 :root {
-  --background: #f6f1ea;
-  --surface: #ffffff;
-  --surface-2: #efe7db;
-  --foreground: #2a1d12;
-  --muted: #7a6a58;
-  --border: #e2d7c6;
-  --accent: #9a5b34; /* roasted copper */
-  --accent-fg: #ffffff;
-  --ring: #c98a5a;
+  --background: #f4efe4;   /* warm parchment */
+  --surface: #fcfaf5;
+  --surface-2: #ece4d6;
+  --foreground: #2a2016;   /* ink */
+  --muted: #857664;
+  --border: #e4dac8;
+  --accent: #a0562e;       /* roasted terracotta */
+  --accent-fg: #fdfbf6;
+  --ring: #c07b48;
+  --shadow-sm: 0 1px 2px rgba(42, 32, 22, 0.05);
+  --shadow: 0 1px 2px rgba(42, 32, 22, 0.04), 0 6px 20px rgba(42, 32, 22, 0.06);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #17110c;
-    --surface: #201811;
-    --surface-2: #2a2018;
-    --foreground: #f0e7db;
-    --muted: #a2917d;
-    --border: #362a20;
-    --accent: #c07a45;
-    --accent-fg: #1a120c;
-    --ring: #c07a45;
+    --background: #191309;
+    --surface: #221a10;
+    --surface-2: #2d2417;
+    --foreground: #efe6d5;
+    --muted: #a89a83;
+    --border: #392d1d;
+    --accent: #d18a52;
+    --accent-fg: #191309;
+    --ring: #d18a52;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4);
   }
 }
 
-/* Explicit theme override wins over the media query (for a future toggle). */
 :root[data-theme="light"] {
-  --background: #f6f1ea; --surface: #ffffff; --surface-2: #efe7db;
-  --foreground: #2a1d12; --muted: #7a6a58; --border: #e2d7c6;
-  --accent: #9a5b34; --accent-fg: #ffffff; --ring: #c98a5a;
+  --background: #f4efe4; --surface: #fcfaf5; --surface-2: #ece4d6;
+  --foreground: #2a2016; --muted: #857664; --border: #e4dac8;
+  --accent: #a0562e; --accent-fg: #fdfbf6; --ring: #c07b48;
+  --shadow-sm: 0 1px 2px rgba(42, 32, 22, 0.05);
+  --shadow: 0 1px 2px rgba(42, 32, 22, 0.04), 0 6px 20px rgba(42, 32, 22, 0.06);
 }
 :root[data-theme="dark"] {
-  --background: #17110c; --surface: #201811; --surface-2: #2a2018;
-  --foreground: #f0e7db; --muted: #a2917d; --border: #362a20;
-  --accent: #c07a45; --accent-fg: #1a120c; --ring: #c07a45;
+  --background: #191309; --surface: #221a10; --surface-2: #2d2417;
+  --foreground: #efe6d5; --muted: #a89a83; --border: #392d1d;
+  --accent: #d18a52; --accent-fg: #191309; --ring: #d18a52;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 @theme inline {
@@ -51,15 +58,65 @@
   --color-ring: var(--ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Thin, on-brand scrollbars for the calendar/table scroll containers. */
+/* Serif display type for headings + wordmark. */
+.font-display {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+}
+
+/* Small uppercase eyebrow label above page titles. */
+.eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ---- reusable component primitives -------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid transparent;
+  transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+  cursor: pointer;
+}
+.btn-primary { background: var(--accent); color: var(--accent-fg); }
+.btn-primary:hover { opacity: 0.9; }
+.btn-ghost { border-color: var(--border); color: var(--foreground); }
+.btn-ghost:hover { background: var(--surface-2); }
+
+/* Visible keyboard focus everywhere. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Thin, on-brand scrollbars for horizontal scroll containers. */
 .scroll-x {
   overflow-x: auto;
   scrollbar-width: thin;

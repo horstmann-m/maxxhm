@@ -3,6 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { useEffect, useMemo, useState } from "react";
 import { NoteEditor } from "@/components/NoteEditor";
+import { PageHeader } from "@/components/PageHeader";
 import { resolveRef } from "@/lib/reference";
 import { getDb } from "@/lib/db";
 
@@ -41,21 +42,16 @@ export default function NotesPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-[1200px] mx-auto">
-      <header className="mb-5 flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Notes</h1>
-          <p className="text-muted mt-1">
-            Your second brain. Write in markdown, tag freely, and link notes to
-            origins and regions — links surface as backlinks on each profile.
-          </p>
-        </div>
-        <button
-          onClick={() => setSelectedId("new")}
-          className="shrink-0 px-4 py-2 rounded-lg bg-accent text-accent-fg text-sm font-medium hover:opacity-90"
-        >
-          + New note
-        </button>
-      </header>
+      <PageHeader
+        eyebrow="Second brain"
+        title="Notes"
+        subtitle="Write in markdown, tag freely, and link notes to origins and regions — links surface as backlinks on each profile."
+        actions={
+          <button onClick={() => setSelectedId("new")} className="btn btn-primary">
+            + New note
+          </button>
+        }
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-[300px_minmax(0,1fr)] gap-6 items-start">
         <div className="space-y-3">

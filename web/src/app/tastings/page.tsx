@@ -4,6 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
 import { CuppingForm } from "@/components/CuppingForm";
 import { MarkdownView } from "@/components/MarkdownView";
+import { PageHeader } from "@/components/PageHeader";
 import { getDb } from "@/lib/db";
 import { deleteTasting } from "@/lib/store";
 import { flavorNodeMap, resolveRef } from "@/lib/reference";
@@ -17,15 +18,11 @@ export default function TastingsPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-[1200px] mx-auto">
-      <header className="mb-5">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-          Tasting journal
-        </h1>
-        <p className="text-muted mt-1 max-w-2xl">
-          Score cups on the SCA form, tag flavours from the wheel, and link each to
-          its origin. Scores show up as backlinks on the origin profile.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Second brain"
+        title="Tasting journal"
+        subtitle="Score cups on the SCA form, tag flavours from the wheel, and link each to its origin. Scores show up as backlinks on the origin profile."
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
         <div className="space-y-3">

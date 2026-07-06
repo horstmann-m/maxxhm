@@ -3,6 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { PageHeader } from "@/components/PageHeader";
 import { getDb } from "@/lib/db";
 import {
   getOrigin,
@@ -76,12 +77,11 @@ export default function SearchPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-[800px] mx-auto">
-      <header className="mb-5">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Search</h1>
-        <p className="text-muted mt-1">
-          Across the knowledge base and your own notes and tastings.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Find"
+        title="Search"
+        subtitle="Across the knowledge base and your own notes and tastings."
+      />
 
       <input
         autoFocus

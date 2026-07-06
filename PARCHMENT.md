@@ -1,4 +1,4 @@
-# ☕ Roastmap — Coffee Sourcing Intelligence
+# ☕ Parchment — Coffee Sourcing Intelligence
 
 A second brain for green coffee that doubles as a purchasing-intelligence platform
 for a semi-pro green buyer. Understand every origin, see the global harvest clock

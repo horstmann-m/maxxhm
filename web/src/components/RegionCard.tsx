@@ -62,13 +62,10 @@ export function RegionCard({ region }: { region: Region }) {
   const { byRegion } = useRisk();
   const risk = byRegion.get(region.id);
   return (
-    <section
-      id={region.id}
-      className="scroll-mt-20 rounded-xl border border-border bg-surface p-4"
-    >
+    <section id={region.id} className="scroll-mt-20 card p-4">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
-          <h3 className="text-lg font-semibold">{region.name}</h3>
+          <h3 className="font-display text-xl font-semibold">{region.name}</h3>
           <p className="text-xs text-muted">
             {region.altitudeMinM.toLocaleString()}–
             {region.altitudeMaxM.toLocaleString()} m · {region.lat.toFixed(2)},{" "}

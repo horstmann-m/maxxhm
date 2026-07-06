@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { InSeasonPanel } from "@/components/InSeasonPanel";
 import { MonthScrubber } from "@/components/MonthScrubber";
+import { PageHeader } from "@/components/PageHeader";
 import { SeasonLegend } from "@/components/SeasonLegend";
 import { WorldMap } from "@/components/WorldMap";
 import { useRisk } from "@/components/WeatherRiskProvider";
@@ -47,18 +48,19 @@ export default function Home() {
 
   return (
     <div className="p-4 md:p-8 max-w-[1400px] mx-auto">
-      <header className="mb-5">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-          The global coffee clock
-        </h1>
-        <p className="text-muted mt-1 max-w-2xl">
-          {origins.length} origins · {regions.length} regions. Each dot is an origin,
-          coloured by the most advanced stage across its regions for{" "}
-          <span className="text-foreground font-medium">{MONTHS[month - 1]}</span>
-          {isNow && <span className="text-muted"> (this month)</span>}. A ring flags a
-          live weather-quality risk. Click an origin to open it.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Seasonality map"
+        title="The global coffee clock"
+        subtitle={
+          <>
+            {origins.length} origins · {regions.length} regions. Each dot is an origin,
+            coloured by the most advanced stage across its regions for{" "}
+            <span className="text-foreground font-medium">{MONTHS[month - 1]}</span>
+            {isNow && <span className="text-muted"> (this month)</span>}. A ring flags a
+            live weather-quality risk. Click an origin to open it.
+          </>
+        }
+      />
 
       <div className="flex flex-col gap-3 mb-4">
         <MonthScrubber month={month} onChange={setMonth} />
@@ -70,8 +72,8 @@ export default function Home() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
         <WorldMap month={month} showRisk={showRisk} />
-        <aside className="bg-surface border border-border rounded-xl p-4">
-          <h2 className="text-lg font-semibold mb-1">
+        <aside className="card p-4">
+          <h2 className="font-display text-xl font-semibold mb-1">
             In season · {MONTHS[month - 1]}
           </h2>
           <p className="text-xs text-muted mb-4">

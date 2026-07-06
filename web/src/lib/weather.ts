@@ -8,7 +8,7 @@ import { evaluateRegion, regionFocusStage, type DailySeries, type RiskResult } f
 const ENDPOINT = "https://api.open-meteo.com/v1/forecast";
 const PAST_DAYS = 30;
 const FORECAST_DAYS = 16;
-const CACHE_KEY = "roastmap.weather.v1";
+const CACHE_KEY = "parchment.weather.v1";
 const TTL_MS = 6 * 60 * 60 * 1000;
 
 interface RawDaily {

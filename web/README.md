@@ -1,6 +1,6 @@
-# Roastmap — web app
+# Parchment — web app
 
-The Next.js front end for Roastmap. See [`../ROASTMAP.md`](../ROASTMAP.md) for the
+The Next.js front end for Parchment. See [`../PARCHMENT.md`](../PARCHMENT.md) for the
 full project overview, architecture, and the Python knowledge pipeline.
 
 ```bash

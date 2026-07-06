@@ -3,6 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { PageHeader } from "@/components/PageHeader";
 import { useRisk } from "@/components/WeatherRiskProvider";
 import { getDb } from "@/lib/db";
 import { getOrigin, regions } from "@/lib/reference";
@@ -38,21 +39,53 @@ function FactorBars({ factors }: { factors: Factor[] }) {
   );
 }
 
+function ScoreGauge({ score, color }: { score: number; color: string }) {
+  const r = 24;
+  const circ = 2 * Math.PI * r;
+  const off = circ * (1 - Math.max(0, Math.min(100, score)) / 100);
+  return (
+    <svg width="58" height="58" viewBox="0 0 58 58" aria-hidden>
+      <circle cx="29" cy="29" r={r} fill="none" stroke="var(--surface-2)" strokeWidth="5" />
+      <circle
+        cx="29"
+        cy="29"
+        r={r}
+        fill="none"
+        stroke={color}
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeDasharray={circ}
+        strokeDashoffset={off}
+        transform="rotate(-90 29 29)"
+      />
+      <text
+        x="29"
+        y="34"
+        textAnchor="middle"
+        fontSize="18"
+        fontWeight="700"
+        fill={color}
+        className="tabular-nums"
+      >
+        {score}
+      </text>
+    </svg>
+  );
+}
+
 function Card({ rank, rec }: { rank: number; rec: RegionScore }) {
   const region = regions.find((r) => r.id === rec.regionId)!;
   const origin = getOrigin(region.originId);
   const band = scoreBand(rec.score);
   return (
-    <li className="rounded-xl border border-border bg-surface p-4">
+    <li className="card p-4">
       <div className="flex items-start gap-4">
-        <div className="text-center shrink-0 w-14">
-          <div className="text-3xl font-bold tabular-nums" style={{ color: band.color }}>
-            {rec.score}
-          </div>
-          <div className="text-[10px] font-medium" style={{ color: band.color }}>
+        <div className="text-center shrink-0">
+          <ScoreGauge score={rec.score} color={band.color} />
+          <div className="text-[10px] font-medium mt-0.5" style={{ color: band.color }}>
             {band.label}
           </div>
-          <div className="text-[10px] text-muted mt-0.5">#{rank}</div>
+          <div className="text-[10px] text-muted">#{rank}</div>
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">
@@ -137,23 +170,17 @@ export default function RecommendPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-[900px] mx-auto">
-      <header className="mb-4 flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Buy now</h1>
-          <p className="text-muted mt-1 max-w-2xl">
-            Every region ranked by freshness, your taste, weather and value — the
-            synthesis of everything in your second brain.
-          </p>
-        </div>
-        <div className="flex gap-2 text-sm">
-          <Link href="/preferences" className="px-3 py-1.5 rounded-lg border border-border hover:bg-surface-2">
-            Taste
-          </Link>
-          <Link href="/prices" className="px-3 py-1.5 rounded-lg border border-border hover:bg-surface-2">
-            Prices
-          </Link>
-        </div>
-      </header>
+      <PageHeader
+        eyebrow="Recommendations"
+        title="Buy now"
+        subtitle="Every region ranked by freshness, your taste, weather and value — the synthesis of everything in your second brain."
+        actions={
+          <>
+            <Link href="/preferences" className="btn btn-ghost">Taste</Link>
+            <Link href="/prices" className="btn btn-ghost">Prices</Link>
+          </>
+        }
+      />
 
       {(!hasPrefs || !hasPrices) && (
         <div className="rounded-xl border border-dashed border-border p-4 text-sm text-muted mb-4">

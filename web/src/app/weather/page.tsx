@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
+import { PageHeader } from "@/components/PageHeader";
 import { RiskDetail } from "@/components/RiskBadge";
 import { useRisk } from "@/components/WeatherRiskProvider";
 import { getOrigin, getRegion, regions } from "@/lib/reference";
@@ -70,23 +71,16 @@ export default function WeatherPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-[900px] mx-auto">
-      <header className="mb-5 flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-            Weather alerts
-          </h1>
-          <p className="text-muted mt-1 max-w-2xl">
-            Live quality risk for every region in a weather-sensitive stage right now,
-            from Open-Meteo forecasts compared against each stage&apos;s ideal climate.
-          </p>
-        </div>
-        <button
-          onClick={refresh}
-          className="shrink-0 px-3 py-1.5 rounded-lg text-sm border border-border hover:bg-surface-2"
-        >
-          ↻ Refresh
-        </button>
-      </header>
+      <PageHeader
+        eyebrow="Weather"
+        title="Weather alerts"
+        subtitle="Live quality risk for every region in a weather-sensitive stage right now, from Open-Meteo forecasts compared against each stage's ideal climate."
+        actions={
+          <button onClick={refresh} className="btn btn-ghost">
+            ↻ Refresh
+          </button>
+        }
+      />
 
       {error && (
         <div className="rounded-xl border border-border bg-surface p-4 text-sm text-muted mb-4">

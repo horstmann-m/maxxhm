@@ -38,7 +38,8 @@ export default function OriginPage({
 
       <header className="mt-3 mb-6 flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-2">
+          <div className="eyebrow mb-1.5">Origin profile</div>
+          <h1 className="font-display text-3xl md:text-4xl font-semibold flex items-center gap-2.5">
             <span aria-hidden>{flag(origin.code)}</span>
             {origin.name}
           </h1>
@@ -63,8 +64,8 @@ export default function OriginPage({
           ))}
         </div>
 
-        <aside className="lg:sticky lg:top-6 rounded-xl border border-border bg-surface p-4">
-          <h2 className="text-lg font-semibold mb-3">Your brain on {origin.name}</h2>
+        <aside className="lg:sticky lg:top-6 card p-4">
+          <h2 className="font-display text-xl font-semibold mb-3">Your brain on {origin.name}</h2>
           <EntityBacklinks refs={refs} />
         </aside>
       </div>

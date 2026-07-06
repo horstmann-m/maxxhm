@@ -3,6 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
 import { useState } from "react";
+import { PageHeader } from "@/components/PageHeader";
 import { getDb } from "@/lib/db";
 import { flavorWheel } from "@/lib/reference";
 import { deriveAffinitiesFromTastings, setAffinity } from "@/lib/store";
@@ -62,18 +63,22 @@ export default function PreferencesPage() {
       <Link href="/recommend" className="text-sm text-muted hover:text-accent">
         ← Buy now
       </Link>
-      <header className="mt-3 mb-5">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Taste preferences</h1>
-        <p className="text-muted mt-1 max-w-2xl">
-          Rate flavour notes to teach the buy recommendations what you love. {setCount} note
-          {setCount !== 1 && "s"} rated.
-        </p>
-      </header>
+      <PageHeader
+        className="mt-3"
+        eyebrow="Your palate"
+        title="Taste preferences"
+        subtitle={
+          <>
+            Rate flavour notes to teach the buy recommendations what you love. {setCount} note
+            {setCount !== 1 && "s"} rated.
+          </>
+        }
+      />
 
       <div className="flex items-center gap-3 mb-5">
         <button
           onClick={async () => setLearned(await deriveAffinitiesFromTastings())}
-          className="px-4 py-2 rounded-lg bg-accent text-accent-fg text-sm font-medium hover:opacity-90"
+          className="btn btn-primary"
         >
           Learn from my tastings
         </button>

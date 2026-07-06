@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
+import { PageHeader } from "@/components/PageHeader";
 import { getDb } from "@/lib/db";
 import { removeWatch } from "@/lib/store";
 import { getRegion, resolveRef } from "@/lib/reference";
@@ -16,13 +17,11 @@ export default function WatchlistPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-[900px] mx-auto">
-      <header className="mb-5">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Watchlist</h1>
-        <p className="text-muted mt-1 max-w-2xl">
-          Origins and regions you&apos;re tracking to buy. Each shows where it sits in
-          the season right now — watch for the buying window to open.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Tracking"
+        title="Watchlist"
+        subtitle="Origins and regions you're tracking to buy. Each shows where it sits in the season right now — watch for the buying window to open."
+      />
 
       {items && items.length === 0 && (
         <div className="rounded-xl border border-dashed border-border p-10 text-center text-muted">

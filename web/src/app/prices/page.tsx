@@ -3,6 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import Link from "next/link";
 import { useState } from "react";
+import { PageHeader } from "@/components/PageHeader";
 import { getDb } from "@/lib/db";
 import { origins } from "@/lib/reference";
 import { setMarketPrice, setOriginPrice } from "@/lib/store";
@@ -97,17 +98,21 @@ export default function PricesPage() {
       <Link href="/recommend" className="text-sm text-muted hover:text-accent">
         ← Buy now
       </Link>
-      <header className="mt-3 mb-5">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Prices</h1>
-        <p className="text-muted mt-1 max-w-2xl">
-          Enter today&apos;s market and your differentials to power the value factor in
-          recommendations. Estimated FOB = C-price + differential.
-        </p>
-        <p className="text-xs text-muted mt-2">
-          Manual entry for now — live ICE/KC futures need a licensed feed, which can be
-          wired in later without changing the rest of the app.
-        </p>
-      </header>
+      <PageHeader
+        className="mt-3"
+        eyebrow="Value"
+        title="Prices"
+        subtitle={
+          <>
+            Enter today&apos;s market and your differentials to power the value factor in
+            recommendations. Estimated FOB = C-price + differential.
+            <span className="block text-xs mt-2">
+              Manual entry for now — live ICE/KC futures need a licensed feed, which can be
+              wired in later without changing the rest of the app.
+            </span>
+          </>
+        }
+      />
 
       <div className="rounded-xl border border-border bg-surface p-4 mb-5">
         <MarketInput entry={market} />
