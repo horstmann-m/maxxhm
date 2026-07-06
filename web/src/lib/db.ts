@@ -7,6 +7,7 @@
 //      switching the primary keys from "id" to "@id" for global id generation.
 
 import Dexie, { type Table } from "dexie";
+import dexieCloud from "dexie-cloud-addon";
 import type {
   Note,
   Origin,
@@ -19,6 +20,9 @@ import type {
   Tasting,
   WatchlistItem,
 } from "./types";
+
+const CLOUD_URL = process.env.NEXT_PUBLIC_DEXIE_CLOUD_URL;
+export const cloudEnabled = !!CLOUD_URL;
 
 export class CoffeeDB extends Dexie {
   notes!: Table<Note, string>;
@@ -33,9 +37,9 @@ export class CoffeeDB extends Dexie {
   customRegions!: Table<Region, string>;
 
   constructor() {
-    // --- CLOUD: const url = process.env.NEXT_PUBLIC_DEXIE_CLOUD_URL;
-    //     super("coffee-second-brain", { addons: url ? [dexieCloud] : [] });
-    super("coffee-second-brain");
+    // Dexie Cloud is opt-in: set NEXT_PUBLIC_DEXIE_CLOUD_URL (from
+    // `npx dexie-cloud create`) and the addon syncs all tables to your account.
+    super("coffee-second-brain", CLOUD_URL ? { addons: [dexieCloud] } : {});
     this.version(1).stores({
       // multi-entry indexes (*) on tags/links power tag filters and backlinks
       notes: "id, updatedAt, *tags, *links",
@@ -57,7 +61,12 @@ export class CoffeeDB extends Dexie {
       customOrigins: "id, name",
       customRegions: "id, originId",
     });
-    // --- CLOUD: if (url) this.cloud.configure({ databaseUrl: url, requireAuth: false });
+    if (CLOUD_URL) {
+      this.cloud.configure({
+        databaseUrl: CLOUD_URL,
+        requireAuth: false, // works offline; sign in from the Sync panel to sync
+      });
+    }
   }
 }
 
@@ -69,7 +78,19 @@ export function getDb(): CoffeeDB {
   if (typeof window === "undefined") {
     throw new Error("getDb() must be called in the browser");
   }
-  if (!_db) _db = new CoffeeDB();
+  if (!_db) {
+    _db = new CoffeeDB();
+    // If another tab holds an older schema version, an upgrade would block and
+    // writes would hang forever. Reload so every tab converges on the new schema.
+    _db.on("versionchange", () => {
+      _db?.close();
+      if (typeof location !== "undefined") location.reload();
+    });
+    _db.on("blocked", () => {
+      console.warn("Parchment DB upgrade is blocked by another open tab — close it.");
+    });
+    _db.open().catch((e) => console.error("Parchment DB failed to open:", e));
+  }
   return _db;
 }
 

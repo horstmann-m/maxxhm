@@ -111,6 +111,7 @@ export interface Tasting {
   name: string; // free label, e.g. "Konga washed, 2024 crop"
   date: string; // ISO yyyy-mm-dd
   scores: CuppingScores;
+  defects?: number; // SCA defect deduction (taints×2 + faults×4)
   totalScore: number;
   descriptors: string[]; // flavor-wheel node ids
   notes: string; // markdown

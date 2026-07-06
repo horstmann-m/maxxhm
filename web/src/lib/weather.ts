@@ -99,6 +99,7 @@ export interface RiskSnapshot {
   byRegion: Map<string, RiskResult>;
   frost: Map<string, FrostResult>;
   anomaly: Map<string, AnomalyResult>;
+  series: Record<string, DailySeries>; // raw daily weather per region (for charts)
   updatedAt: number;
 }
 
@@ -115,5 +116,5 @@ export async function loadRiskSnapshot(month: number, force = false): Promise<Ri
     frost.set(r.id, evaluateFrost(r.id, !!r.frostProne, s));
     anomaly.set(r.id, evaluateAnomaly(r.id, r.originId, s));
   }
-  return { byRegion, frost, anomaly, updatedAt: Date.now() };
+  return { byRegion, frost, anomaly, series, updatedAt: Date.now() };
 }

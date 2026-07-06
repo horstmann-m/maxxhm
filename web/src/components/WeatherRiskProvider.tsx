@@ -3,13 +3,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { currentMonth } from "@/lib/season";
 import { loadRiskSnapshot } from "@/lib/weather";
-import type { RiskResult } from "@/lib/risk";
+import type { DailySeries, RiskResult } from "@/lib/risk";
 import type { AnomalyResult, FrostResult } from "@/lib/market";
 
 interface RiskContext {
   byRegion: Map<string, RiskResult>;
   frost: Map<string, FrostResult>;
   anomaly: Map<string, AnomalyResult>;
+  series: Record<string, DailySeries>;
   updatedAt: number | null;
   loading: boolean;
   error: string | null;
@@ -19,10 +20,12 @@ interface RiskContext {
 const EMPTY = new Map<string, RiskResult>();
 const EMPTY_FROST = new Map<string, FrostResult>();
 const EMPTY_ANOM = new Map<string, AnomalyResult>();
+const EMPTY_SERIES: Record<string, DailySeries> = {};
 const Ctx = createContext<RiskContext>({
   byRegion: EMPTY,
   frost: EMPTY_FROST,
   anomaly: EMPTY_ANOM,
+  series: EMPTY_SERIES,
   updatedAt: null,
   loading: true,
   error: null,
@@ -37,6 +40,7 @@ export function WeatherRiskProvider({ children }: { children: React.ReactNode })
   const [byRegion, setByRegion] = useState<Map<string, RiskResult>>(EMPTY);
   const [frost, setFrost] = useState<Map<string, FrostResult>>(EMPTY_FROST);
   const [anomaly, setAnomaly] = useState<Map<string, AnomalyResult>>(EMPTY_ANOM);
+  const [series, setSeries] = useState<Record<string, DailySeries>>(EMPTY_SERIES);
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,6 +55,7 @@ export function WeatherRiskProvider({ children }: { children: React.ReactNode })
         setByRegion(snap.byRegion);
         setFrost(snap.frost);
         setAnomaly(snap.anomaly);
+        setSeries(snap.series);
         setUpdatedAt(snap.updatedAt);
         setError(null);
         setLoading(false);
@@ -71,6 +76,7 @@ export function WeatherRiskProvider({ children }: { children: React.ReactNode })
         byRegion,
         frost,
         anomaly,
+        series,
         updatedAt,
         loading,
         error,

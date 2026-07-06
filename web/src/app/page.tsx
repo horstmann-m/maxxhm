@@ -2,48 +2,28 @@
 
 import { useState } from "react";
 import { InSeasonPanel } from "@/components/InSeasonPanel";
+import { LeafletMap } from "@/components/LeafletMap";
 import { MonthScrubber } from "@/components/MonthScrubber";
 import { PageHeader } from "@/components/PageHeader";
 import { SeasonLegend } from "@/components/SeasonLegend";
-import { WorldMap } from "@/components/WorldMap";
 import { useRisk } from "@/components/WeatherRiskProvider";
 import { MONTHS, currentMonth } from "@/lib/season";
 import { origins, regions } from "@/lib/reference";
 
-function WeatherToggle({
-  showRisk,
-  onToggle,
-}: {
-  showRisk: boolean;
-  onToggle: () => void;
-}) {
+function WeatherStatus() {
   const { loading, error, updatedAt } = useRisk();
   const status = error
     ? "weather unavailable"
     : loading
       ? "loading weather…"
       : updatedAt
-        ? `updated ${new Date(updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+        ? `weather updated ${new Date(updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
         : "";
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-muted">{status}</span>
-      <button
-        onClick={onToggle}
-        aria-pressed={showRisk}
-        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-          showRisk ? "bg-accent text-accent-fg border-accent" : "border-border hover:bg-surface-2"
-        }`}
-      >
-        🌦️ Weather risk {showRisk ? "on" : "off"}
-      </button>
-    </div>
-  );
+  return <span className="text-xs text-muted">{status}</span>;
 }
 
 export default function Home() {
   const [month, setMonth] = useState(currentMonth());
-  const [showRisk, setShowRisk] = useState(true);
   const isNow = month === currentMonth();
 
   return (
@@ -53,11 +33,11 @@ export default function Home() {
         title="The global coffee clock"
         subtitle={
           <>
-            {origins.length} origins · {regions.length} regions. Each dot is an origin,
-            coloured by the most advanced stage across its regions for{" "}
+            {origins.length} origins · {regions.length} regions. Pan and zoom the map; each
+            dot is an origin coloured by its stage for{" "}
             <span className="text-foreground font-medium">{MONTHS[month - 1]}</span>
-            {isNow && <span className="text-muted"> (this month)</span>}. A ring flags a
-            live weather-quality risk. Click an origin to open it.
+            {isNow && <span className="text-muted"> (this month)</span>}. A ring flags a live
+            weather-quality risk. Toggle the precipitation and temperature radar top-right.
           </>
         }
       />
@@ -66,12 +46,12 @@ export default function Home() {
         <MonthScrubber month={month} onChange={setMonth} />
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <SeasonLegend />
-          <WeatherToggle showRisk={showRisk} onToggle={() => setShowRisk((v) => !v)} />
+          <WeatherStatus />
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
-        <WorldMap month={month} showRisk={showRisk} />
+        <LeafletMap month={month} />
         <aside className="card p-4">
           <h2 className="font-display text-xl font-semibold mb-1">
             In season · {MONTHS[month - 1]}

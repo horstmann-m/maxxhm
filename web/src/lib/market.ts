@@ -24,6 +24,9 @@ interface AnomalyConfig {
 export const marketModel = marketModelJson as { frost: FrostConfig; anomaly: AnomalyConfig };
 const normals = climateNormalsJson as Record<string, number[]>; // originId -> 12 monthly mm
 
+/** 12 monthly mean rainfall (mm) for an origin, or null if no baseline. */
+export const originNormals = (originId: string): number[] | null => normals[originId] ?? null;
+
 export interface FrostResult {
   regionId: string;
   level: RiskLevel;

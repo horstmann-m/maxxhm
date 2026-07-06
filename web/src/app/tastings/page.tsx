@@ -24,8 +24,8 @@ export default function TastingsPage() {
         subtitle="Score cups on the SCA form, tag flavours from the wheel, and link each to its origin. Scores show up as backlinks on the origin profile."
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
-        <div className="space-y-3">
+      <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6 items-start">
+        <div className="space-y-3 lg:order-1 order-2">
           {tastings && tastings.length === 0 && (
             <p className="text-sm text-muted">No cuppings yet — score your first one.</p>
           )}
@@ -109,7 +109,7 @@ export default function TastingsPage() {
           })}
         </div>
 
-        <div className="lg:sticky lg:top-6">
+        <div className="lg:sticky lg:top-6 order-1 lg:order-2">
           <CuppingForm onSaved={() => {}} />
         </div>
       </div>

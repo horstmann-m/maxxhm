@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { RiskBadge, RiskDetail } from "@/components/RiskBadge";
 import { WatchButton } from "@/components/WatchButton";
+import { WeatherDetailChart } from "@/components/WeatherDetailChart";
 import { useRisk } from "@/components/WeatherRiskProvider";
 import { RISK_META } from "@/lib/risk";
 import { getProcess, getVarietal } from "@/lib/reference";
@@ -66,6 +68,7 @@ export function RegionCard({ region }: { region: Region }) {
   const anomalyHit = anomaly.get(region.id);
   const showFrost = frostHit && frostHit.level !== "ok";
   const showAnomaly = anomalyHit && anomalyHit.level !== "ok" && anomalyHit.kind !== "none";
+  const [showClimate, setShowClimate] = useState(false);
   return (
     <section id={region.id} className="scroll-mt-20 card p-4">
       <div className="flex items-start justify-between gap-3 mb-3">
@@ -135,9 +138,21 @@ export function RegionCard({ region }: { region: Region }) {
         </Field>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 flex items-center gap-3">
         <WatchButton entityType="region" entityId={region.id} />
+        <button
+          onClick={() => setShowClimate((v) => !v)}
+          className="text-xs text-accent hover:underline"
+        >
+          {showClimate ? "Hide climate detail" : "Climate detail"}
+        </button>
       </div>
+
+      {showClimate && (
+        <div className="mt-3 border-t border-border pt-3">
+          <WeatherDetailChart regionId={region.id} originId={region.originId} />
+        </div>
+      )}
     </section>
   );
 }

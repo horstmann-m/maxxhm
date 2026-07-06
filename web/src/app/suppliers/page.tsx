@@ -22,6 +22,19 @@ function AddSupplier() {
   const [name, setName] = useState("");
   const [type, setType] = useState<SupplierType>("exporter");
   const [country, setCountry] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  async function submit() {
+    if (!name.trim()) {
+      setError("Give the supplier a name.");
+      return;
+    }
+    try {
+      await createSupplier({ name: name.trim(), type, country: country.trim() || undefined });
+      setName(""); setCountry(""); setError(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  }
   return (
     <div className="card p-4 flex flex-wrap items-end gap-2">
       <label className="text-xs text-muted">
@@ -41,16 +54,10 @@ function AddSupplier() {
         <input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="optional"
           className="block mt-1 w-28 text-sm rounded-lg border border-border bg-background px-2 py-1.5" />
       </label>
-      <button
-        onClick={() => {
-          if (!name.trim()) return;
-          createSupplier({ name: name.trim(), type, country: country.trim() || undefined });
-          setName(""); setCountry("");
-        }}
-        className="btn btn-primary"
-      >
+      <button onClick={submit} className="btn btn-primary">
         + Add supplier
       </button>
+      {error && <p className="w-full text-sm text-red-600">Couldn&apos;t add: {error}</p>}
     </div>
   );
 }

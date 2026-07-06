@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CloudSync } from "@/components/CloudSync";
 import { Logo, NavIcon } from "@/components/icons";
 
 const LINKS = [
@@ -23,7 +24,7 @@ export function Nav() {
     exact ? pathname === href : pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <nav className="md:w-60 md:min-h-screen border-b md:border-b-0 md:border-r border-border bg-surface md:sticky md:top-0 md:h-screen shrink-0">
+    <nav className="md:w-60 md:min-h-screen border-b md:border-b-0 md:border-r border-border bg-surface md:sticky md:top-0 md:h-screen shrink-0 md:flex md:flex-col">
       <div className="px-5 pt-5 pb-3 flex md:block items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <span className="text-accent">
@@ -59,6 +60,9 @@ export function Nav() {
           );
         })}
       </ul>
+      <div className="hidden md:block mt-auto p-3 border-t border-border">
+        <CloudSync />
+      </div>
     </nav>
   );
 }

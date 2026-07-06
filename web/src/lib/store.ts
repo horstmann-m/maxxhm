@@ -43,11 +43,12 @@ export const deleteNote = (id: string) => getDb().notes.delete(id);
 export async function createTasting(
   input: Omit<Tasting, "id" | "createdAt" | "totalScore">
 ): Promise<string> {
+  const gross = totalScore(input.scores);
   const tasting: Tasting = {
     ...input,
     id: newId(),
     createdAt: Date.now(),
-    totalScore: totalScore(input.scores),
+    totalScore: Math.round((gross - (input.defects ?? 0)) * 100) / 100,
   };
   await getDb().tastings.add(tasting);
   return tasting.id;

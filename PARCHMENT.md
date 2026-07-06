@@ -122,19 +122,35 @@ PYTHONPATH=. python -m weather.backtest yirgacheffe --stage drying \
   --fixture weather/fixtures/rainy_drying.json
 ```
 
-## Enabling sync (Dexie Cloud) — optional
+## Optional integrations (env vars)
 
-Phase 1 is local-only. To sync your notes/tastings across devices:
+The app is fully local-first; these unlock extras when set.
+
+### Dexie Cloud sync (multi-device)
+
+`dexie-cloud-addon` is wired in. Just provide a database and the app syncs every
+table to your account; a **Sign in to sync** control appears in the nav footer.
 
 ```bash
 cd web
-npx dexie-cloud create          # gives you a databaseUrl
-npm install dexie-cloud-addon
-echo "NEXT_PUBLIC_DEXIE_CLOUD_URL=<url>" >> .env.local
+npx dexie-cloud create              # creates a DB, prints its databaseUrl
+echo "NEXT_PUBLIC_DEXIE_CLOUD_URL=<databaseUrl>" >> .env.local   # + set it in Vercel
+npm run dev
 ```
 
-Then follow the `--- CLOUD:` markers in `web/src/lib/db.ts` (pass the addon to Dexie,
-switch primary keys from `id` to `@id`).
+Sign in from the nav footer (email one-time code). Without the var, the app stays
+purely local — no behaviour change.
+
+### Temperature radar (map)
+
+The map's **Precip** layer uses free RainViewer radar (no key). The **Temp** layer
+uses OpenWeatherMap tiles, which need a free key:
+
+```bash
+echo "NEXT_PUBLIC_OWM_API_KEY=<key>" >> .env.local   # + set it in Vercel
+```
+
+Without it, the Temp toggle shows a hint and markers stay coloured by season.
 
 ## Roadmap
 
