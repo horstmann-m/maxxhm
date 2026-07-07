@@ -1,13 +1,18 @@
 "use client";
 
 import { useObservable } from "dexie-react-hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cloudEnabled, getDb } from "@/lib/db";
 
 // Dexie Cloud sign-in + status. Renders nothing unless NEXT_PUBLIC_DEXIE_CLOUD_URL
-// is set. Handles the addon's email → one-time-code interaction inline.
+// is set. Gated on a client-mounted flag so getDb() (browser-only) is never called
+// during server-side pre-rendering. Handles the addon's email → OTP flow inline.
 export function CloudSync() {
-  if (!cloudEnabled) return null;
+  const [mounted, setMounted] = useState(false);
+  // Client-only mount gate so getDb() (browser-only) never runs during SSR/prerender.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+  if (!cloudEnabled || !mounted) return null;
   return <CloudSyncInner />;
 }
 
