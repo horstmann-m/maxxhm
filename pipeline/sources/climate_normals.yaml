@@ -1,0 +1,21 @@
+# Monthly mean rainfall (mm), Jan..Dec, per origin — the baseline the rainfall
+# anomaly signal compares live weather against. Approximate, origin-level averages;
+# refine or add more origins as needed (origins without normals simply get no
+# anomaly flag). rain_mm must be exactly 12 values.
+normals:
+  - origin_id: brazil
+    rain_mm: [250, 210, 180, 90, 40, 20, 15, 25, 70, 150, 220, 260]
+  - origin_id: colombia
+    rain_mm: [90, 110, 150, 200, 190, 120, 90, 100, 150, 210, 180, 120]
+  - origin_id: ethiopia
+    rain_mm: [20, 30, 60, 90, 90, 120, 220, 210, 150, 60, 30, 20]
+  - origin_id: kenya
+    rain_mm: [40, 40, 90, 180, 150, 40, 25, 30, 35, 120, 160, 90]
+  - origin_id: guatemala
+    rain_mm: [10, 10, 20, 50, 150, 250, 200, 210, 230, 150, 50, 20]
+  - origin_id: honduras
+    rain_mm: [15, 15, 25, 60, 150, 220, 180, 200, 220, 160, 70, 25]
+  - origin_id: costa_rica
+    rain_mm: [20, 15, 25, 60, 220, 260, 240, 270, 320, 300, 120, 40]
+  - origin_id: rwanda
+    rain_mm: [90, 110, 140, 180, 110, 30, 20, 40, 90, 110, 120, 100]

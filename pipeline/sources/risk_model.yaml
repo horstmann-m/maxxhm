@@ -1,0 +1,98 @@
+# Weather quality-risk model. Declarative rules evaluated against Open-Meteo daily
+# data for the region's current weather-sensitive stage. This is the SINGLE source
+# of truth for both the TS (browser) and Python evaluators.
+#
+# Each metric computes a numeric value over a window of day-offsets from "today"
+# (negative = past, 0 = today, positive = forecast), then a direction + warn/alert
+# thresholds classify it. Stage level = worst metric.
+#
+#   kind: rolling_sum  -> max sum of `source` over any `window_days`-long window
+#                         within [from_day, to_day]           (direction: high)
+#   kind: sum          -> sum of `source` over [from_day, to_day]
+#   kind: count_above  -> number of days in range with source > threshold (high)
+#
+# source ∈ {precip, tmax, tmin}. Thresholds are typical/approximate and meant to
+# be tuned with pipeline/weather/backtest.py.
+stages:
+  - stage: drying
+    metrics:
+      - kind: rolling_sum
+        source: precip
+        label: Rain over any 7 days
+        unit: mm
+        window_days: 7
+        from_day: -2
+        to_day: 14
+        direction: high
+        warn: 15
+        alert: 35
+        reason_warn: Showers during drying — watch for mould and ferment defects.
+        reason_alert: Heavy rain forecast during drying — high defect risk.
+  - stage: harvest_main
+    metrics:
+      - kind: rolling_sum
+        source: precip
+        label: Rain over any 7 days
+        unit: mm
+        window_days: 7
+        from_day: -2
+        to_day: 14
+        direction: high
+        warn: 25
+        alert: 60
+        reason_warn: Wet picking conditions — expect cherry drop and uneven ripening.
+        reason_alert: Heavy rain during harvest — ferment defects and cherry loss.
+  - stage: harvest_fly
+    metrics:
+      - kind: rolling_sum
+        source: precip
+        label: Rain over any 7 days
+        unit: mm
+        window_days: 7
+        from_day: -2
+        to_day: 14
+        direction: high
+        warn: 25
+        alert: 60
+        reason_warn: Wet conditions on the fly crop — quality dip likely.
+        reason_alert: Heavy rain on the fly crop — ferment defects and cherry loss.
+  - stage: flowering
+    metrics:
+      - kind: rolling_sum
+        source: precip
+        label: Rain over any 10 days
+        unit: mm
+        window_days: 10
+        from_day: -5
+        to_day: 14
+        direction: high
+        warn: 120
+        alert: 200
+        reason_warn: Persistent rain during flowering — risk of staggered, uneven bloom.
+        reason_alert: Very heavy rain during flowering — bloom disruption likely.
+  - stage: cherry_development
+    metrics:
+      - kind: sum
+        source: precip
+        label: Rainfall, last 30 days
+        unit: mm
+        window_days: 30
+        from_day: -29
+        to_day: 0
+        direction: low
+        warn: 40
+        alert: 15
+        reason_warn: Dry spell during bean development — risk of small beans.
+        reason_alert: Severe drought during development — small, low-density beans.
+      - kind: count_above
+        source: tmax
+        label: Hot days over 30°C
+        unit: days
+        threshold: 30
+        from_day: -6
+        to_day: 14
+        direction: high
+        warn: 5
+        alert: 12
+        reason_warn: Repeated heat stress during development.
+        reason_alert: Sustained heat stress during development.

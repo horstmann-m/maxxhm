@@ -1,0 +1,110 @@
+[
+  {
+    "id": "ethiopia",
+    "name": "Ethiopia",
+    "code": "ET",
+    "blurb": "The birthplace of Arabica and its deepest genetic reservoir. Smallholder-dominated, mostly indigenous landraces grown as \"garden coffee\".",
+    "altitudeMinM": 1500,
+    "altitudeMaxM": 2300,
+    "character": "Floral, citric and tea-like when washed; blueberry and jammy when natural."
+  },
+  {
+    "id": "kenya",
+    "name": "Kenya",
+    "code": "KE",
+    "blurb": "Rigorous auction/washing-station system and SL-series varieties produce some of the most structured coffees in the world.",
+    "altitudeMinM": 1400,
+    "altitudeMaxM": 2100,
+    "character": "Blackcurrant, tomato and grapefruit with bright, wine-like acidity."
+  },
+  {
+    "id": "colombia",
+    "name": "Colombia",
+    "code": "CO",
+    "blurb": "Vast range of microclimates across three Andean cordilleras with two harvests, giving near year-round fresh supply.",
+    "altitudeMinM": 1200,
+    "altitudeMaxM": 2100,
+    "character": "Balanced, sweet, caramel and red-fruit with a rounded citric acidity."
+  },
+  {
+    "id": "brazil",
+    "name": "Brazil",
+    "code": "BR",
+    "blurb": "The world's largest producer; mechanised, lower-altitude farms and a single big dry-season harvest set the tone for the C-market.",
+    "altitudeMinM": 800,
+    "altitudeMaxM": 1400,
+    "character": "Chocolate, nutty, low-acid and heavy-bodied — the classic base of espresso blends."
+  },
+  {
+    "id": "guatemala",
+    "name": "Guatemala",
+    "code": "GT",
+    "blurb": "Eight distinct volcanic regions with high altitude and shade cultivation give consistent, structured cups.",
+    "altitudeMinM": 1300,
+    "altitudeMaxM": 2000,
+    "character": "Cocoa, baking spice and orange, with rich body and lively acidity."
+  },
+  {
+    "id": "costa_rica",
+    "name": "Costa Rica",
+    "code": "CR",
+    "blurb": "Micromill revolution shifted the country toward small-batch, honey-processed traceable lots. Robusta is legally restricted.",
+    "altitudeMinM": 1200,
+    "altitudeMaxM": 1900,
+    "character": "Clean, bright and sweet — honeyed stone fruit and citrus."
+  },
+  {
+    "id": "panama",
+    "name": "Panama",
+    "code": "PA",
+    "blurb": "Small output but outsized fame — Boquete and Volcán Geisha lots set world auction records.",
+    "altitudeMinM": 1300,
+    "altitudeMaxM": 1900,
+    "character": "Jasmine, bergamot and tropical fruit clarity in the celebrated Geishas."
+  },
+  {
+    "id": "honduras",
+    "name": "Honduras",
+    "code": "HN",
+    "blurb": "Central America's largest producer; huge quality range now anchored by improving high-altitude specialty regions.",
+    "altitudeMinM": 1200,
+    "altitudeMaxM": 1700,
+    "character": "Sweet caramel and stone fruit; the best lots rival its neighbours."
+  },
+  {
+    "id": "rwanda",
+    "name": "Rwanda",
+    "code": "RW",
+    "blurb": "Land of a thousand hills; a washing-station-led specialty revival built almost entirely on Red Bourbon.",
+    "altitudeMinM": 1500,
+    "altitudeMaxM": 2000,
+    "character": "Floral, red-fruit and citrus with a silky, tea-like body."
+  },
+  {
+    "id": "burundi",
+    "name": "Burundi",
+    "code": "BI",
+    "blurb": "Tiny, landlocked and Bourbon-dominated; hilly washing-station coffees with a delicacy close to Rwanda.",
+    "altitudeMinM": 1500,
+    "altitudeMaxM": 2000,
+    "character": "Juicy red fruit, floral top notes and bright, clean acidity."
+  },
+  {
+    "id": "indonesia",
+    "name": "Indonesia",
+    "code": "ID",
+    "blurb": "Sumatra, Java, Sulawesi and Flores; the wet-hulled (giling basah) tradition gives a signature earthy, full-bodied profile.",
+    "altitudeMinM": 900,
+    "altitudeMaxM": 1600,
+    "character": "Earthy, cedar and dark chocolate with low acidity and syrupy body."
+  },
+  {
+    "id": "peru",
+    "name": "Peru",
+    "code": "PE",
+    "blurb": "Large smallholder and organic/co-op base across the northern and southern Andes; improving traceability and specialty share.",
+    "altitudeMinM": 1200,
+    "altitudeMaxM": 1900,
+    "character": "Gentle, sweet and mild — soft chocolate, nuts and light citrus."
+  }
+]

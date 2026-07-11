@@ -1,0 +1,71 @@
+# Compact SCA-style flavor wheel. Two levels: category -> descriptor.
+# Colours approximate the SCA / World Coffee Research Sensory Lexicon wheel and
+# are reused directly by the tasting UI for descriptor chips.
+wheel:
+  - id: fruity
+    name: Fruity
+    color: "#d6314f"
+    children:
+      - { id: berry, name: Berry, color: "#c02a63" }
+      - { id: dried_fruit, name: Dried Fruit, color: "#8f1d3e" }
+      - { id: citrus, name: Citrus, color: "#e8a90c" }
+      - { id: stone_fruit, name: Stone Fruit, color: "#e06a1b" }
+      - { id: tropical, name: Tropical Fruit, color: "#e8b21b" }
+  - id: floral
+    name: Floral
+    color: "#c86fa8"
+    children:
+      - { id: jasmine, name: Jasmine, color: "#d98cc0" }
+      - { id: rose, name: Rose, color: "#c76fa0" }
+      - { id: chamomile, name: Chamomile, color: "#e0c85a" }
+      - { id: black_tea, name: Black Tea, color: "#a15a86" }
+  - id: sweet
+    name: Sweet
+    color: "#e0455f"
+    children:
+      - { id: brown_sugar, name: Brown Sugar, color: "#a5673f" }
+      - { id: caramel, name: Caramelized, color: "#c07a34" }
+      - { id: honey, name: Honey, color: "#e0a92a" }
+      - { id: vanilla, name: Vanilla, color: "#e6d3a3" }
+  - id: nutty_cocoa
+    name: Nutty / Cocoa
+    color: "#8a6a4f"
+    children:
+      - { id: nutty, name: Nutty, color: "#a9855f" }
+      - { id: chocolate, name: Chocolate, color: "#6b4a34" }
+      - { id: dark_chocolate, name: Dark Chocolate, color: "#4a3122" }
+  - id: spices
+    name: Spices
+    color: "#9e2b25"
+    children:
+      - { id: brown_spice, name: Brown Spice, color: "#7a3b26" }
+      - { id: pepper, name: Pepper, color: "#8c4a3a" }
+      - { id: clove_cinnamon, name: Clove / Cinnamon, color: "#a8542e" }
+  - id: sour_fermented
+    name: Sour / Fermented
+    color: "#c9b028"
+    children:
+      - { id: winey, name: Winey, color: "#7a2f4e" }
+      - { id: boozy, name: Boozy / Fermented, color: "#9a7b2a" }
+      - { id: sour_acid, name: Sour / Acidic, color: "#cbd14a" }
+  - id: green_vegetative
+    name: Green / Vegetative
+    color: "#3f8f4f"
+    children:
+      - { id: herb_like, name: Herb-like, color: "#4f9e5a" }
+      - { id: fresh, name: Fresh / Grassy, color: "#7bb85a" }
+      - { id: beany, name: Beany, color: "#8a9a5a" }
+  - id: roasted
+    name: Roasted
+    color: "#7a4a3a"
+    children:
+      - { id: cereal, name: Cereal / Malt, color: "#b08a4a" }
+      - { id: burnt, name: Burnt / Smoky, color: "#4a3a34" }
+      - { id: tobacco, name: Tobacco, color: "#6a4a30" }
+  - id: other
+    name: Other
+    color: "#5a6a7a"
+    children:
+      - { id: earthy, name: Earthy, color: "#5a4a3a" }
+      - { id: papery_musty, name: Papery / Musty, color: "#9a9a86" }
+      - { id: chemical, name: Chemical, color: "#6a7a8a" }

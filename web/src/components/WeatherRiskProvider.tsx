@@ -1,0 +1,92 @@
+"use client";
+
+import { createContext, useContext, useEffect, useState } from "react";
+import { currentMonth } from "@/lib/season";
+import { loadRiskSnapshot } from "@/lib/weather";
+import type { DailySeries, RiskResult } from "@/lib/risk";
+import type { AnomalyResult, FrostResult } from "@/lib/market";
+
+interface RiskContext {
+  byRegion: Map<string, RiskResult>;
+  frost: Map<string, FrostResult>;
+  anomaly: Map<string, AnomalyResult>;
+  series: Record<string, DailySeries>;
+  updatedAt: number | null;
+  loading: boolean;
+  error: string | null;
+  refresh: () => void;
+}
+
+const EMPTY = new Map<string, RiskResult>();
+const EMPTY_FROST = new Map<string, FrostResult>();
+const EMPTY_ANOM = new Map<string, AnomalyResult>();
+const EMPTY_SERIES: Record<string, DailySeries> = {};
+const Ctx = createContext<RiskContext>({
+  byRegion: EMPTY,
+  frost: EMPTY_FROST,
+  anomaly: EMPTY_ANOM,
+  series: EMPTY_SERIES,
+  updatedAt: null,
+  loading: true,
+  error: null,
+  refresh: () => {},
+});
+
+export const useRisk = () => useContext(Ctx);
+
+// Weather risk is always evaluated for "now" (a forecast), independent of the
+// map's month scrubber. Fetched once, cached 6h in localStorage (see weather.ts).
+export function WeatherRiskProvider({ children }: { children: React.ReactNode }) {
+  const [byRegion, setByRegion] = useState<Map<string, RiskResult>>(EMPTY);
+  const [frost, setFrost] = useState<Map<string, FrostResult>>(EMPTY_FROST);
+  const [anomaly, setAnomaly] = useState<Map<string, AnomalyResult>>(EMPTY_ANOM);
+  const [series, setSeries] = useState<Record<string, DailySeries>>(EMPTY_SERIES);
+  const [updatedAt, setUpdatedAt] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [nonce, setNonce] = useState(0);
+  const force = nonce > 0;
+
+  useEffect(() => {
+    let alive = true;
+    loadRiskSnapshot(currentMonth(), force)
+      .then((snap) => {
+        if (!alive) return;
+        setByRegion(snap.byRegion);
+        setFrost(snap.frost);
+        setAnomaly(snap.anomaly);
+        setSeries(snap.series);
+        setUpdatedAt(snap.updatedAt);
+        setError(null);
+        setLoading(false);
+      })
+      .catch((e: unknown) => {
+        if (!alive) return;
+        setError(e instanceof Error ? e.message : String(e));
+        setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [nonce, force]);
+
+  return (
+    <Ctx.Provider
+      value={{
+        byRegion,
+        frost,
+        anomaly,
+        series,
+        updatedAt,
+        loading,
+        error,
+        refresh: () => {
+          setLoading(true);
+          setNonce((n) => n + 1);
+        },
+      }}
+    >
+      {children}
+    </Ctx.Provider>
+  );
+}

@@ -1,0 +1,446 @@
+# Region centroids, altitudes and harvest calendars. Month ranges (1-12) may
+# wrap the year boundary. These windows drive the "what's in season now" map and
+# the harvest calendar; they are typical/approximate and region-averaged.
+# flavor_nodes reference flavor_wheel.yaml ids and power taste-match scoring.
+regions:
+  # ---------------- Ethiopia ----------------
+  - id: yirgacheffe
+    origin_id: ethiopia
+    name: Yirgacheffe
+    lat: 6.16
+    lng: 38.20
+    altitude_min_m: 1750
+    altitude_max_m: 2200
+    varietals: [heirloom]
+    processes: [washed, natural]
+    flavor_tags: [jasmine, lemon, bergamot, black tea, peach]
+    flavor_nodes: [jasmine, citrus, black_tea, stone_fruit]
+    harvest:
+      - { stage: flowering, start: 2, end: 3 }
+      - { stage: cherry_development, start: 4, end: 9 }
+      - { stage: harvest_main, start: 10, end: 12 }
+      - { stage: drying, start: 11, end: 1 }
+      - { stage: export, start: 1, end: 3 }
+  - id: guji
+    origin_id: ethiopia
+    name: Guji (Hambela)
+    lat: 5.70
+    lng: 38.55
+    altitude_min_m: 1800
+    altitude_max_m: 2300
+    varietals: [heirloom]
+    processes: [washed, natural]
+    flavor_tags: [strawberry, tropical, floral, candy]
+    flavor_nodes: [berry, tropical, jasmine, honey]
+    harvest:
+      - { stage: flowering, start: 2, end: 3 }
+      - { stage: cherry_development, start: 4, end: 9 }
+      - { stage: harvest_main, start: 10, end: 1 }
+      - { stage: drying, start: 11, end: 2 }
+      - { stage: export, start: 2, end: 4 }
+  - id: sidama
+    origin_id: ethiopia
+    name: Sidama (Bensa)
+    lat: 6.72
+    lng: 38.50
+    altitude_min_m: 1700
+    altitude_max_m: 2200
+    varietals: [heirloom]
+    processes: [washed, natural]
+    flavor_tags: [blueberry, floral, citrus, honey]
+    flavor_nodes: [berry, jasmine, citrus, honey]
+    harvest:
+      - { stage: flowering, start: 2, end: 3 }
+      - { stage: cherry_development, start: 4, end: 9 }
+      - { stage: harvest_main, start: 10, end: 12 }
+      - { stage: drying, start: 11, end: 1 }
+      - { stage: export, start: 1, end: 3 }
+  - id: harrar
+    origin_id: ethiopia
+    name: Harrar
+    lat: 9.31
+    lng: 42.12
+    altitude_min_m: 1500
+    altitude_max_m: 2100
+    varietals: [heirloom]
+    processes: [natural]
+    flavor_tags: [blueberry, dried fruit, winey, dark chocolate]
+    flavor_nodes: [berry, dried_fruit, winey, dark_chocolate]
+    harvest:
+      - { stage: flowering, start: 3, end: 4 }
+      - { stage: cherry_development, start: 5, end: 9 }
+      - { stage: harvest_main, start: 10, end: 2 }
+      - { stage: drying, start: 11, end: 2 }
+      - { stage: export, start: 2, end: 4 }
+  # ---------------- Kenya ----------------
+  - id: nyeri
+    origin_id: kenya
+    name: Nyeri
+    lat: -0.42
+    lng: 36.95
+    altitude_min_m: 1600
+    altitude_max_m: 2000
+    varietals: [sl28, sl34, ruiru11, batian]
+    processes: [washed]
+    flavor_tags: [blackcurrant, grapefruit, tomato, cane sugar]
+    flavor_nodes: [berry, citrus, brown_sugar, sour_acid]
+    harvest:
+      - { stage: flowering, start: 3, end: 4 }
+      - { stage: harvest_fly, start: 6, end: 8, note: "Early/fly crop from the long rains" }
+      - { stage: cherry_development, start: 5, end: 9 }
+      - { stage: harvest_main, start: 10, end: 12 }
+      - { stage: drying, start: 10, end: 1 }
+      - { stage: export, start: 1, end: 3 }
+  - id: kirinyaga
+    origin_id: kenya
+    name: Kirinyaga
+    lat: -0.50
+    lng: 37.30
+    altitude_min_m: 1500
+    altitude_max_m: 1900
+    varietals: [sl28, sl34, ruiru11, batian]
+    processes: [washed]
+    flavor_tags: [blackberry, plum, orange, brown sugar]
+    flavor_nodes: [berry, stone_fruit, citrus, brown_sugar]
+    harvest:
+      - { stage: flowering, start: 3, end: 4 }
+      - { stage: harvest_fly, start: 6, end: 8 }
+      - { stage: cherry_development, start: 5, end: 9 }
+      - { stage: harvest_main, start: 10, end: 12 }
+      - { stage: drying, start: 10, end: 1 }
+      - { stage: export, start: 1, end: 3 }
+  # ---------------- Colombia ----------------
+  - id: huila
+    origin_id: colombia
+    name: Huila
+    lat: 2.00
+    lng: -75.90
+    altitude_min_m: 1400
+    altitude_max_m: 1900
+    varietals: [caturra, castillo, colombia_var]
+    processes: [washed, honey]
+    flavor_tags: [caramel, red apple, citrus, panela]
+    flavor_nodes: [caramel, stone_fruit, citrus, brown_sugar]
+    harvest:
+      - { stage: flowering, start: 1, end: 2 }
+      - { stage: harvest_main, start: 9, end: 12 }
+      - { stage: harvest_fly, start: 4, end: 6, note: "Mitaca secondary crop" }
+      - { stage: drying, start: 9, end: 1 }
+      - { stage: export, start: 11, end: 3 }
+  - id: narino
+    origin_id: colombia
+    name: Nariño
+    lat: 1.20
+    lng: -77.30
+    altitude_min_m: 1700
+    altitude_max_m: 2100
+    varietals: [caturra, castillo]
+    processes: [washed]
+    flavor_tags: [tangerine, tropical, sugarcane, floral]
+    flavor_nodes: [citrus, tropical, brown_sugar, jasmine]
+    harvest:
+      - { stage: flowering, start: 9, end: 10 }
+      - { stage: cherry_development, start: 11, end: 4 }
+      - { stage: harvest_main, start: 5, end: 7 }
+      - { stage: drying, start: 5, end: 8 }
+      - { stage: export, start: 7, end: 10 }
+  # ---------------- Brazil ----------------
+  - id: sul_de_minas
+    origin_id: brazil
+    name: Sul de Minas
+    lat: -21.50
+    lng: -45.40
+    altitude_min_m: 900
+    altitude_max_m: 1300
+    varietals: [mundo_novo, catuai, bourbon]
+    processes: [natural, honey]
+    flavor_tags: [milk chocolate, peanut, caramel, red apple]
+    flavor_nodes: [chocolate, nutty, caramel, stone_fruit]
+    frost_prone: true
+    harvest:
+      - { stage: flowering, start: 9, end: 10 }
+      - { stage: cherry_development, start: 11, end: 4 }
+      - { stage: harvest_main, start: 5, end: 8 }
+      - { stage: drying, start: 6, end: 9 }
+      - { stage: export, start: 8, end: 11 }
+  - id: cerrado_mineiro
+    origin_id: brazil
+    name: Cerrado Mineiro
+    lat: -18.90
+    lng: -47.50
+    altitude_min_m: 900
+    altitude_max_m: 1250
+    varietals: [catuai, mundo_novo, bourbon]
+    processes: [natural]
+    flavor_tags: [chocolate, hazelnut, dried fruit, low acidity]
+    flavor_nodes: [chocolate, nutty, dried_fruit, dark_chocolate]
+    frost_prone: true
+    harvest:
+      - { stage: flowering, start: 9, end: 10 }
+      - { stage: cherry_development, start: 11, end: 4 }
+      - { stage: harvest_main, start: 5, end: 8 }
+      - { stage: drying, start: 6, end: 9 }
+      - { stage: export, start: 8, end: 11 }
+  # ---------------- Guatemala ----------------
+  - id: antigua
+    origin_id: guatemala
+    name: Antigua
+    lat: 14.55
+    lng: -90.73
+    altitude_min_m: 1500
+    altitude_max_m: 1700
+    varietals: [bourbon, caturra, catuai]
+    processes: [washed]
+    flavor_tags: [cocoa, baking spice, orange, full body]
+    flavor_nodes: [chocolate, brown_spice, citrus, dark_chocolate]
+    harvest:
+      - { stage: flowering, start: 4, end: 5 }
+      - { stage: cherry_development, start: 6, end: 11 }
+      - { stage: harvest_main, start: 12, end: 3 }
+      - { stage: drying, start: 1, end: 4 }
+      - { stage: export, start: 3, end: 6 }
+  - id: huehuetenango
+    origin_id: guatemala
+    name: Huehuetenango
+    lat: 15.32
+    lng: -91.47
+    altitude_min_m: 1500
+    altitude_max_m: 2000
+    varietals: [bourbon, caturra]
+    processes: [washed]
+    flavor_tags: [red apple, honey, citrus, cocoa]
+    flavor_nodes: [stone_fruit, honey, citrus, chocolate]
+    harvest:
+      - { stage: flowering, start: 4, end: 5 }
+      - { stage: cherry_development, start: 6, end: 12 }
+      - { stage: harvest_main, start: 1, end: 4 }
+      - { stage: drying, start: 2, end: 5 }
+      - { stage: export, start: 4, end: 7 }
+  # ---------------- Costa Rica ----------------
+  - id: tarrazu
+    origin_id: costa_rica
+    name: Tarrazú
+    lat: 9.66
+    lng: -84.02
+    altitude_min_m: 1200
+    altitude_max_m: 1900
+    varietals: [caturra, catuai, villa_sarchi]
+    processes: [washed, honey]
+    flavor_tags: [honey, peach, orange, clean]
+    flavor_nodes: [honey, stone_fruit, citrus, caramel]
+    harvest:
+      - { stage: flowering, start: 3, end: 4 }
+      - { stage: cherry_development, start: 5, end: 10 }
+      - { stage: harvest_main, start: 11, end: 3 }
+      - { stage: drying, start: 12, end: 3 }
+      - { stage: export, start: 2, end: 5 }
+  - id: west_valley
+    origin_id: costa_rica
+    name: West Valley
+    lat: 10.10
+    lng: -84.40
+    altitude_min_m: 1200
+    altitude_max_m: 1650
+    varietals: [villa_sarchi, caturra, catuai]
+    processes: [honey, washed]
+    flavor_tags: [peach, brown sugar, red fruit, floral]
+    flavor_nodes: [stone_fruit, brown_sugar, berry, jasmine]
+    harvest:
+      - { stage: flowering, start: 3, end: 4 }
+      - { stage: cherry_development, start: 5, end: 10 }
+      - { stage: harvest_main, start: 11, end: 2 }
+      - { stage: drying, start: 12, end: 3 }
+      - { stage: export, start: 2, end: 5 }
+  # ---------------- Panama ----------------
+  - id: boquete
+    origin_id: panama
+    name: Boquete
+    lat: 8.78
+    lng: -82.43
+    altitude_min_m: 1300
+    altitude_max_m: 1800
+    varietals: [geisha, caturra, catuai]
+    processes: [washed, natural]
+    flavor_tags: [jasmine, bergamot, papaya, honeysuckle]
+    flavor_nodes: [jasmine, citrus, tropical, rose]
+    harvest:
+      - { stage: flowering, start: 3, end: 4 }
+      - { stage: cherry_development, start: 5, end: 11 }
+      - { stage: harvest_main, start: 12, end: 3 }
+      - { stage: drying, start: 1, end: 4 }
+      - { stage: export, start: 3, end: 6 }
+  - id: volcan
+    origin_id: panama
+    name: Volcán / Candela
+    lat: 8.78
+    lng: -82.63
+    altitude_min_m: 1400
+    altitude_max_m: 1900
+    varietals: [geisha, pacamara]
+    processes: [washed, natural]
+    flavor_tags: [floral, tropical, stone fruit, tea-like]
+    flavor_nodes: [jasmine, tropical, stone_fruit, black_tea]
+    harvest:
+      - { stage: flowering, start: 3, end: 4 }
+      - { stage: cherry_development, start: 5, end: 11 }
+      - { stage: harvest_main, start: 12, end: 3 }
+      - { stage: drying, start: 1, end: 4 }
+      - { stage: export, start: 3, end: 6 }
+  # ---------------- Honduras ----------------
+  - id: marcala
+    origin_id: honduras
+    name: Marcala (La Paz)
+    lat: 14.16
+    lng: -88.02
+    altitude_min_m: 1300
+    altitude_max_m: 1700
+    varietals: [bourbon, catuai, pacas, catimor]
+    processes: [washed, honey]
+    flavor_tags: [caramel, stone fruit, cocoa, citrus]
+    flavor_nodes: [caramel, stone_fruit, chocolate, citrus]
+    harvest:
+      - { stage: flowering, start: 4, end: 5 }
+      - { stage: cherry_development, start: 6, end: 11 }
+      - { stage: harvest_main, start: 11, end: 3 }
+      - { stage: drying, start: 12, end: 3 }
+      - { stage: export, start: 2, end: 6 }
+  - id: copan
+    origin_id: honduras
+    name: Copán
+    lat: 14.90
+    lng: -88.90
+    altitude_min_m: 1200
+    altitude_max_m: 1500
+    varietals: [bourbon, catuai]
+    processes: [washed]
+    flavor_tags: [chocolate, red apple, brown sugar]
+    flavor_nodes: [chocolate, stone_fruit, brown_sugar]
+    harvest:
+      - { stage: flowering, start: 4, end: 5 }
+      - { stage: cherry_development, start: 6, end: 10 }
+      - { stage: harvest_main, start: 11, end: 2 }
+      - { stage: drying, start: 12, end: 3 }
+      - { stage: export, start: 2, end: 5 }
+  # ---------------- Rwanda ----------------
+  - id: nyamasheke
+    origin_id: rwanda
+    name: Nyamasheke (Western)
+    lat: -2.35
+    lng: 29.13
+    altitude_min_m: 1600
+    altitude_max_m: 2000
+    varietals: [bourbon]
+    processes: [washed]
+    flavor_tags: [red currant, floral, orange, silky]
+    flavor_nodes: [berry, jasmine, citrus, black_tea]
+    harvest:
+      - { stage: flowering, start: 9, end: 10 }
+      - { stage: cherry_development, start: 11, end: 3 }
+      - { stage: harvest_main, start: 3, end: 6 }
+      - { stage: drying, start: 4, end: 7 }
+      - { stage: export, start: 6, end: 9 }
+  - id: huye
+    origin_id: rwanda
+    name: Huye (Southern)
+    lat: -2.53
+    lng: 29.74
+    altitude_min_m: 1700
+    altitude_max_m: 2000
+    varietals: [bourbon]
+    processes: [washed]
+    flavor_tags: [floral, orange, red fruit, tea-like]
+    flavor_nodes: [jasmine, citrus, berry, black_tea]
+    harvest:
+      - { stage: flowering, start: 9, end: 10 }
+      - { stage: cherry_development, start: 11, end: 3 }
+      - { stage: harvest_main, start: 3, end: 6 }
+      - { stage: drying, start: 4, end: 7 }
+      - { stage: export, start: 6, end: 9 }
+  # ---------------- Burundi ----------------
+  - id: kayanza
+    origin_id: burundi
+    name: Kayanza
+    lat: -2.92
+    lng: 29.62
+    altitude_min_m: 1700
+    altitude_max_m: 2000
+    varietals: [bourbon]
+    processes: [washed]
+    flavor_tags: [red fruit, floral, black tea, juicy]
+    flavor_nodes: [berry, jasmine, black_tea, sour_acid]
+    harvest:
+      - { stage: flowering, start: 9, end: 10 }
+      - { stage: cherry_development, start: 11, end: 3 }
+      - { stage: harvest_main, start: 3, end: 6 }
+      - { stage: drying, start: 4, end: 7 }
+      - { stage: export, start: 6, end: 9 }
+  # ---------------- Indonesia ----------------
+  - id: gayo
+    origin_id: indonesia
+    name: Sumatra — Gayo (Aceh)
+    lat: 4.60
+    lng: 96.85
+    altitude_min_m: 1200
+    altitude_max_m: 1600
+    varietals: [catimor, bourbon]
+    processes: [wet_hulled]
+    flavor_tags: [cedar, earthy, dark chocolate, herbal]
+    flavor_nodes: [earthy, dark_chocolate, herb_like, tobacco]
+    harvest:
+      - { stage: flowering, start: 4, end: 5 }
+      - { stage: cherry_development, start: 6, end: 9 }
+      - { stage: harvest_main, start: 10, end: 2 }
+      - { stage: drying, start: 11, end: 3 }
+      - { stage: export, start: 1, end: 4 }
+  - id: java_ijen
+    origin_id: indonesia
+    name: Java — Ijen Plateau
+    lat: -8.10
+    lng: 114.20
+    altitude_min_m: 900
+    altitude_max_m: 1500
+    varietals: [catimor, typica]
+    processes: [wet_hulled, washed]
+    flavor_tags: [cedar, herbal, low acidity, syrupy]
+    flavor_nodes: [earthy, herb_like, dark_chocolate, brown_spice]
+    harvest:
+      - { stage: flowering, start: 10, end: 11 }
+      - { stage: cherry_development, start: 12, end: 5 }
+      - { stage: harvest_main, start: 6, end: 10 }
+      - { stage: drying, start: 7, end: 10 }
+      - { stage: export, start: 9, end: 12 }
+  # ---------------- Peru ----------------
+  - id: cajamarca
+    origin_id: peru
+    name: Cajamarca (Jaén)
+    lat: -5.70
+    lng: -78.80
+    altitude_min_m: 1400
+    altitude_max_m: 1900
+    varietals: [bourbon, caturra, catimor, typica]
+    processes: [washed]
+    flavor_tags: [soft chocolate, almond, citrus, sweet]
+    flavor_nodes: [chocolate, nutty, citrus, brown_sugar]
+    harvest:
+      - { stage: flowering, start: 9, end: 10 }
+      - { stage: cherry_development, start: 11, end: 4 }
+      - { stage: harvest_main, start: 5, end: 9 }
+      - { stage: drying, start: 6, end: 9 }
+      - { stage: export, start: 8, end: 11 }
+  - id: cusco
+    origin_id: peru
+    name: Cusco (La Convención)
+    lat: -12.90
+    lng: -72.70
+    altitude_min_m: 1200
+    altitude_max_m: 1800
+    varietals: [typica, bourbon, caturra]
+    processes: [washed]
+    flavor_tags: [nutty, mild, sweet, light citrus]
+    flavor_nodes: [nutty, brown_sugar, citrus, caramel]
+    harvest:
+      - { stage: flowering, start: 9, end: 10 }
+      - { stage: cherry_development, start: 11, end: 4 }
+      - { stage: harvest_main, start: 5, end: 9 }
+      - { stage: drying, start: 6, end: 9 }
+      - { stage: export, start: 8, end: 11 }

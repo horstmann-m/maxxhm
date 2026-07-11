@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+/* ---- Parchment theme tokens --------------------------------------------- */
+:root {
+  --background: #f4efe4;   /* warm parchment */
+  --surface: #fcfaf5;
+  --surface-2: #ece4d6;
+  --foreground: #2a2016;   /* ink */
+  --muted: #857664;
+  --border: #e4dac8;
+  --accent: #a0562e;       /* roasted terracotta */
+  --accent-fg: #fdfbf6;
+  --ring: #c07b48;
+  --shadow-sm: 0 1px 2px rgba(42, 32, 22, 0.05);
+  --shadow: 0 1px 2px rgba(42, 32, 22, 0.04), 0 6px 20px rgba(42, 32, 22, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #191309;
+    --surface: #221a10;
+    --surface-2: #2d2417;
+    --foreground: #efe6d5;
+    --muted: #a89a83;
+    --border: #392d1d;
+    --accent: #d18a52;
+    --accent-fg: #191309;
+    --ring: #d18a52;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+}
+
+:root[data-theme="light"] {
+  --background: #f4efe4; --surface: #fcfaf5; --surface-2: #ece4d6;
+  --foreground: #2a2016; --muted: #857664; --border: #e4dac8;
+  --accent: #a0562e; --accent-fg: #fdfbf6; --ring: #c07b48;
+  --shadow-sm: 0 1px 2px rgba(42, 32, 22, 0.05);
+  --shadow: 0 1px 2px rgba(42, 32, 22, 0.04), 0 6px 20px rgba(42, 32, 22, 0.06);
+}
+:root[data-theme="dark"] {
+  --background: #191309; --surface: #221a10; --surface-2: #2d2417;
+  --foreground: #efe6d5; --muted: #a89a83; --border: #392d1d;
+  --accent: #d18a52; --accent-fg: #191309; --ring: #d18a52;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Serif display type for headings + wordmark. */
+.font-display {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+}
+
+/* Small uppercase eyebrow label above page titles. */
+.eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ---- reusable component primitives -------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid transparent;
+  transition: background-color 0.15s, border-color 0.15s, opacity 0.15s;
+  cursor: pointer;
+}
+.btn-primary { background: var(--accent); color: var(--accent-fg); }
+.btn-primary:hover { opacity: 0.9; }
+.btn-ghost { border-color: var(--border); color: var(--foreground); }
+.btn-ghost:hover { background: var(--surface-2); }
+
+/* Visible keyboard focus everywhere. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Thin, on-brand scrollbars for horizontal scroll containers. */
+.scroll-x {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* Markdown prose styling for notes/tastings. */
+.prose-coffee { line-height: 1.65; }
+.prose-coffee h1 { font-size: 1.4rem; font-weight: 700; margin: 0.6em 0 0.3em; }
+.prose-coffee h2 { font-size: 1.15rem; font-weight: 700; margin: 0.6em 0 0.3em; }
+.prose-coffee h3 { font-size: 1rem; font-weight: 600; margin: 0.6em 0 0.3em; }
+.prose-coffee p { margin: 0.5em 0; }
+.prose-coffee ul { list-style: disc; padding-left: 1.4em; margin: 0.5em 0; }
+.prose-coffee ol { list-style: decimal; padding-left: 1.4em; margin: 0.5em 0; }
+.prose-coffee a { color: var(--accent); text-decoration: underline; }
+.prose-coffee code {
+  background: var(--surface-2); padding: 0.1em 0.35em; border-radius: 4px;
+  font-family: var(--font-mono), monospace; font-size: 0.9em;
+}
+.prose-coffee blockquote {
+  border-left: 3px solid var(--border); padding-left: 0.8em; color: var(--muted);
+  margin: 0.5em 0;
+}

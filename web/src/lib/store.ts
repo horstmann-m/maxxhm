@@ -1,0 +1,215 @@
+// Mutation + query helpers over the Dexie DB. Keep all writes here so id/
+// timestamp bookkeeping lives in one place and components stay declarative.
+
+import { getDb, newId } from "./db";
+import { totalScore } from "./scoring";
+import type {
+  CuppingScores,
+  EntityRef,
+  EntityType,
+  Note,
+  Origin,
+  PriceEntry,
+  Preferences,
+  Region,
+  Sample,
+  Supplier,
+  Tasting,
+  WatchlistItem,
+} from "./types";
+
+// ---- notes ------------------------------------------------------------------
+
+export async function createNote(
+  input: Pick<Note, "title" | "body" | "tags" | "links">
+): Promise<string> {
+  const now = Date.now();
+  const note: Note = { id: newId(), createdAt: now, updatedAt: now, ...input };
+  await getDb().notes.add(note);
+  return note.id;
+}
+
+export async function updateNote(
+  id: string,
+  patch: Partial<Pick<Note, "title" | "body" | "tags" | "links">>
+): Promise<void> {
+  await getDb().notes.update(id, { ...patch, updatedAt: Date.now() });
+}
+
+export const deleteNote = (id: string) => getDb().notes.delete(id);
+
+// ---- tastings ---------------------------------------------------------------
+
+export async function createTasting(
+  input: Omit<Tasting, "id" | "createdAt" | "totalScore">
+): Promise<string> {
+  const gross = totalScore(input.scores);
+  const tasting: Tasting = {
+    ...input,
+    id: newId(),
+    createdAt: Date.now(),
+    totalScore: Math.round((gross - (input.defects ?? 0)) * 100) / 100,
+  };
+  await getDb().tastings.add(tasting);
+  return tasting.id;
+}
+
+export async function updateTastingScores(
+  id: string,
+  scores: CuppingScores
+): Promise<void> {
+  await getDb().tastings.update(id, { scores, totalScore: totalScore(scores) });
+}
+
+export const deleteTasting = (id: string) => getDb().tastings.delete(id);
+
+// ---- watchlist --------------------------------------------------------------
+
+export async function toggleWatch(
+  entityType: EntityType,
+  entityId: string,
+  note = ""
+): Promise<boolean> {
+  const db = getDb();
+  const entityKey: EntityRef = `${entityType}:${entityId}`;
+  const existing = await db.watchlist.where("entityKey").equals(entityKey).first();
+  if (existing) {
+    await db.watchlist.delete(existing.id);
+    return false;
+  }
+  const item: WatchlistItem = {
+    id: newId(),
+    entityType,
+    entityId,
+    entityKey,
+    note,
+    addedAt: Date.now(),
+  };
+  await db.watchlist.add(item);
+  return true;
+}
+
+export const removeWatch = (id: string) => getDb().watchlist.delete(id);
+
+// ---- preferences ------------------------------------------------------------
+
+export async function setAffinity(nodeId: string, weight: number): Promise<void> {
+  const db = getDb();
+  const current = (await db.preferences.get("me")) ?? { id: "me", affinities: {} };
+  const affinities = { ...current.affinities };
+  if (weight === 0) delete affinities[nodeId];
+  else affinities[nodeId] = weight;
+  await db.preferences.put({ id: "me", affinities } as Preferences);
+}
+
+/** Seed affinities from tasting descriptors, weighted by cupping score band.
+ *  Merges into existing affinities; returns how many nodes were set. */
+export async function deriveAffinitiesFromTastings(): Promise<number> {
+  const db = getDb();
+  const tastings = await db.tastings.toArray();
+  const votes = new Map<string, number>();
+  for (const t of tastings) {
+    const w = t.totalScore >= 87 ? 2 : t.totalScore >= 82 ? 1 : t.totalScore >= 78 ? 0 : -1;
+    for (const d of t.descriptors) votes.set(d, (votes.get(d) ?? 0) + w);
+  }
+  const current = (await db.preferences.get("me")) ?? { id: "me", affinities: {} };
+  const affinities = { ...current.affinities };
+  for (const [node, v] of votes) {
+    if (v === 0) continue;
+    affinities[node] = Math.max(-2, Math.min(2, v));
+  }
+  await db.preferences.put({ id: "me", affinities } as Preferences);
+  return votes.size;
+}
+
+// ---- prices (Phase 3, manual entry) -----------------------------------------
+
+const todayISO = () => new Date().toISOString().slice(0, 10);
+
+/** Log a dated C-price observation and refresh the "current" market price to the
+ *  most recent point. One entry per date (re-logging a date overwrites it). */
+export async function logCPrice(date: string, cPriceUscLb: number): Promise<void> {
+  const db = getDb();
+  await db.priceHistory.put({ id: date, date, cPriceUscLb, createdAt: Date.now() });
+  const latest = (await db.priceHistory.orderBy("date").reverse().first())?.cPriceUscLb;
+  const cur = await db.prices.get("market");
+  await db.prices.put({
+    ...cur,
+    id: "market",
+    kind: "market",
+    cPriceUscLb: latest ?? cPriceUscLb,
+    at: Date.now(),
+  });
+}
+
+/** Set today's C-price (also logs it to history). */
+export const setMarketPrice = (cPriceUscLb: number) => logCPrice(todayISO(), cPriceUscLb);
+
+/** Alert threshold: notify when the C-price drops below this. */
+export async function setPriceThreshold(thresholdUscLb: number | undefined): Promise<void> {
+  const db = getDb();
+  const cur = await db.prices.get("market");
+  await db.prices.put({ ...cur, id: "market", kind: "market", thresholdUscLb, at: Date.now() });
+}
+
+// ---- suppliers + samples (Phase 4) ------------------------------------------
+
+export async function createSupplier(
+  input: Pick<Supplier, "name" | "type" | "country" | "note">
+): Promise<string> {
+  const supplier: Supplier = { id: newId(), createdAt: Date.now(), ...input };
+  await getDb().suppliers.add(supplier);
+  return supplier.id;
+}
+
+export async function deleteSupplier(id: string): Promise<void> {
+  const db = getDb();
+  await db.transaction("rw", db.suppliers, db.samples, async () => {
+    await db.samples.where("supplierId").equals(id).delete();
+    await db.suppliers.delete(id);
+  });
+}
+
+export async function createSample(
+  input: Omit<Sample, "id" | "createdAt">
+): Promise<string> {
+  const sample: Sample = { id: newId(), createdAt: Date.now(), ...input };
+  await getDb().samples.add(sample);
+  return sample.id;
+}
+
+export const updateSample = (id: string, patch: Partial<Sample>) =>
+  getDb().samples.update(id, patch);
+
+export const deleteSample = (id: string) => getDb().samples.delete(id);
+
+// ---- custom origins/regions (in-app editor, Phase 4) ------------------------
+
+export const addCustomOrigin = (o: Origin) => getDb().customOrigins.put({ ...o, custom: true });
+export const addCustomRegion = (r: Region) => getDb().customRegions.put({ ...r, custom: true });
+
+export async function deleteCustomOrigin(id: string): Promise<void> {
+  const db = getDb();
+  await db.transaction("rw", db.customOrigins, db.customRegions, async () => {
+    await db.customRegions.where("originId").equals(id).delete();
+    await db.customOrigins.delete(id);
+  });
+}
+
+export const deleteCustomRegion = (id: string) => getDb().customRegions.delete(id);
+
+export async function setOriginPrice(
+  originId: string,
+  patch: Pick<PriceEntry, "differentialUscLb" | "targetFobUscLb" | "note">
+): Promise<void> {
+  const db = getDb();
+  const id = `origin:${originId}`;
+  const current = await db.prices.get(id);
+  await db.prices.put({
+    id,
+    kind: "origin",
+    ...current,
+    ...patch,
+    at: Date.now(),
+  });
+}

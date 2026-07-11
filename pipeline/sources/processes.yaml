@@ -1,0 +1,16 @@
+processes:
+  - id: washed
+    name: Washed (Wet)
+    description: Cherry pulped, fermented to remove mucilage, then washed and dried. Emphasises origin/varietal clarity and acidity; clean cup.
+  - id: natural
+    name: Natural (Dry)
+    description: Whole cherry dried intact so the bean absorbs fruit sugars. Heavier body, bigger sweetness, fruit-forward — needs careful drying to avoid ferment defects.
+  - id: honey
+    name: Honey / Pulped Natural
+    description: Cherry pulped but some mucilage left on during drying. Between washed and natural — rounded sweetness with retained clarity. Graded white/yellow/red/black by mucilage left.
+  - id: anaerobic
+    name: Anaerobic / Carbonic Maceration
+    description: Cherry or must fermented in sealed, oxygen-limited tanks for controlled, often intense fruity and boozy profiles. Modern experimental method.
+  - id: wet_hulled
+    name: Wet-Hulled (Giling Basah)
+    description: Indonesian method — parchment hulled at high moisture then dried. Produces low acidity, heavy body, earthy/cedar notes and the classic blue-green bean.
