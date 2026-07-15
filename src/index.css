@@ -1,0 +1,50 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #060A06;
+  color: #EDEBE1;
+  font-family: 'Georgia', serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, select, input {
+  font: inherit;
+}
+
+button {
+  outline: none;
+}
+
+/* Visible keyboard focus ring everywhere interactive (a11y requirement:
+   the prototype had no focus-visible styling at all). */
+.sg-focusable:focus-visible,
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid #FFD54F;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Respect prefers-reduced-motion: kill transitions/animations globally. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
