@@ -1,10 +1,14 @@
 import { colors, fonts } from "../theme.js";
 import SectionLabel from "./SectionLabel.jsx";
+import LogExportImportBar from "./LogExportImportBar.jsx";
 
-export default function WateringHistory({ log, profiles }) {
+export default function WateringHistory({ log, profiles, onExportJson, onExportCsv, onImport }) {
   return (
     <div>
-      <SectionLabel>Bewässerungsprotokoll ({log.length} Einträge)</SectionLabel>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 4 }}>
+        <SectionLabel>Bewässerungsprotokoll ({log.length} Einträge)</SectionLabel>
+        <LogExportImportBar label="Bewässerungsprotokoll" onExportJson={onExportJson} onExportCsv={onExportCsv} onImport={onImport} />
+      </div>
       {log.length === 0 ? (
         <div style={{ padding: 16, textAlign: "center", color: colors.textSecondary, fontSize: 12, marginTop: 8 }}>
           Noch keine automatische Bewässerung ausgelöst.

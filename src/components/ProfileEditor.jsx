@@ -2,7 +2,20 @@ import { useState, useEffect } from "react";
 import { colors, fonts } from "../theme.js";
 import { PLANTS } from "../plants/profiles.js";
 
-const METRIC_LABELS = { temperature: "Temperatur (°C)", humidity: "Luftfeuchtigkeit (%)", light: "Licht (lux)", soil: "Boden (%)", ph: "pH" };
+// Round 2, item 9: the health score's "humidity" factor is actually scored
+// against the VPD band (thresholds.vpd — see computeHealth() in
+// lib/health.js), not the raw humidity band below it. Both are editable
+// here now, with labels that make which one drives what explicit — before
+// this fix, "Luftfeuchtigkeit" was the only editable band and editing it
+// changed alerting but silently did nothing to the health score.
+const METRIC_LABELS = {
+  temperature: "Temperatur (°C)",
+  humidity: "Luftfeuchtigkeit (%) — Alarmgrenzen",
+  vpd: "VPD – Luftfeuchtigkeit (kPa) — treibt den Gesundheits-Score",
+  light: "Licht (lux)",
+  soil: "Boden (%)",
+  ph: "pH",
+};
 const BOUND_LABELS = { critLow: "Kritisch min", warnLow: "Warn min", idealLow: "Ideal min", idealHigh: "Ideal max", warnHigh: "Warn max", critHigh: "Kritisch max" };
 const BOUND_ORDER = ["critLow", "warnLow", "idealLow", "idealHigh", "warnHigh", "critHigh"];
 

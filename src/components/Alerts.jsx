@@ -1,10 +1,14 @@
 import { colors, fonts, alertColor } from "../theme.js";
 import SectionLabel from "./SectionLabel.jsx";
+import LogExportImportBar from "./LogExportImportBar.jsx";
 
-export default function Alerts({ alerts, alertLog }) {
+export default function Alerts({ alerts, alertLog, onExportJson, onExportCsv, onImport }) {
   return (
     <div>
-      <SectionLabel>Alert-Protokoll ({alertLog.length} Einträge)</SectionLabel>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+        <SectionLabel>Alert-Protokoll ({alertLog.length} Einträge)</SectionLabel>
+        <LogExportImportBar label="Alert-Protokoll" onExportJson={onExportJson} onExportCsv={onExportCsv} onImport={onImport} />
+      </div>
 
       {alerts.length > 0 ? (
         <div style={{ margin: "10px 0 16px", padding: "12px 14px", background: "rgba(255,107,103,0.07)", borderRadius: 8, border: "1px solid rgba(255,107,103,0.18)" }}>
