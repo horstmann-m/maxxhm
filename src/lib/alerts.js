@@ -59,6 +59,29 @@ export function checkAlerts(data, profiles) {
     pushIfOutOfBand(alerts, `${plantKey}.light`, reading.light_lux, profile.thresholds.light, {
       label: `${profile.name} Licht`, icon: "💡", decimals: 0, unit: " lux",
     });
+
+    // Firmware-reported fault states (Round 2: sensor-fault / no-rebound
+    // detection in the ESP32's auto-watering loop — see docs/API.md "Fault
+    // states"). These are keyed separately from the soil/light bands above
+    // so they log their own rising-edge entry and don't get masked by an
+    // in-band soil reading (a stale-but-in-band value can coexist with a
+    // sensor fault).
+    const autoWaterState = data.auto_water?.[plantKey]?.state;
+    if (autoWaterState === "sensor-fault") {
+      alerts.push({
+        key: `${plantKey}.sensorFault`,
+        level: "critical",
+        msg: `${profile.name}: Bodensensor liefert keine plausiblen Werte — Auto-Bewässerung pausiert`,
+        icon: "⚠️",
+      });
+    } else if (autoWaterState === "no-rebound") {
+      alerts.push({
+        key: `${plantKey}.noRebound`,
+        level: "critical",
+        msg: `${profile.name}: Boden reagiert nicht auf Bewässerung (Tank leer / Pumpe defekt?) — Auto-Bewässerung deaktiviert`,
+        icon: "🚱",
+      });
+    }
   }
 
   return alerts;

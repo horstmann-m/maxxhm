@@ -56,6 +56,12 @@ your specific breakout boards don't expose the ADDR pin, use a second I2C bus
   API throughout; v6's `StaticJsonDocument`/`createNestedObject()` API is not a drop-in
   match
 - `WiFi`, `WebServer`, `Preferences`, `Wire` — bundled with the ESP32 Arduino core
+- `esp_task_wdt` (task watchdog) and `driver/gpio` — bundled with the ESP32 Arduino
+  core (esp-idf headers). The task-watchdog and `hw_timer_t` APIs used for the pump
+  failsafe (see below) target **Arduino-ESP32 core 3.x**; core 2.x has different
+  function signatures (`esp_task_wdt_init(timeoutSeconds, panic)`,
+  `timerBegin(timerNum, prescaler, countUp)`) — check your installed core version
+  before flashing and adjust the calls in `setup()` if needed.
 
 ## Configuration before flashing
 
@@ -76,6 +82,28 @@ your specific breakout boards don't expose the ADDR pin, use a second I2C bus
   malformed or malicious `/api/config` POST cannot make the pump run indefinitely.
 - Auto-watering never overlaps a running pulse, respects the per-plant cooldown, and
   is capped at `max_daily_pulses` per plant per day.
+- **Pump failsafe (Round 2):** the `MAX_PULSE_SECONDS` cap is enforced twice,
+  independently — `serviceRunningPump()` on the normal `loop()` cadence, and a
+  hardware-timer ISR (`onPumpFailsafeTimer()`) that fires every 500ms regardless of
+  whether `loop()` is making progress at all. On top of that, the ESP32 task watchdog
+  (`esp_task_wdt`) reboots the board if `loop()` doesn't check in within
+  `WDT_TIMEOUT_S` (10s) — since the pump relay pins are driven `LOW` early in
+  `setup()`, a reboot can never leave the pump stuck on.
+- **Soil-sensor fault detection (Round 2):** a raw ADC reading at/near either rail, or
+  one that stays flat-lined across `SOIL_FAULT_WINDOW` consecutive reads, marks that
+  plant `state: "sensor-fault"` in `/api/sensors` and blocks its auto-watering until
+  the sensor is fixed and produces a plausible, varying reading again.
+- **No-rebound / reservoir-empty detection (Round 2):** after firing a pulse, the
+  firmware re-checks soil moisture a short while later; if it hasn't risen by
+  `REBOUND_MIN_RISE_PERCENT`, that plant is disarmed with `state: "no-rebound"`
+  (empty reservoir, popped tube, seized pump) — this persists across a
+  disable/re-enable toggle from the dashboard by design, and currently only clears on
+  a firmware reboot/power-cycle once the hardware issue is fixed.
+- **WiFi reconnect (Round 2):** `loop()` checks `WiFi.status()` every
+  `WIFI_CHECK_INTERVAL_MS` (10s) and re-attaches after a drop, non-blocking, so a
+  router reboot no longer requires power-cycling the ESP32 to restore dashboard
+  visibility. Auto-watering itself never depended on WiFi and keeps running through an
+  outage either way.
 - If you wire one valve per plant instead of a single shared pump, update
   `startPump()` / `runAutoWaterLoop()` to address the correct valve pin per plant
   instead of the shared `PIN_PUMP_RELAY` — the current sketch assumes one shared pump

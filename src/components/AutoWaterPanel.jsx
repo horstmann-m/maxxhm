@@ -5,6 +5,10 @@ const STATE_COPY = {
   "cooling-down": { icon: "🕒", text: "Cooldown nach Bewässerung", color: colors.orange },
   pumping: { icon: "💧", text: "Bewässert gerade", color: colors.blue },
   disarmed: { icon: "⚪", text: "Deaktiviert", color: colors.textMuted },
+  // Round 2: firmware-reported fault states — see docs/API.md "Fault states".
+  // Both disarm auto-watering on the device regardless of `rule.enabled`.
+  "sensor-fault": { icon: "⚠️", text: "Sensorfehler — Auto-Bewässerung pausiert", color: colors.red },
+  "no-rebound": { icon: "🚱", text: "Keine Reaktion auf Bewässerung — deaktiviert (Tank/Pumpe prüfen)", color: colors.red },
 };
 
 const inputStyle = {

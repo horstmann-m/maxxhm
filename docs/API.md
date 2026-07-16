@@ -62,8 +62,12 @@ Notes:
   key here (and a matching entry in `src/plants/profiles.js` + `auto_water`) — nothing
   else in the schema changes shape.
 - `auto_water[plant].state` is one of `"armed" | "cooling-down" | "pumping" |
-  "disarmed"` — see the state machine below. The dashboard displays this string
-  directly (`src/components/AutoWaterPanel.jsx`); it does not re-derive it.
+  "disarmed" | "sensor-fault" | "no-rebound"` — see the state machine below. The
+  dashboard displays this string directly (`src/components/AutoWaterPanel.jsx`); it
+  does not re-derive it. `"sensor-fault"` and `"no-rebound"` are Round 2 additions —
+  see the "Fault states" section below — and both take precedence over
+  `enabled`/`disabled`: a faulted plant reports its fault state even while `enabled`
+  is `true`.
 - All numeric fields may be integers or floats; the dashboard always formats with
   `.toFixed(n)`, never assumes a specific precision from the device.
 - If a field is temporarily unreadable (sensor fault), omit it or send `null` rather
@@ -124,6 +128,8 @@ Pseudocode (see the firmware `.ino` for the real implementation):
 
 ```
 for each plant with an auto_water rule:
+  if soil_sensor_fault:                         state = "sensor-fault"; continue   # Round 2
+  if no_rebound_fault:                           state = "no-rebound"; continue     # Round 2
   if not rule.enabled:                         state = "disarmed"; continue
   if pump_is_active:                            skip (never overlap pulses)
   if soil_percent >= rule.threshold_percent:    state = "armed"; continue
@@ -148,3 +154,26 @@ Safety gates, all enforced in firmware regardless of what the dashboard requests
 - **No overlap** — a trigger is ignored while `pump_active` is already true.
 - **`pulses_today` resets at local midnight** (or on a rolling 24h window if no RTC/NTP
   is available — document whichever is implemented in the `.ino` comments).
+
+## Fault states (Round 2)
+
+Two additional `auto_water[plant].state` values, both of which **disarm auto-watering
+for that plant regardless of `rule.enabled`** — a user re-arming from the dashboard
+must not silently un-stick a genuinely faulty sensor or an empty reservoir:
+
+- **`"sensor-fault"`** — the firmware rejected the plant's soil reading as untrustworthy:
+  either the raw ADC value sat at/near a rail (`raw <= 50` or `raw >= 4045` on the
+  12-bit scale — a disconnected or shorted sensor), or it stayed flat-lined (range
+  `< 3` raw counts) across `SOIL_FAULT_WINDOW` (6) consecutive reads, which a live
+  capacitive sensor's ADC noise never does. `soil_percent` keeps reporting the last
+  known-good value (stale, not a fabricated reading) while this is active. Clears
+  automatically once the sensor produces plausible, varying readings again.
+- **`"no-rebound"`** — a watering pulse fired but the plant's soil moisture didn't rise
+  by at least ~3% over the next couple of re-checks after a settle period. Likely
+  causes: empty reservoir, a popped/kinked tube, or a seized pump. Firmware disarms
+  that plant's auto-water to avoid repeatedly firing the daily cap for zero effect (and
+  risking a dry-run pump). This does **not** auto-clear — it persists until the
+  underlying hardware issue is fixed and the device is rebooted/power-cycled.
+
+The dashboard's alert engine (`src/lib/alerts.js`) surfaces both as critical alerts
+when present in the sensor payload's `auto_water[plant].state`.

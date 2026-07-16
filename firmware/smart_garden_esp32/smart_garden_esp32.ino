@@ -35,6 +35,28 @@
  * sanity. Treat calibration constants (ADC->% mapping, TDS/pH curve
  * coefficients) as starting points; every capacitive soil sensor and pH
  * probe needs its own dry/wet (and buffer-solution) calibration.
+ *
+ * Round 2 additions (safety hardening, see docs/API.md):
+ *   - Soil-sensor fault detection (rail-extreme + flat-lined-variance) —
+ *     a disconnected/shorted sensor no longer silently over- or
+ *     under-waters; auto_water[plant].state reports "sensor-fault".
+ *   - Reservoir-empty / no-rebound verification — a pulse that doesn't
+ *     raise soil moisture (empty tank, popped tube, seized pump) disarms
+ *     that plant's auto-water and reports state: "no-rebound".
+ *   - Pump failsafe: a hardware-timer ISR cuts the relay independent of
+ *     loop() cadence, plus the ESP32 task watchdog reboots the board if
+ *     loop() itself wedges. Belt-and-suspenders on top of
+ *     serviceRunningPump()'s normal MAX_PULSE_SECONDS enforcement.
+ *   - WiFi reconnect guard — loop() periodically checks WiFi.status()
+ *     and re-attaches after a router drop instead of requiring a
+ *     power-cycle (auto-watering keeps running locally either way; this
+ *     restores dashboard visibility).
+ *   These are reviewed for logic/pin/timing sanity only, same as the
+ *   rest of this sketch — not compiled/flashed against real hardware.
+ *   The hw_timer_t / esp_task_wdt APIs below target Arduino-ESP32 core
+ *   3.x; older core versions (2.x) use different signatures
+ *   (`timerBegin(num, prescaler, countUp)`, `esp_task_wdt_init(s, panic)`)
+ *   — check against your installed core version before flashing.
  */
 
 #include <WiFi.h>
@@ -45,6 +67,8 @@
 #include <ArduinoJson.h>
 #include <Preferences.h>
 #include <time.h>
+#include <esp_task_wdt.h>
+#include <driver/gpio.h>
 
 // ---------------------------------------------------------------------------
 //  WIFI
@@ -83,6 +107,25 @@ const uint32_t MAX_PULSE_SECONDS = 8;       // absolute cap, regardless of rule.
 const uint32_t SENSOR_INTERVAL_MS = 5000;   // matches the dashboard's default POLL_INTERVAL
 const uint32_t AUTO_WATER_CHECK_INTERVAL_MS = 5000;
 
+// --- Round 2: soil-sensor fault detection ---
+const int SOIL_RAW_RAIL_LOW = 50;     // at/near 0 — shorted or disconnected-to-GND
+const int SOIL_RAW_RAIL_HIGH = 4045;  // at/near 4095 (12-bit) — open circuit / disconnected
+const int SOIL_FAULT_WINDOW = 6;      // consecutive samples inspected for flat-lining
+const int SOIL_FAULT_MIN_RANGE = 3;   // raw ADC counts; a live sensor always jitters at least this much
+
+// --- Round 2: reservoir-empty / no-rebound verification ---
+const uint32_t REBOUND_SETTLE_MS = 60000UL;  // wait after a pulse for moisture to redistribute
+const uint32_t REBOUND_RECHECK_MS = 30000UL; // spacing between rebound re-checks
+const int REBOUND_MAX_SAMPLES = 3;           // give a pulse this many checks (~settle + 2 rechecks) to show a rise
+const float REBOUND_MIN_RISE_PERCENT = 3.0;  // must rise by at least this much to count as "the pump worked"
+
+// --- Round 2: pump failsafe (hardware timer ISR + task watchdog) ---
+const uint32_t WDT_TIMEOUT_S = 10;                 // reboot if loop() doesn't check in within this window
+const uint64_t PUMP_FAILSAFE_TIMER_US = 500000ULL; // ISR cadence, independent of loop()
+
+// --- Round 2: WiFi reconnect guard ---
+const uint32_t WIFI_CHECK_INTERVAL_MS = 10000;
+
 // ---------------------------------------------------------------------------
 //  STATE
 // ---------------------------------------------------------------------------
@@ -115,6 +158,24 @@ struct PlantState {
   AutoWaterRuntime runtime;
   float lastSoilPercent;
   float lastLux;
+
+  // --- Round 2: soil-sensor fault detection (see checkSoilFault()) ---
+  int soilRawHistory[SOIL_FAULT_WINDOW];
+  int soilRawHistoryIdx;    // ring-buffer write position
+  int soilRawHistoryCount;  // caps at SOIL_FAULT_WINDOW once the buffer fills
+  bool soilFault;
+
+  // --- Round 2: reservoir-empty / no-rebound verification (see serviceReboundChecks()) ---
+  bool reboundCheckPending;
+  float reboundSoilBefore;
+  uint32_t reboundCheckDueAtMs;
+  int reboundSamplesTaken;
+  bool noReboundFault;
+  // Remaining fields (soilRawHistory[], soilRawHistoryIdx, soilRawHistoryCount,
+  // soilFault, reboundCheckPending, reboundSoilBefore, reboundCheckDueAtMs,
+  // reboundSamplesTaken, noReboundFault) are intentionally left out of the
+  // aggregate initializer below — C++ zero/false-initializes any trailing
+  // members not given an explicit value in a positional aggregate init.
 };
 
 PlantState plants[2] = {
@@ -123,10 +184,23 @@ PlantState plants[2] = {
 };
 const int PLANT_COUNT = 2;
 
-bool pumpActive = false;
-uint32_t pumpStartedAtMs = 0;
-uint32_t pumpRunSeconds = 0;
+// `volatile` because these are also read/written from onPumpFailsafeTimer()
+// (a hardware-timer ISR, see below) in addition to the main loop — without
+// it the compiler is free to cache stale values in the main-loop context.
+volatile bool pumpActive = false;
+volatile uint32_t pumpStartedAtMs = 0;
+volatile uint32_t pumpRunSeconds = 0;
 uint32_t lastPumpFinishedAtMs = 0; // for actuators.last_pump_seconds_ago
+
+// Set by onPumpFailsafeTimer() when it has to cut the relay itself because
+// the main loop hasn't reached serviceRunningPump() in time; consumed
+// (non-atomically, but only ever cleared right after being read) by
+// serviceRunningPump() on the next loop() iteration to finish the
+// non-ISR-safe bookkeeping (Serial logging, lastPumpFinishedAtMs).
+volatile bool pumpFailsafeTriggeredFlag = false;
+hw_timer_t* pumpFailsafeTimer = nullptr;
+
+uint32_t lastWifiCheckMs = 0;
 
 // "auto" is the light relay's default mode; on/off are manual overrides
 // until the next /api/light?action=auto call.
@@ -218,10 +292,61 @@ void stopPump() {
   lastPumpFinishedAtMs = millis();
 }
 
+// ---------------------------------------------------------------------------
+//  PUMP FAILSAFE — hardware-timer ISR (Round 2, item 4)
+// ---------------------------------------------------------------------------
+// serviceRunningPump() below is the normal enforcement path for
+// MAX_PULSE_SECONDS, but it only runs when loop() reaches it each
+// iteration. A blocked I2C/DHT read or a stuck server.handleClient() could
+// delay that indefinitely, leaving the relay stuck HIGH. This ISR is the
+// belt-and-suspenders backstop: it fires on a hardware timer completely
+// independent of loop()'s cadence (including while loop() is fully
+// wedged) and cuts the relay directly.
+//
+// Kept intentionally minimal per ESP32 ISR constraints (marked IRAM_ATTR,
+// no Serial, no heap allocation, no floating point). gpio_set_level() is a
+// direct register write and is safe to call from interrupt context, unlike
+// digitalWrite() which is not guaranteed IRAM-resident on every core
+// version. A 500ms grace margin over the configured run time avoids racing
+// the normal stopPump() path on a healthy loop.
+void IRAM_ATTR onPumpFailsafeTimer() {
+  if (pumpActive && (millis() - pumpStartedAtMs) >= (pumpRunSeconds * 1000UL + 500UL)) {
+    gpio_set_level((gpio_num_t)PIN_PUMP_RELAY, 0);
+    pumpFailsafeTriggeredFlag = true;
+  }
+}
+
 void serviceRunningPump() {
+  if (pumpFailsafeTriggeredFlag) {
+    // The ISR already dropped the relay; finish the non-ISR-safe
+    // bookkeeping here on the main thread.
+    pumpFailsafeTriggeredFlag = false;
+    if (pumpActive) {
+      pumpActive = false;
+      lastPumpFinishedAtMs = millis();
+      Serial.println("[failsafe] pump cutoff enforced by hardware-timer ISR (loop cadence backstop tripped)");
+    }
+    return;
+  }
   if (pumpActive && millis() - pumpStartedAtMs >= pumpRunSeconds * 1000UL) {
     stopPump();
   }
+}
+
+// ---------------------------------------------------------------------------
+//  WIFI RECONNECT GUARD (Round 2, item 6)
+// ---------------------------------------------------------------------------
+// loop() previously never checked WiFi.status() — a router reboot/drop left
+// the device connected to nothing until power-cycled. Auto-watering keeps
+// enforcing its rules locally either way (it doesn't depend on WiFi), but
+// all dashboard visibility and manual control is lost until this runs.
+// WiFi.begin() is non-blocking here (no delay() loop) so a dropped
+// connection never stalls the auto-water loop while reconnecting.
+void serviceWifiConnection() {
+  if (WiFi.status() == WL_CONNECTED) return;
+  Serial.println("[wifi] not connected — attempting reconnect");
+  WiFi.disconnect();
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 }
 
 void setLightRelay(bool on) {
@@ -242,6 +367,37 @@ void serviceLightAutoMode() {
 }
 
 // ---------------------------------------------------------------------------
+//  SOIL SENSOR FAULT DETECTION (Round 2, item 3)
+// ---------------------------------------------------------------------------
+// A disconnected/shorted capacitive soil sensor is dangerous if undetected:
+// pegged-low raw (-> soilRawToPercent() reads ~100% "wet") silently starves
+// auto-watering while the plant actually dries out and dies of thirst with
+// a green-looking dashboard; pegged-high raw (-> reads ~0% "dry") fires
+// auto-water up to the daily cap into an already-fine plant
+// (overwatering/root rot). Two independent checks:
+//   1) Rail-extreme rejection — raw at/near the ADC's 0 or 4095 ends.
+//   2) Flat-lined-variance — a live capacitive sensor always shows some ADC
+//      jitter even in perfectly stable soil; a raw value that repeats
+//      near-identically across SOIL_FAULT_WINDOW consecutive reads (~30s at
+//      the default 5s sensor interval) is more consistent with a
+//      disconnected/stuck pin than a real analog signal.
+bool checkSoilFault(PlantState& p, int raw) {
+  if (raw <= SOIL_RAW_RAIL_LOW || raw >= SOIL_RAW_RAIL_HIGH) return true;
+
+  p.soilRawHistory[p.soilRawHistoryIdx] = raw;
+  p.soilRawHistoryIdx = (p.soilRawHistoryIdx + 1) % SOIL_FAULT_WINDOW;
+  if (p.soilRawHistoryCount < SOIL_FAULT_WINDOW) p.soilRawHistoryCount++;
+  if (p.soilRawHistoryCount < SOIL_FAULT_WINDOW) return false; // not enough samples yet
+
+  int lo = p.soilRawHistory[0], hi = p.soilRawHistory[0];
+  for (int i = 1; i < SOIL_FAULT_WINDOW; i++) {
+    if (p.soilRawHistory[i] < lo) lo = p.soilRawHistory[i];
+    if (p.soilRawHistory[i] > hi) hi = p.soilRawHistory[i];
+  }
+  return (hi - lo) < SOIL_FAULT_MIN_RANGE;
+}
+
+// ---------------------------------------------------------------------------
 //  SENSOR READ
 // ---------------------------------------------------------------------------
 void readAllSensors() {
@@ -252,13 +408,67 @@ void readAllSensors() {
 
   for (int i = 0; i < PLANT_COUNT; i++) {
     int raw = analogRead(plants[i].soilPin);
-    plants[i].lastSoilPercent = soilRawToPercent(raw);
+    plants[i].soilFault = checkSoilFault(plants[i], raw);
+    // On fault, deliberately keep the last known-good lastSoilPercent
+    // (stale but plausible) rather than writing a bogus reading — the
+    // soilFault flag (surfaced as auto_water[plant].state ==
+    // "sensor-fault") is what actually gates auto-water and the UI alert.
+    if (!plants[i].soilFault) {
+      plants[i].lastSoilPercent = soilRawToPercent(raw);
+    }
     float lux = plants[i].luxSensor->readLightLevel();
     if (lux >= 0) plants[i].lastLux = lux; // BH1750 returns -1 on read failure
   }
 
   lastTdsPpm = readTdsPpm(isnan(lastTemperature) ? 25.0 : lastTemperature);
   lastPh = readPh();
+}
+
+// ---------------------------------------------------------------------------
+//  RESERVOIR-EMPTY / NO-REBOUND VERIFICATION (Round 2, item 7)
+// ---------------------------------------------------------------------------
+// runAutoWaterLoop() fires a pulse and, historically, just trusted it
+// worked. An empty reservoir, a popped tube, or a seized pump means it
+// would fire the daily cap every day for zero effect (and can run a pump
+// dry). After a pulse, this waits for the soil to settle
+// (REBOUND_SETTLE_MS) and re-samples; if it hasn't risen by at least
+// REBOUND_MIN_RISE_PERCENT within REBOUND_MAX_SAMPLES checks, the plant's
+// auto-water is disarmed (state: "no-rebound") until a human investigates.
+// Called once per sensor-read cycle, right after readAllSensors() updates
+// lastSoilPercent — see loop().
+void serviceReboundChecks() {
+  uint32_t now = millis();
+  for (int i = 0; i < PLANT_COUNT; i++) {
+    PlantState& p = plants[i];
+    if (!p.reboundCheckPending) continue;
+    if (p.soilFault) {
+      // Can't trust either soilBefore or the current reading — drop this
+      // rebound check rather than risk a false "no-rebound" fault (or a
+      // false pass) off a bad sensor. The sensor-fault gate in
+      // runAutoWaterLoop() already blocks auto-water for this plant.
+      p.reboundCheckPending = false;
+      continue;
+    }
+    // Rollover-safe "not due yet" check (millis() wraps after ~49.7 days;
+    // a direct now < dueAt comparison would misbehave across that wrap —
+    // same subtraction idiom used elsewhere in this file, e.g. serviceRunningPump()).
+    if ((int32_t)(now - p.reboundCheckDueAtMs) < 0) continue;
+
+    float rise = p.lastSoilPercent - p.reboundSoilBefore;
+    if (rise >= REBOUND_MIN_RISE_PERCENT) {
+      p.reboundCheckPending = false;
+      continue; // pulse worked — nothing else to do
+    }
+
+    p.reboundSamplesTaken++;
+    if (p.reboundSamplesTaken >= REBOUND_MAX_SAMPLES) {
+      p.noReboundFault = true;
+      p.reboundCheckPending = false;
+      Serial.printf("[failsafe] %s: no soil moisture rebound after watering pulse — disarming auto-water (reservoir/tube/pump?)\n", p.id);
+    } else {
+      p.reboundCheckDueAtMs = now + REBOUND_RECHECK_MS; // give it another settle window
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -282,6 +492,18 @@ void runAutoWaterLoop() {
   for (int i = 0; i < PLANT_COUNT; i++) {
     PlantState& p = plants[i];
     resetDailyCounterIfNeeded(p.runtime);
+
+    // Round 2 fault gates — both take precedence over the rule's own
+    // enabled/disabled toggle, since re-arming from the dashboard must not
+    // silently un-stick a genuinely faulty sensor or an empty reservoir.
+    if (p.soilFault) {
+      p.runtime.state = "sensor-fault";
+      continue;
+    }
+    if (p.noReboundFault) {
+      p.runtime.state = "no-rebound";
+      continue;
+    }
 
     if (!p.rule.enabled) {
       p.runtime.state = "disarmed";
@@ -321,6 +543,12 @@ void runAutoWaterLoop() {
     p.runtime.state = "pumping";
     // If your hardware has one valve/pump per plant instead of a shared
     // pump, only start THIS plant's pump/valve pin here.
+
+    // Round 2: schedule a no-rebound check — see serviceReboundChecks().
+    p.reboundCheckPending = true;
+    p.reboundSoilBefore = p.lastSoilPercent;
+    p.reboundCheckDueAtMs = millis() + p.rule.pulseSeconds * 1000UL + REBOUND_SETTLE_MS;
+    p.reboundSamplesTaken = 0;
   }
 }
 
@@ -494,6 +722,28 @@ void setup() {
   // schedule. Adjust the UTC offset / DST rules for your timezone.
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
 
+  // Round 2: hardware-timer pump failsafe — fires on PUMP_FAILSAFE_TIMER_US
+  // cadence completely independent of loop(), see onPumpFailsafeTimer().
+  // Arduino-ESP32 core 3.x API (single-arg timerBegin(frequencyHz)); core
+  // 2.x uses timerBegin(timerNum, prescaler, countUp) — adjust if needed.
+  pumpFailsafeTimer = timerBegin(1000000); // 1 MHz tick
+  timerAttachInterrupt(pumpFailsafeTimer, &onPumpFailsafeTimer);
+  timerAlarm(pumpFailsafeTimer, PUMP_FAILSAFE_TIMER_US, true, 0);
+
+  // Round 2: task watchdog — reboots the board if loop() doesn't call
+  // esp_task_wdt_reset() (see loop()) within WDT_TIMEOUT_S. The relay
+  // returns to its LOW boot state (see digitalWrite() calls above) on
+  // reboot, so a wedged loop can never leave the pump stuck on
+  // indefinitely. Core 3.x config-struct API; core 2.x uses
+  // esp_task_wdt_init(timeoutSeconds, panic) instead.
+  esp_task_wdt_config_t wdtConfig = {
+    .timeout_ms = WDT_TIMEOUT_S * 1000,
+    .idle_core_mask = 0,
+    .trigger_panic = true,
+  };
+  esp_task_wdt_init(&wdtConfig);
+  esp_task_wdt_add(NULL); // watch the loop() task
+
   server.on("/api/sensors", HTTP_GET, handleSensors);
   server.on("/api/pump", HTTP_GET, handlePump);
   server.on("/api/light", HTTP_GET, handleLight);
@@ -504,6 +754,8 @@ void setup() {
 }
 
 void loop() {
+  esp_task_wdt_reset(); // Round 2: check in with the task watchdog every iteration
+
   server.handleClient();
   serviceRunningPump();
 
@@ -512,9 +764,14 @@ void loop() {
     lastSensorReadMs = now;
     readAllSensors();
     serviceLightAutoMode();
+    serviceReboundChecks(); // Round 2: needs the just-refreshed lastSoilPercent
   }
   if (now - lastAutoWaterCheckMs >= AUTO_WATER_CHECK_INTERVAL_MS) {
     lastAutoWaterCheckMs = now;
     runAutoWaterLoop();
+  }
+  if (now - lastWifiCheckMs >= WIFI_CHECK_INTERVAL_MS) {
+    lastWifiCheckMs = now;
+    serviceWifiConnection(); // Round 2: reconnect after a router drop
   }
 }
