@@ -6,7 +6,8 @@ import { generateDemoData, createDemoState, applyWateringPulse } from "./lib/dem
 import { checkAlerts, dedupeAlerts } from "./lib/alerts.js";
 import { computeHealth, estimateDLIIncrementMol, forecastSoilDryHours, shouldWater, defaultAutoWaterRule } from "./lib/health.js";
 import { loadState, saveState } from "./lib/storage.js";
-import { fetchSensors, sendCommand as apiSendCommand, fetchConfig, postConfig } from "./lib/api.js";
+import { fetchSensors, sendCommand as apiSendCommand, fetchConfig, postConfig, toDeviceConfig, fromDeviceConfig } from "./lib/api.js";
+import { exportWateringLogJson, exportWateringLogCsv, exportAlertLogJson, exportAlertLogCsv, importLogFile } from "./lib/exportLog.js";
 
 import Header from "./components/Header.jsx";
 import Tabs from "./components/Tabs.jsx";
@@ -73,7 +74,11 @@ export default function App() {
   const [editingPlant, setEditingPlant] = useState("arabica");
 
   const demoStateRef = useRef(createDemoState());
-  const activeAlertKeysRef = useRef(new Set());
+  // Persisted across reload (Round 2, item 5 — the round-1 disclosed bug):
+  // without this, a still-active alert re-fires as a "rising edge" and logs
+  // a duplicate entry on every page refresh, since dedupeAlerts() had
+  // nothing to compare against but an empty set.
+  const activeAlertKeysRef = useRef(new Set(loadState("activeAlertKeys", [])));
   const consecutiveFailuresRef = useRef(0);
   const lastTickAtRef = useRef(Date.now());
   const autoWaterRulesRef = useRef(autoWaterRules);
@@ -107,7 +112,7 @@ export default function App() {
       skipNextConfigPushRef.current = false;
       return;
     }
-    postConfig(CONFIG.ESP32_URL, { auto_water: autoWaterRules }).then((result) => {
+    postConfig(CONFIG.ESP32_URL, toDeviceConfig(autoWaterRules)).then((result) => {
       if (!result.ok) showToast(`Konfiguration konnte nicht an das Gerät gesendet werden: ${result.error}`, "error");
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,7 +167,14 @@ export default function App() {
         const configResult = await fetchConfig(CONFIG.ESP32_URL);
         if (configResult.ok && configResult.data?.auto_water) {
           skipNextConfigPushRef.current = true;
-          setAutoWaterRules((prev) => ({ ...prev, ...configResult.data.auto_water }));
+          const deviceRules = fromDeviceConfig(configResult.data);
+          setAutoWaterRules((prev) => {
+            const next = { ...prev };
+            for (const [plantKey, patch] of Object.entries(deviceRules)) {
+              next[plantKey] = { ...next[plantKey], ...patch };
+            }
+            return next;
+          });
         }
       }
 
@@ -278,6 +290,7 @@ export default function App() {
     setAlerts(newAlerts);
     const { activeKeys, risingEdge } = dedupeAlerts(newAlerts, activeAlertKeysRef.current);
     activeAlertKeysRef.current = activeKeys;
+    saveState("activeAlertKeys", Array.from(activeKeys));
     if (risingEdge.length > 0) {
       setAlertLog((prev) => [...risingEdge.map((a) => ({ ...a, id: nextId(), time: now.toLocaleTimeString() })), ...prev].slice(0, CONFIG.MAX_ALERT_LOG));
     }
@@ -353,6 +366,66 @@ export default function App() {
       });
     },
     [profiles, showToast]
+  );
+
+  // ---- log export / import (Round 2, item 8) -------------------------------
+  // Client-side only, no backend — see src/lib/exportLog.js. Import merges
+  // by `id` (existing entries win on collision) and re-applies the same
+  // MAX_*_LOG cap the live logging path uses.
+  const handleImportWateringLog = useCallback(
+    async (file) => {
+      try {
+        const entries = await importLogFile(file);
+        const normalized = entries
+          .filter((e) => e && e.plant)
+          .map((e) => ({
+            id: e.id != null && e.id !== "" ? String(e.id) : nextId(),
+            time: e.time ?? "",
+            plant: e.plant,
+            pulseSeconds: Number(e.pulseSeconds) || 0,
+            soilBefore: Number(e.soilBefore) || 0,
+            reason: e.reason ?? "",
+          }));
+        if (normalized.length === 0) throw new Error("keine gültigen Einträge gefunden");
+        setWateringLog((prev) => {
+          const existingIds = new Set(prev.map((p) => p.id));
+          const toAdd = normalized.filter((e) => !existingIds.has(e.id));
+          return [...toAdd, ...prev].slice(0, CONFIG.MAX_WATERING_LOG);
+        });
+        showToast(`Bewässerungsprotokoll: ${normalized.length} Einträge importiert`, "success");
+      } catch (err) {
+        showToast(`Import fehlgeschlagen: ${err.message}`, "error");
+      }
+    },
+    [showToast]
+  );
+
+  const handleImportAlertLog = useCallback(
+    async (file) => {
+      try {
+        const entries = await importLogFile(file);
+        const normalized = entries
+          .filter((e) => e && e.msg)
+          .map((e) => ({
+            id: e.id != null && e.id !== "" ? String(e.id) : nextId(),
+            time: e.time ?? "",
+            key: e.key ?? "",
+            level: e.level === "critical" ? "critical" : "warning",
+            msg: e.msg,
+            icon: e.icon ?? "⚠️",
+          }));
+        if (normalized.length === 0) throw new Error("keine gültigen Einträge gefunden");
+        setAlertLog((prev) => {
+          const existingIds = new Set(prev.map((p) => p.id));
+          const toAdd = normalized.filter((e) => !existingIds.has(e.id));
+          return [...toAdd, ...prev].slice(0, CONFIG.MAX_ALERT_LOG);
+        });
+        showToast(`Alert-Protokoll: ${normalized.length} Einträge importiert`, "success");
+      } catch (err) {
+        showToast(`Import fehlgeschlagen: ${err.message}`, "error");
+      }
+    },
+    [showToast]
   );
 
   // ---- derived / render ----------------------------------------------------
@@ -484,7 +557,13 @@ export default function App() {
                 />
               ))}
 
-              <WateringHistory log={wateringLog} profiles={profiles} />
+              <WateringHistory
+                log={wateringLog}
+                profiles={profiles}
+                onExportJson={() => exportWateringLogJson(wateringLog)}
+                onExportCsv={() => exportWateringLogCsv(wateringLog)}
+                onImport={handleImportWateringLog}
+              />
 
               <SectionLabel>Pflanzenprofile bearbeiten</SectionLabel>
               <div style={{ padding: 16, background: colors.bgPanel, borderRadius: 8, border: `1px solid ${colors.borderSubtle}` }}>
@@ -517,7 +596,13 @@ export default function App() {
 
           {tab === "alerts" && (
             <div id="panel-alerts" role="tabpanel" aria-labelledby="tab-alerts">
-              <Alerts alerts={alerts} alertLog={alertLog} />
+              <Alerts
+                alerts={alerts}
+                alertLog={alertLog}
+                onExportJson={() => exportAlertLogJson(alertLog)}
+                onExportCsv={() => exportAlertLogCsv(alertLog)}
+                onImport={handleImportAlertLog}
+              />
             </div>
           )}
         </div>
