@@ -66,7 +66,9 @@ export function forecastSoilDryHours(soilHistory, thresholdPercent, pollInterval
 // ---- Health index (0-100) -------------------------------------------
 // Smooth 0..1 score per factor: 1.0 inside the ideal band, tapering
 // through the warn band, hitting 0 at (or beyond) the critical bound.
-function scoreFactor(value, t) {
+// Exported for direct unit testing of the boundary taper (Round 2, item 2)
+// — otherwise only reachable indirectly through computeHealth().
+export function scoreFactor(value, t) {
   if (typeof value !== "number" || Number.isNaN(value) || !t) return null;
   const { idealLow, idealHigh } = t;
   if (value >= idealLow && value <= idealHigh) return 1;

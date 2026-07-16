@@ -8,7 +8,9 @@ import { PLANT_ORDER } from "../plants/profiles.js";
 // soil sitting below threshold for hours) logs exactly once instead of
 // flooding the log every poll — the prototype's bug #1.
 
-function pushIfOutOfBand(alerts, key, value, thresholds, { label, icon, unit = "", decimals = 1 }) {
+// Exported for direct unit testing of the crit-over-warn precedence (Round
+// 2, item 2) — otherwise only reachable indirectly through checkAlerts().
+export function pushIfOutOfBand(alerts, key, value, thresholds, { label, icon, unit = "", decimals = 1 }) {
   if (typeof value !== "number" || Number.isNaN(value) || !thresholds) return;
   const { warnLow, warnHigh, critLow, critHigh } = thresholds;
   if (critLow != null && value < critLow) {
