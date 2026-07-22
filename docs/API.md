@@ -9,6 +9,13 @@ a real device — only `CONFIG.ESP32_URL` in `src/config.js` changes.
 All endpoints are plain HTTP (no auth) on the ESP32's local IP, intended for a
 trusted home network. Timeouts on the dashboard side are 4s per request.
 
+The dashboard's origin (`localhost:5173` in dev, wherever it's hosted on your LAN) always
+differs from the device's own origin, so every response includes
+`Access-Control-Allow-Origin: *`, and each path also responds to the browser's `OPTIONS`
+preflight (triggered by `POST /api/config`'s JSON body). CORS headers are not a substitute
+for network trust — this device still has no auth and should stay on a trusted home LAN,
+not the public internet.
+
 ## `GET /api/sensors`
 
 Returns the current full sensor snapshot. Polled every `CONFIG.POLL_INTERVAL` (default

@@ -617,9 +617,33 @@ void writeSensorsJson(JsonDocument& doc) {
 }
 
 // ---------------------------------------------------------------------------
+//  CORS
+// ---------------------------------------------------------------------------
+// The dashboard is served from a different origin than this device
+// (localhost:5173 in dev, a LAN IP if hosted on e.g. a Raspberry Pi, ...) —
+// browsers enforce CORS on every cross-origin request regardless of whether
+// both sides are on the same local network. Allow any origin (this device
+// has no auth and is meant for a trusted home LAN only, per docs/API.md).
+void sendCorsHeaders() {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.sendHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
+// POST /api/config sends a JSON body, which is not a CORS "simple request" —
+// the browser sends an OPTIONS preflight first and expects these headers
+// back before it will send the actual POST. Registered for every API path
+// so any future non-GET/non-simple endpoint is covered automatically.
+void handleCorsPreflight() {
+  sendCorsHeaders();
+  server.send(204);
+}
+
+// ---------------------------------------------------------------------------
 //  HTTP HANDLERS
 // ---------------------------------------------------------------------------
 void handleSensors() {
+  sendCorsHeaders();
   JsonDocument doc;
   writeSensorsJson(doc);
   String out;
@@ -628,6 +652,7 @@ void handleSensors() {
 }
 
 void handlePump() {
+  sendCorsHeaders();
   String action = server.arg("action");
   if (action == "on") {
     // Manual pulses use MAX_PULSE_SECONDS (the safety cap) directly rather
@@ -644,6 +669,7 @@ void handlePump() {
 }
 
 void handleLight() {
+  sendCorsHeaders();
   String action = server.arg("action");
   if (action == "on") {
     lightMode = LIGHT_FORCED_ON;
@@ -662,6 +688,7 @@ void handleLight() {
 }
 
 void handleGetConfig() {
+  sendCorsHeaders();
   JsonDocument doc;
   JsonObject autoWater = doc["auto_water"].to<JsonObject>();
   for (int i = 0; i < PLANT_COUNT; i++) {
@@ -678,6 +705,7 @@ void handleGetConfig() {
 }
 
 void handlePostConfig() {
+  sendCorsHeaders();
   if (!server.hasArg("plain")) {
     server.send(400, "application/json", "{\"ok\":false,\"error\":\"missing body\"}");
     return;
@@ -703,6 +731,7 @@ void handlePostConfig() {
 }
 
 void handleNotFound() {
+  sendCorsHeaders();
   server.send(404, "application/json", "{\"ok\":false,\"error\":\"not found\"}");
 }
 
@@ -791,6 +820,13 @@ void setup() {
   server.on("/api/light", HTTP_GET, handleLight);
   server.on("/api/config", HTTP_GET, handleGetConfig);
   server.on("/api/config", HTTP_POST, handlePostConfig);
+  // CORS preflight — only /api/config's POST (JSON body) actually triggers
+  // browser preflight today, but registered for every path so it stays
+  // correct if a future endpoint adds non-simple headers/methods.
+  server.on("/api/sensors", HTTP_OPTIONS, handleCorsPreflight);
+  server.on("/api/pump", HTTP_OPTIONS, handleCorsPreflight);
+  server.on("/api/light", HTTP_OPTIONS, handleCorsPreflight);
+  server.on("/api/config", HTTP_OPTIONS, handleCorsPreflight);
   server.onNotFound(handleNotFound);
   server.begin();
 }
