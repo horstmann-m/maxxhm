@@ -334,6 +334,25 @@ void serviceRunningPump() {
 }
 
 // ---------------------------------------------------------------------------
+//  WIFI DIAGNOSTICS
+// ---------------------------------------------------------------------------
+// Decodes wl_status_t into a human-readable reason so a failed connection
+// attempt is actually debuggable from the Serial Monitor instead of just
+// printing "." forever with no information.
+const char* wifiStatusString(wl_status_t status) {
+  switch (status) {
+    case WL_IDLE_STATUS:     return "WL_IDLE_STATUS (radio initializing)";
+    case WL_NO_SSID_AVAIL:   return "WL_NO_SSID_AVAIL (SSID not found — check spelling, or out of range/wrong band)";
+    case WL_SCAN_COMPLETED:  return "WL_SCAN_COMPLETED";
+    case WL_CONNECTED:       return "WL_CONNECTED";
+    case WL_CONNECT_FAILED:  return "WL_CONNECT_FAILED (wrong password, or router auth mode unsupported — e.g. WPA3-only/PMF-required)";
+    case WL_CONNECTION_LOST: return "WL_CONNECTION_LOST";
+    case WL_DISCONNECTED:    return "WL_DISCONNECTED";
+    default:                 return "unknown status";
+  }
+}
+
+// ---------------------------------------------------------------------------
 //  WIFI RECONNECT GUARD (Round 2, item 6)
 // ---------------------------------------------------------------------------
 // loop() previously never checked WiFi.status() — a router reboot/drop left
@@ -708,13 +727,28 @@ void setup() {
   prefs.begin("smartgarden", false);
   for (int i = 0; i < PLANT_COUNT; i++) loadRuleFromPrefs(plants[i]);
 
+  // Retries WiFi.begin() in ~20s attempts, printing the decoded wl_status_t
+  // once per second, until connected. Unlike a bare dot-printing loop, this
+  // tells you *why* an attempt failed (wrong password vs. SSID not found vs.
+  // an auth mode the ESP32's classic WiFi stack can't negotiate, e.g. WPA3).
+  const uint32_t WIFI_ATTEMPT_TIMEOUT_MS = 20000;
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.print("Connecting to WiFi");
+  Serial.println("Connecting to WiFi...");
+  uint32_t attemptStartedMs = millis();
+  wl_status_t lastStatus = WL_IDLE_STATUS;
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+    delay(1000);
+    lastStatus = WiFi.status();
+    Serial.printf("  status=%d  %s\n", (int)lastStatus, wifiStatusString(lastStatus));
+    if (millis() - attemptStartedMs >= WIFI_ATTEMPT_TIMEOUT_MS) {
+      Serial.printf("Attempt timed out after %lus, last status: %s. Retrying...\n",
+                    WIFI_ATTEMPT_TIMEOUT_MS / 1000, wifiStatusString(lastStatus));
+      WiFi.disconnect();
+      WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+      attemptStartedMs = millis();
+    }
   }
-  Serial.println();
+  Serial.println("WiFi connected.");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
