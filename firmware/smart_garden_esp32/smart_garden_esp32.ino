@@ -727,6 +727,14 @@ void setup() {
   prefs.begin("smartgarden", false);
   for (int i = 0; i < PLANT_COUNT; i++) loadRuleFromPrefs(plants[i]);
 
+  // WIFI_STA must be set explicitly — without it the radio can be left in a
+  // stale AP/AP+STA mode carried over in flash from a previous sketch/session,
+  // which shows up as a WL_DISCONNECTED loop that never resolves to a clean
+  // pass/fail. WiFi.disconnect(true) clears any old stored config first.
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect(true);
+  delay(100);
+
   // Retries WiFi.begin() in ~20s attempts, printing the decoded wl_status_t
   // once per second, until connected. Unlike a bare dot-printing loop, this
   // tells you *why* an attempt failed (wrong password vs. SSID not found vs.
