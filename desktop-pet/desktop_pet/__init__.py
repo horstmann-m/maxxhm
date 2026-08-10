@@ -3,7 +3,7 @@
 Pure standard library: Tk for the window, everything else drawn by hand.
 """
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 __all__ = ["PetApp"]
 

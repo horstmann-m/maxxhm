@@ -61,6 +61,12 @@ def build_parser() -> argparse.ArgumentParser:
         "middle of the screen that does not wander. If you cannot see this, the "
         "problem is Tk itself rather than the pet",
     )
+    parser.add_argument(
+        "--selftest",
+        action="store_true",
+        help="draw four plain shapes and nothing else. Bypasses all creature "
+        "code, so a blank window here means the problem is Tk, not the pet",
+    )
     parser.add_argument("--version", action="version", version=f"desktop-pet {__version__}")
     return parser
 
@@ -75,7 +81,10 @@ def main(argv: list[str] | None = None) -> int:
     kind = creatures.get(args.creature)
     palette = palettes.get(args.palette, prefer=kind.name)
 
-    from .app import PetApp
+    from .app import PetApp, run_selftest
+
+    if args.selftest:
+        return run_selftest(max(160, args.size))
 
     app = PetApp(
         size=args.size,

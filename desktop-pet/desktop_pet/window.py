@@ -73,7 +73,10 @@ class PetWindow:
             highlightthickness=0,
             bd=0,
         )
-        self.canvas.pack()
+        # fill/expand rather than a bare pack(): if the canvas ends up
+        # smaller than the window, the platform's own window backing shows
+        # through and the pet looks like it failed to draw.
+        self.canvas.pack(fill="both", expand=True)
 
     # ------------------------------------------------------------------ probing
 

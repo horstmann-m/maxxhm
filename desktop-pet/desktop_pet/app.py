@@ -6,6 +6,7 @@ import platform
 import random
 import time
 import tkinter as tk
+import traceback
 
 from . import __version__, creatures, palette as palettes
 from .brain import Brain, State, World
@@ -13,6 +14,42 @@ from .pose import Particle, Pose
 from .window import PetWindow
 
 CLICK_SLOP = 5  # pixels of movement still counted as a click, not a drag
+
+
+def run_selftest(size: int = 240) -> int:
+    """Draw the simplest possible shapes and stop.
+
+    This deliberately avoids every line of creature code. If these shapes
+    appear, Tk's canvas works and the fault is in the pet's drawing; if the
+    window is blank, the fault is below us, in Tk or the Python it is
+    bound to.
+    """
+    window = PetWindow(size, topmost=True, plain=True, allow_transparency=False)
+    canvas = window.canvas
+    canvas.create_rectangle(0, 0, size, size, fill="#f4f4f4", outline="")
+    canvas.create_rectangle(size * 0.08, size * 0.08, size * 0.46, size * 0.46,
+                            fill="#c1121f", outline="#000000", width=3)
+    canvas.create_oval(size * 0.54, size * 0.08, size * 0.92, size * 0.46,
+                       fill="#2a9d8f", outline="#000000", width=3)
+    canvas.create_polygon(size * 0.5, size * 0.54, size * 0.92, size * 0.92,
+                          size * 0.08, size * 0.92,
+                          fill="#e9c46a", outline="#000000", width=3)
+    canvas.create_text(size * 0.5, size * 0.72, text="canvas ok",
+                       font=("Helvetica", max(11, int(size * 0.09)), "bold"))
+    window.raise_to_front()
+    print(
+        f"selftest: Tk {window.tk_patchlevel} on {platform.system()} | "
+        f"window {window.geometry()} | "
+        f"expect a red square, a green circle, a yellow triangle and the "
+        f"words 'canvas ok'",
+        flush=True,
+    )
+    print("close the window, or press Ctrl-C here, when you have looked", flush=True)
+    try:
+        window.root.mainloop()
+    except KeyboardInterrupt:
+        pass
+    return 0
 
 
 class PetApp:
@@ -68,6 +105,7 @@ class PetApp:
         self._lift_cooldown = 0.0
         self._running = True
         self._after_id: str | None = None
+        self._render_failed = False
 
         self._bind_events()
         self.window.move_to(self.brain.x, self.brain.y)
@@ -257,7 +295,7 @@ class PetApp:
         self._update_particles(dt)
         if not self.still:
             self.window.move_to(self.brain.x, self.brain.y)
-        self._render()
+        self._render_guarded()
         self._keep_on_top(dt)
 
     def _keep_on_top(self, dt: float) -> None:
@@ -270,6 +308,43 @@ class PetApp:
                 self.window.root.lift()
             except tk.TclError:
                 pass
+
+    def _render_guarded(self) -> None:
+        """Draw, and make a drawing failure visible instead of silent.
+
+        A canvas that raises every frame otherwise leaves an empty window and
+        a wall of identical tracebacks, which says nothing about which of the
+        two is broken.
+        """
+        try:
+            self._render()
+        except Exception:
+            if not self._render_failed:
+                self._render_failed = True
+                print("\n--- the creature failed to draw ---", flush=True)
+                traceback.print_exc()
+                print(
+                    "The window itself is fine; the drawing is not. Please "
+                    "report this with the startup line above.",
+                    flush=True,
+                )
+            self._draw_failure_marker()
+
+    def _draw_failure_marker(self) -> None:
+        """Something unmistakable, so the window is never merely blank."""
+        try:
+            canvas = self.window.canvas
+            canvas.delete("all")
+            canvas.create_rectangle(
+                0, 0, self.size, self.size, fill="#c1121f", outline=""
+            )
+            canvas.create_text(
+                self.size / 2, self.size / 2,
+                text="draw\nfailed", fill="#ffffff", justify="center",
+                font=("Helvetica", max(9, int(self.size * 0.12)), "bold"),
+            )
+        except tk.TclError:
+            pass
 
     def _render(self) -> None:
         pose = Pose(

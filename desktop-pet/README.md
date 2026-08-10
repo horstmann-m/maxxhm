@@ -104,15 +104,24 @@ python3 pet.py --doctor
 ```
 
 That is a plain, always-on-top window parked in the middle of the screen that
-does not wander — the maximum-visibility mode. If you cannot see *that*, the
-problem is Tk rather than the pet, and this is a useful check:
+does not wander — the maximum-visibility mode.
+
+**A window opens but is empty.** The window and the drawing are separate
+problems, and this tells them apart:
 
 ```bash
-python3 -c "import tkinter; tkinter.Label(text='Tk works').pack(); tkinter.mainloop()"
+python3 pet.py --selftest
 ```
 
-If `--doctor` works but a normal run does not, the borderless window is the
-problem — say so in an issue, along with the startup line.
+It draws four plain shapes — a red square, a green circle, a yellow triangle
+and the words "canvas ok" — using none of the creature code. If they appear,
+Tk is fine and the pet's drawing is at fault. If the window is still blank,
+the problem is below the pet, in Tk or the Python it is bound to; a Python
+built against Tk 8.6 (python.org's installer, or `brew install python-tk`) is
+the usual cure.
+
+If the creature's own drawing raises, the pet prints one traceback and shows a
+red "draw failed" panel rather than leaving you with an empty window.
 
 **It's behind the Dock.** The default `--floor 48` suits a Windows taskbar and
 is shorter than a typical macOS Dock. Raise it: `--floor 110`.
