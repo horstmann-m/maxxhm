@@ -131,10 +131,10 @@ The one genuinely platform-specific part is the see-through window:
 
 - **Windows** — fully transparent background via `-transparentcolor`, and the
   transparent area does not intercept clicks.
-- **macOS** — transparent via the `-transparent` window attribute, but only
-  on Tk 8.6. Apple's system Tk is 8.5.9, where the attribute is accepted and
-  then honoured unpredictably, so the pet detects that version and uses the
-  card instead.
+- **macOS** — transparent via the `-transparent` window attribute, on Tk 8.6
+  and up (Tk 9 included). Apple's own system Tk is 8.5.9, where the attribute
+  is accepted and then honoured unpredictably, so the pet detects that version
+  and uses the card instead.
 - **Linux/X11** — Tk cannot request an ARGB visual, so per-pixel transparency
   is not available. The pet falls back to sitting on a small rounded card, so
   the window reads as a deliberate little terrarium rather than a stray
