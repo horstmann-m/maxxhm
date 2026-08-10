@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import platform
 import random
 import time
 import tkinter as tk
 
-from . import creatures, palette as palettes
+from . import __version__, creatures, palette as palettes
 from .brain import Brain, State, World
 from .pose import Particle, Pose
 from .window import PetWindow
@@ -23,8 +24,12 @@ class PetApp:
         fps: int = 50,
         floor_margin: int = 48,
         topmost: bool = True,
+        plain: bool = False,
+        allow_transparency: bool = True,
     ):
-        self.window = PetWindow(size, topmost=topmost)
+        self.window = PetWindow(
+            size, topmost=topmost, plain=plain, allow_transparency=allow_transparency
+        )
         self.kind = creature if isinstance(creature, creatures.Kind) else creatures.get(creature)
         self.palette = (
             palette
@@ -294,7 +299,33 @@ class PetApp:
         except tk.TclError:
             pass
 
+    def describe(self) -> str:
+        """One line saying where the pet is and how it is being drawn.
+
+        Printed at startup: when someone cannot find their pet, this is the
+        difference between guessing and knowing.
+        """
+        screen_w, screen_h = self.window.screen_size()
+        window = "plain" if self.window.plain else "borderless"
+        skin = "transparent" if self.window.transparent else "opaque card"
+        return (
+            f"desktop-pet {__version__}: {self.kind.name} in {self.palette.name} | "
+            f"Tk {self.window.tk_patchlevel} on {platform.system()} | "
+            f"screen {screen_w}x{screen_h} | {window} window, {skin} | "
+            f"asked for {self.size}px at ({int(self.brain.x)}, {int(self.brain.y)}), "
+            f"Tk reports {self.window.geometry()}"
+        )
+
     def run(self) -> None:
+        print(self.describe(), flush=True)
+        if self.window.legacy_aqua_tk:
+            print(
+                "note: this is Apple's system Tk 8.5, which cannot do a "
+                "see-through window -- the pet sits on a small card instead. "
+                "Install Python from python.org (or `brew install python-tk`) "
+                "for Tk 8.6 and a transparent background.",
+                flush=True,
+            )
         self._last_tick = time.perf_counter()
         self._after_id = self.window.root.after(self.frame_ms, self._tick)
         try:

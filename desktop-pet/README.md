@@ -68,6 +68,8 @@ moves faster.
 --fps 50           lower this to 30 to be kinder to a laptop battery
 --floor 48         pixels kept clear at the bottom, e.g. for a taskbar
 --no-topmost       let other windows cover it
+--plain            ordinary titled window; always visible, has a close button
+--no-transparent   skip the see-through background, draw on a card
 ```
 
 Colours for the dragon are `ember` (charcoal and orange), `storm` (deep blue,
@@ -86,13 +88,45 @@ software X server — a worst case, since it has no graphics acceleration to
 lean on. Dropping to `--fps 30` takes that to about 7%, and the blob is around
 half the dragon either way (it draws about half as many shapes per frame).
 
+## If you can't find it
+
+The pet starts at a random spot along the bottom of the primary screen. It
+prints a line at startup saying where it put itself and how it is drawing
+itself — read that first, it usually answers the question.
+
+**The terminal looks frozen.** It isn't: the window loop holds the terminal
+until the pet exits. `Ctrl-C` stops it.
+
+**Nothing appears.** Use the fallback window, which is an ordinary titled one
+that always shows up and has a close button:
+
+```bash
+python3 pet.py --plain
+```
+
+If it appears in plain mode but not otherwise, the borderless window is the
+problem — say so in an issue, along with the startup line.
+
+**It's behind the Dock.** The default `--floor 48` suits a Windows taskbar and
+is shorter than a typical macOS Dock. Raise it: `--floor 110`.
+
+**macOS: "The system version of Tk is deprecated".** Apple's system Tk is
+8.5.9, from 2010. The pet detects it and skips the transparent window, because
+8.5 accepts the request and then draws unpredictably — you get the opaque card
+instead, which is worth more than a pet you cannot find. For a genuinely
+see-through pet, install Python from python.org or run `brew install
+python-tk`, either of which brings Tk 8.6.
+
 ## Platform notes
 
 The one genuinely platform-specific part is the see-through window:
 
 - **Windows** — fully transparent background via `-transparentcolor`, and the
   transparent area does not intercept clicks.
-- **macOS** — transparent via the `-transparent` window attribute.
+- **macOS** — transparent via the `-transparent` window attribute, but only
+  on Tk 8.6. Apple's system Tk is 8.5.9, where the attribute is accepted and
+  then honoured unpredictably, so the pet detects that version and uses the
+  card instead.
 - **Linux/X11** — Tk cannot request an ARGB visual, so per-pixel transparency
   is not available. The pet falls back to sitting on a small rounded card, so
   the window reads as a deliberate little terrarium rather than a stray

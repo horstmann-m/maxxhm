@@ -42,6 +42,18 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="let other windows cover the creature",
     )
+    parser.add_argument(
+        "--plain",
+        action="store_true",
+        help="use an ordinary titled window instead of a borderless one. Slower "
+        "to fall in love with, but it always shows up and it has a close button "
+        "-- try this first if you cannot find your pet",
+    )
+    parser.add_argument(
+        "--no-transparent",
+        action="store_true",
+        help="skip the see-through background and draw the pet on a small card",
+    )
     parser.add_argument("--version", action="version", version=f"desktop-pet {__version__}")
     return parser
 
@@ -65,6 +77,8 @@ def main(argv: list[str] | None = None) -> int:
         fps=args.fps,
         floor_margin=args.floor_margin,
         topmost=not args.no_topmost,
+        plain=args.plain,
+        allow_transparency=not args.no_transparent,
     )
     app.run()
     return 0
