@@ -97,14 +97,21 @@ itself — read that first, it usually answers the question.
 **The terminal looks frozen.** It isn't: the window loop holds the terminal
 until the pet exits. `Ctrl-C` stops it.
 
-**Nothing appears.** Use the fallback window, which is an ordinary titled one
-that always shows up and has a close button:
+**Nothing appears.** Start with the widest net:
 
 ```bash
-python3 pet.py --plain
+python3 pet.py --doctor
 ```
 
-If it appears in plain mode but not otherwise, the borderless window is the
+That is a plain, always-on-top window parked in the middle of the screen that
+does not wander — the maximum-visibility mode. If you cannot see *that*, the
+problem is Tk rather than the pet, and this is a useful check:
+
+```bash
+python3 -c "import tkinter; tkinter.Label(text='Tk works').pack(); tkinter.mainloop()"
+```
+
+If `--doctor` works but a normal run does not, the borderless window is the
 problem — say so in an issue, along with the startup line.
 
 **It's behind the Dock.** The default `--floor 48` suits a Windows taskbar and
@@ -115,7 +122,8 @@ is shorter than a typical macOS Dock. Raise it: `--floor 110`.
 8.5 accepts the request and then draws unpredictably — you get the opaque card
 instead, which is worth more than a pet you cannot find. For a genuinely
 see-through pet, install Python from python.org or run `brew install
-python-tk`, either of which brings Tk 8.6.
+python-tk`. Tk 8.6 and Tk 9 are both fine; the startup line tells you which
+one you are on.
 
 ## Platform notes
 

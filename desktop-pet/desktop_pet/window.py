@@ -5,8 +5,9 @@ desktop pet:
 
 * Windows -- ``-transparentcolor`` knocks out one chroma colour.
 * macOS   -- ``-transparent`` plus the ``systemTransparent`` background,
-  but only on Tk 8.6. Apple's system Tk is still 8.5.9, where borderless
-  transparent windows are unreliable enough that we do not try.
+  on Tk 8.6 and up (including Tk 9). Apple's own system Tk is still 8.5.9,
+  where borderless transparent windows are unreliable enough that we do not
+  try; if the colour name is rejected we fall back rather than crash.
 * Linux/X11 -- Tk cannot request an ARGB visual, so there is no reliable
   per-pixel transparency. We fall back to drawing an opaque rounded card
   (see the creatures' ``backdrop`` mode) so the window still looks
@@ -41,8 +42,11 @@ class PetWindow:
         self.root.resizable(False, False)
         if not plain:
             self.root.overrideredirect(True)
-            if topmost:
-                self.root.attributes("-topmost", True)
+        if topmost:
+            # Plain windows need this too. Without it the fallback opens
+            # behind whatever you launched it from -- usually a terminal
+            # sitting exactly where the pet spawns.
+            self.root.attributes("-topmost", True)
 
         self.transparent = (
             self._enable_transparency() if allow_transparency and not plain else False
@@ -52,7 +56,15 @@ class PetWindow:
         else:
             background = OPAQUE
 
-        self.root.configure(bg=background)
+        try:
+            self.root.configure(bg=background)
+        except tk.TclError:
+            # The window attribute was accepted but the matching colour name
+            # was not -- macOS names in particular have moved between Tk
+            # releases. An opaque pet beats a traceback.
+            self.transparent = False
+            background = OPAQUE
+            self.root.configure(bg=background)
         self.canvas = tk.Canvas(
             self.root,
             width=size,
@@ -82,7 +94,11 @@ class PetWindow:
 
     @property
     def legacy_aqua_tk(self) -> bool:
-        """Apple's system Tk, too old to be trusted with a transparent window."""
+        """Apple's system Tk 8.5, too old to be trusted with transparency.
+
+        Anything from 8.6 up -- including Tk 9 -- is fine, so the check is a
+        floor rather than an equality test.
+        """
         return self._is_mac and self._tk_version < (8, 6)
 
     def _enable_transparency(self) -> bool:
@@ -102,6 +118,14 @@ class PetWindow:
         except tk.TclError:
             return False
         return False
+
+    def raise_to_front(self) -> None:
+        """Make sure the window is actually on screen and on top."""
+        try:
+            self.root.lift()
+            self.root.update_idletasks()
+        except tk.TclError:
+            pass
 
     # ------------------------------------------------------------------ geometry
 

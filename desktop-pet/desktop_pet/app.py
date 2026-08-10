@@ -26,7 +26,9 @@ class PetApp:
         topmost: bool = True,
         plain: bool = False,
         allow_transparency: bool = True,
+        still: bool = False,
     ):
+        self.still = still
         self.window = PetWindow(
             size, topmost=topmost, plain=plain, allow_transparency=allow_transparency
         )
@@ -45,8 +47,15 @@ class PetApp:
             right=max(0, screen_w - size),
             floor=max(0, screen_h - floor_margin - size),
         )
-        start_x = random.randint(int(screen_w * 0.25), int(screen_w * 0.75))
-        self.brain = Brain(start_x, self.world.floor, self.world, size)
+        # "Still" mode parks the pet dead centre and stops the window from
+        # chasing it, so there is exactly one place to look for it.
+        start_x = (
+            (screen_w - size) // 2
+            if still
+            else random.randint(int(screen_w * 0.25), int(screen_w * 0.75))
+        )
+        start_y = (screen_h - size) // 2 if still else self.world.floor
+        self.brain = Brain(start_x, start_y, self.world, size)
 
         self.particles: list[Particle] = []
         self._press: tuple[int, int] | None = None
@@ -246,7 +255,8 @@ class PetApp:
         # Wings beat hard in the air and idle-flutter on the ground.
         self._wing += dt * (16.0 if not self.brain.grounded else 2.0)
         self._update_particles(dt)
-        self.window.move_to(self.brain.x, self.brain.y)
+        if not self.still:
+            self.window.move_to(self.brain.x, self.brain.y)
         self._render()
         self._keep_on_top(dt)
 
@@ -317,6 +327,7 @@ class PetApp:
         )
 
     def run(self) -> None:
+        self.window.raise_to_front()
         print(self.describe(), flush=True)
         if self.window.legacy_aqua_tk:
             print(

@@ -54,6 +54,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="skip the see-through background and draw the pet on a small card",
     )
+    parser.add_argument(
+        "--doctor",
+        action="store_true",
+        help="maximum visibility: a plain, always-on-top window parked in the "
+        "middle of the screen that does not wander. If you cannot see this, the "
+        "problem is Tk itself rather than the pet",
+    )
     parser.add_argument("--version", action="version", version=f"desktop-pet {__version__}")
     return parser
 
@@ -77,8 +84,9 @@ def main(argv: list[str] | None = None) -> int:
         fps=args.fps,
         floor_margin=args.floor_margin,
         topmost=not args.no_topmost,
-        plain=args.plain,
-        allow_transparency=not args.no_transparent,
+        plain=args.plain or args.doctor,
+        allow_transparency=not (args.no_transparent or args.doctor),
+        still=args.doctor,
     )
     app.run()
     return 0
