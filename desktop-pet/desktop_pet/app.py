@@ -6,9 +6,9 @@ import random
 import time
 import tkinter as tk
 
-from . import creature, palette as palettes
+from . import creatures, palette as palettes
 from .brain import Brain, State, World
-from .creature import Particle, Pose
+from .pose import Particle, Pose
 from .window import PetWindow
 
 CLICK_SLOP = 5  # pixels of movement still counted as a click, not a drag
@@ -18,13 +18,19 @@ class PetApp:
     def __init__(
         self,
         size: int = 128,
+        creature: creatures.Kind | str | None = None,
         palette: palettes.Palette | str | None = None,
         fps: int = 50,
         floor_margin: int = 48,
         topmost: bool = True,
     ):
         self.window = PetWindow(size, topmost=topmost)
-        self.palette = palette if isinstance(palette, palettes.Palette) else palettes.get(palette)
+        self.kind = creature if isinstance(creature, creatures.Kind) else creatures.get(creature)
+        self.palette = (
+            palette
+            if isinstance(palette, palettes.Palette)
+            else palettes.get(palette, prefer=self.kind.name)
+        )
         self.size = size
         self.frame_ms = max(8, int(1000 / max(1, fps)))
 
@@ -42,10 +48,12 @@ class PetApp:
         self._grab_offset = (0, 0)
         self._drag_trail: list[tuple[float, int, int]] = []
         self._dragging = False
-        self._zzz_cooldown = 0.0
+        self._breath_cooldown = 0.0
+        self._wing = 0.0
         self._last_tick = time.perf_counter()
         self._lift_cooldown = 0.0
         self._running = True
+        self._after_id: str | None = None
 
         self._bind_events()
         self.window.move_to(self.brain.x, self.brain.y)
@@ -94,7 +102,7 @@ class PetApp:
             self.brain.release(*self._throw_velocity())
         else:
             self.brain.pet()
-            self._spawn_hearts()
+            self._spawn_delight()
         self._press = None
         self._dragging = False
 
@@ -123,6 +131,7 @@ class PetApp:
             menu.add_command(label="Take a nap", command=self.brain.doze_off)
         menu.add_command(label="Boing!", command=lambda: self.brain.hop(720.0))
         menu.add_command(label="Change colour", command=self._cycle_palette)
+        menu.add_command(label="Switch creature", command=self._cycle_creature)
         menu.add_separator()
         menu.add_command(label="Quit", command=self.quit)
         try:
@@ -132,38 +141,78 @@ class PetApp:
 
     def _scritch(self) -> None:
         self.brain.pet()
-        self._spawn_hearts()
+        self._spawn_delight()
 
     def _cycle_palette(self) -> None:
         self.palette = palettes.next_after(self.palette)
 
+    def _cycle_creature(self) -> None:
+        order = list(creatures.NAMES)
+        self.kind = creatures.KINDS[order[(order.index(self.kind.name) + 1) % len(order)]]
+        # Carry the colour across only if it suits the new creature.
+        if self.palette.family != self.kind.name:
+            self.palette = palettes.get("random", prefer=self.kind.name)
+        self.particles.clear()
+
     # ---------------------------------------------------------------- particles
 
-    def _spawn_hearts(self) -> None:
-        for _ in range(3):
-            self.particles.append(
-                Particle(
-                    kind="heart",
-                    # Above the head, not over the face.
-                    x=random.choice((random.uniform(0.14, 0.36), random.uniform(0.64, 0.86))),
-                    y=random.uniform(0.16, 0.26),
-                    life=1.0,
-                    size=random.uniform(0.75, 1.25),
+    def _spawn_delight(self) -> None:
+        """What the creature emits when petted: fire, or hearts."""
+        kind = self.kind.pet_particle
+        facing = self.brain.facing
+        for _ in range(4 if kind == "flame" else 3):
+            if kind == "flame":
+                # Breathed forward from the snout, arcing up as it cools.
+                # The offsets track where the dragon's mouth actually is.
+                self.particles.append(
+                    Particle(
+                        kind=kind,
+                        x=0.5 + facing * random.uniform(0.28, 0.34),
+                        y=random.uniform(0.50, 0.56),
+                        vx=facing * random.uniform(0.35, 0.60),
+                        vy=random.uniform(-0.30, -0.12),
+                        decay=random.uniform(1.3, 1.9),
+                        size=random.uniform(0.7, 1.3),
+                    )
                 )
-            )
+            else:
+                self.particles.append(
+                    Particle(
+                        kind=kind,
+                        x=random.choice((random.uniform(0.14, 0.36), random.uniform(0.64, 0.86))),
+                        y=random.uniform(0.16, 0.26),
+                        vy=-0.32,
+                        decay=0.85,
+                        size=random.uniform(0.75, 1.25),
+                    )
+                )
 
     def _update_particles(self, dt: float) -> None:
         for particle in self.particles:
-            particle.life -= dt * (0.85 if particle.kind == "heart" else 0.45)
-            particle.y -= dt * (0.32 if particle.kind == "heart" else 0.16)
-            particle.x += dt * (0.05 if particle.kind == "zzz" else 0.0)
-        self.particles = [p for p in self.particles if p.life > 0 and p.y > -0.1]
+            particle.life -= dt * particle.decay
+            particle.x += particle.vx * dt
+            particle.y += particle.vy * dt
+            particle.vx *= 0.94  # air resistance, so flames stall and rise
+            particle.vy -= dt * 0.20
+        self.particles = [p for p in self.particles if p.life > 0 and p.y > -0.15]
 
-        self._zzz_cooldown -= dt
-        if self.brain.state is State.SLEEP and self._zzz_cooldown <= 0:
-            self._zzz_cooldown = 1.3
+        self._breath_cooldown -= dt
+        if self.brain.state is State.SLEEP and self._breath_cooldown <= 0:
+            self._breath_cooldown = self.kind.sleep_rate
+            facing = self.brain.facing
+            smoke = self.kind.sleep_particle == "smoke"
             self.particles.append(
-                Particle(kind="zzz", x=0.74, y=0.30, life=1.0, size=random.uniform(0.8, 1.2))
+                Particle(
+                    kind=self.kind.sleep_particle,
+                    # Smoke rings leave the curled-up dragon's nostrils; the
+                    # blob's "z"s just float above its head.
+                    x=0.5 + facing * (0.30 if smoke else 0.22),
+                    y=0.63 if smoke else 0.34,
+                    vx=facing * 0.05,
+                    vy=-0.09 if smoke else -0.06,
+                    decay=0.45,
+                    size=random.uniform(0.8, 1.2),
+                )
             )
 
     # --------------------------------------------------------------------- loop
@@ -176,7 +225,7 @@ class PetApp:
         except KeyboardInterrupt:  # Ctrl-C in the launching terminal
             self.quit()
             return
-        self.window.root.after(self.frame_ms, self._tick)
+        self._after_id = self.window.root.after(self.frame_ms, self._tick)
 
     def _step(self) -> None:
         now = time.perf_counter()
@@ -189,6 +238,8 @@ class PetApp:
             pointer = (int(self.brain.centre[0]), int(self.brain.centre[1]))
 
         self.brain.update(dt, pointer)
+        # Wings beat hard in the air and idle-flutter on the ground.
+        self._wing += dt * (16.0 if not self.brain.grounded else 2.0)
         self._update_particles(dt)
         self.window.move_to(self.brain.x, self.brain.y)
         self._render()
@@ -214,11 +265,12 @@ class PetApp:
             smile=self.brain.smile,
             step=self.brain.step,
             wobble=self.brain.wobble,
+            wing=self._wing,
             lift=self.brain.tuck,
             asleep=self.brain.state is State.SLEEP,
             particles=self.particles,
         )
-        creature.draw(
+        self.kind.draw(
             self.window.canvas,
             self.size,
             self.size,
@@ -229,6 +281,14 @@ class PetApp:
 
     def quit(self) -> None:
         self._running = False
+        # Cancel the queued frame first: destroying the root with a callback
+        # still pending makes Tk complain about an invalid command name.
+        if self._after_id is not None:
+            try:
+                self.window.root.after_cancel(self._after_id)
+            except tk.TclError:
+                pass
+            self._after_id = None
         try:
             self.window.root.destroy()
         except tk.TclError:
@@ -236,7 +296,7 @@ class PetApp:
 
     def run(self) -> None:
         self._last_tick = time.perf_counter()
-        self.window.root.after(self.frame_ms, self._tick)
+        self._after_id = self.window.root.after(self.frame_ms, self._tick)
         try:
             self.window.root.mainloop()
         except KeyboardInterrupt:

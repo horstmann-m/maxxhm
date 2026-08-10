@@ -1,4 +1,4 @@
-"""Draws the creature onto a Tk canvas.
+"""The original blob: a round, sprouted, thoroughly cheerful thing.
 
 Everything is vector shapes computed at draw time, so the pet scales to any
 size and there are no sprite sheets to ship. The whole canvas is cleared and
@@ -9,34 +9,8 @@ redrawn each frame -- it is only ~20 items, which Tk handles comfortably at
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
-
-from .palette import Palette
-
-
-@dataclass
-class Pose:
-    """Everything the renderer needs to know for a single frame."""
-
-    facing: int = 1  # 1 = right, -1 = left
-    squash: float = 1.0  # >1 wide and short, <1 tall and thin
-    blink: float = 0.0  # 0 = wide open, 1 = fully shut
-    look: tuple[float, float] = (0.0, 0.0)  # pupil offset, each in -1..1
-    smile: float = 0.5  # 0 = neutral, 1 = big grin, <0 = frown
-    step: float = 0.0  # gait phase in radians
-    wobble: float = 0.0  # body jiggle phase in radians
-    lift: float = 0.0  # extra vertical offset in body radii (jumping)
-    asleep: bool = False
-    particles: list["Particle"] = field(default_factory=list)
-
-
-@dataclass
-class Particle:
-    kind: str  # "heart" or "zzz"
-    x: float  # 0..1 across the canvas
-    y: float  # 0..1 down the canvas
-    life: float  # 1 at birth, 0 at death
-    size: float = 1.0
+from ..palette import Palette
+from ..pose import Pose
 
 
 def _flat(points: list[tuple[float, float]]) -> list[float]:

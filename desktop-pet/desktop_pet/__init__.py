@@ -1,9 +1,9 @@
-"""A small creature that lives on your desktop.
+"""A small creature that lives on your desktop: a baby dragon, or a blob.
 
 Pure standard library: Tk for the window, everything else drawn by hand.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 __all__ = ["PetApp"]
 

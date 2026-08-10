@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import __version__, palette as palettes
+from . import __version__, creatures, palette as palettes
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -14,12 +14,19 @@ def build_parser() -> argparse.ArgumentParser:
         description="Set a small creature loose on your desktop.",
     )
     parser.add_argument(
+        "--creature",
+        default="dragon",
+        help=f"which creature to keep: {', '.join(creatures.NAMES)} (default: dragon)",
+    )
+    parser.add_argument(
         "--size", type=int, default=128, help="creature size in pixels (default: 128)"
     )
     parser.add_argument(
         "--palette",
         default="random",
-        help=f"colour scheme: {', '.join(palettes.NAMES)} or 'random' (default: random)",
+        help="colour scheme: "
+        + ", ".join(palettes.NAMES)
+        + " or 'random', which picks one suited to the creature (default: random)",
     )
     parser.add_argument("--fps", type=int, default=50, help="frames per second (default: 50)")
     parser.add_argument(
@@ -44,14 +51,16 @@ def main(argv: list[str] | None = None) -> int:
     if args.size < 48:
         raise SystemExit("--size below 48 leaves no room for a face")
 
-    # Resolve the palette before opening a window, so a typo fails with a
-    # readable message instead of a Tk error.
-    palette = palettes.get(args.palette)
+    # Resolve both before opening a window, so a typo fails with a readable
+    # message instead of a Tk error.
+    kind = creatures.get(args.creature)
+    palette = palettes.get(args.palette, prefer=kind.name)
 
     from .app import PetApp
 
     app = PetApp(
         size=args.size,
+        creature=kind,
         palette=palette,
         fps=args.fps,
         floor_margin=args.floor_margin,
